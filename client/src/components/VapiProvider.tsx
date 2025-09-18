@@ -58,15 +58,30 @@ export function VapiProvider({ children }: VapiProviderProps) {
 
     vapiInstance.on('speech-end', () => {
       console.log('User stopped speaking');
-      setLogoState('speaking');
+      // Don't automatically change to speaking - wait for assistant to actually speak
     });
 
     vapiInstance.on('message', (message) => {
       console.log('Message received:', message);
-      if (message.type === 'transcript' && message.role === 'assistant') {
-        setLogoState('speaking');
-      } else if (message.type === 'transcript' && message.role === 'user') {
-        setLogoState('listening');
+      
+      // Handle speech status updates (more reliable than transcript events)
+      if (message.type === 'speech-update') {
+        if (message.role === 'assistant' && message.status === 'started') {
+          setLogoState('speaking');
+        } else if (message.role === 'assistant' && message.status === 'stopped') {
+          setLogoState('listening');
+        } else if (message.role === 'user' && message.status === 'started') {
+          setLogoState('listening');
+        }
+      }
+      
+      // Fallback: Handle transcript events if speech-update events don't cover everything
+      if (message.type === 'transcript') {
+        if (message.role === 'assistant') {
+          setLogoState('speaking');
+        } else if (message.role === 'user') {
+          setLogoState('listening');
+        }
       }
     });
 
