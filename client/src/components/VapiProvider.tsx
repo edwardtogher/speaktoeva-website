@@ -43,6 +43,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
     vapiInstance.on('call-end', () => {
       console.log('Call ended');
       setIsCallActive(false);
+      // Always reset to dormant when call ends, regardless of previous state
       setLogoState('dormant');
       toast({
         title: "Call Ended",
@@ -72,6 +73,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
     vapiInstance.on('error', (error) => {
       console.error('Vapi error:', error);
       setIsCallActive(false);
+      // Always reset to dormant on error
       setLogoState('dormant');
       toast({
         title: "Connection Error",
@@ -121,6 +123,9 @@ export function VapiProvider({ children }: VapiProviderProps) {
   const endCall = () => {
     if (vapi) {
       vapi.stop();
+      // Immediately reset to dormant when user manually ends call
+      setLogoState('dormant');
+      setIsCallActive(false);
     }
   };
 
