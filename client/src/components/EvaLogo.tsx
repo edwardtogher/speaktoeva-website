@@ -89,7 +89,12 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
       </button>
       
       <div className="text-sm text-muted-foreground" aria-live="polite" data-testid="text-logo-status">
-        Status: <span className="capitalize font-medium">{state}</span>
+        <span className="font-medium">
+          {state === 'dormant' && 'Click to speak'}
+          {state === 'connecting' && 'Connecting'}
+          {state === 'listening' && 'Click to stop'}
+          {state === 'speaking' && 'Click to stop'}
+        </span>
       </div>
     </div>
   );
