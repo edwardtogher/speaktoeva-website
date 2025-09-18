@@ -22,6 +22,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [logoState, setLogoState] = useState<LogoState>('dormant');
+  const [isAssistantSpeaking, setIsAssistantSpeaking] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
     vapiInstance.on('call-end', () => {
       console.log('Call ended');
       setIsCallActive(false);
+      setIsAssistantSpeaking(false);
       // Always reset to dormant when call ends, regardless of previous state
       setLogoState('dormant');
       toast({
@@ -67,15 +69,18 @@ export function VapiProvider({ children }: VapiProviderProps) {
       // Only use speech-update events for state changes (most reliable)
       if (message.type === 'speech-update') {
         if (message.role === 'assistant' && message.status === 'started') {
+          setIsAssistantSpeaking(true);
           setLogoState('speaking');
         } else if (message.role === 'assistant' && message.status === 'stopped') {
+          setIsAssistantSpeaking(false);
           setLogoState('listening');
         } else if (message.role === 'user' && message.status === 'started') {
-          setLogoState('listening');
+          // Only set to listening if assistant is not currently speaking
+          if (!isAssistantSpeaking) {
+            setLogoState('listening');
+          }
         }
       }
-      
-      // Note: Removed transcript-based state changes to prevent conflicts
     });
 
     vapiInstance.on('error', (error) => {
@@ -137,6 +142,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
       // Immediately reset UI state
       setLogoState('dormant');
       setIsCallActive(false);
+      setIsAssistantSpeaking(false);
       
       console.log('Call manually ended/cancelled');
       
