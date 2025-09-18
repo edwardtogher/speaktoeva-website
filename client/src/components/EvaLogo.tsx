@@ -50,7 +50,7 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
     <div className={`flex flex-col items-center gap-4 ${className}`}>
       <button
         onClick={onClick}
-        className="group focus:outline-none focus:ring-4 focus:ring-primary/20 rounded-lg p-4 hover-elevate"
+        className="group focus:outline-none focus:ring-0 bg-transparent border-none p-0 cursor-pointer"
         aria-label="Talk to EVA"
         data-testid="button-eva-logo"
       >
