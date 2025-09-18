@@ -87,12 +87,19 @@ export default function Hero() {
           </div>
 
           {/* EVA Logo */}
-          <div className="py-8">
+          <div className="py-8 space-y-6">
             <EvaLogo 
               state={logoState} 
               onClick={handleLogoClick}
               className="mx-auto"
             />
+            
+            {/* Talk to EVA Button */}
+            <div className="flex justify-center">
+              <Button size="lg" onClick={handleLogoClick} data-testid="button-talk-to-eva">
+                {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Talk to EVA'}
+              </Button>
+            </div>
           </div>
 
           {/* Description */}
@@ -102,10 +109,7 @@ export default function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" onClick={handleLogoClick} data-testid="button-talk-to-eva">
-                {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Talk to EVA'}
-              </Button>
+            <div className="flex justify-center">
               <Button size="lg" variant="outline" onClick={handleBookCall} data-testid="button-book-walkthrough">
                 Book a 10-min walkthrough
               </Button>
