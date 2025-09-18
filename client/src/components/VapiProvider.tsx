@@ -80,7 +80,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
       });
     });
 
-    // Expose global function for manual testing
+    // Expose global function for manual testing (from original design)
     if (typeof window !== 'undefined') {
       (window as any).setEvaLogoState = (state: LogoState) => {
         console.log(`Setting EVA logo state to: ${state}`);

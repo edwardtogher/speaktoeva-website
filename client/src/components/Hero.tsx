@@ -1,22 +1,38 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import EvaLogo, { LogoState } from './EvaLogo';
+import EvaLogo from './EvaLogo';
+import { useVapi } from './VapiProvider';
 import { BOOKING_LINK } from '@/config/vapi';
 
 export default function Hero() {
-  const [logoState, setLogoState] = useState<LogoState>('dormant');
+  const { logoState, startCall, endCall, isCallActive } = useVapi();
 
-  const handleTalkToEva = () => {
-    console.log('Starting Vapi call...');
-    setLogoState('connecting');
-    
-    // Simulate call flow for demo
-    setTimeout(() => setLogoState('listening'), 2000);
-    setTimeout(() => setLogoState('speaking'), 4000);
-    setTimeout(() => setLogoState('listening'), 6000);
-    setTimeout(() => setLogoState('dormant'), 8000);
-  };
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input field
+      if (['INPUT', 'TEXTAREA'].includes((document.activeElement as any)?.tagName)) {
+        return;
+      }
+
+      // Manual state control for testing (from original design)
+      if (e.key === '1' && typeof window !== 'undefined') {
+        (window as any).setEvaLogoState?.('dormant');
+      }
+      if (e.key === '2' && typeof window !== 'undefined') {
+        (window as any).setEvaLogoState?.('connecting');
+      }
+      if (e.key === '3' && typeof window !== 'undefined') {
+        (window as any).setEvaLogoState?.('speaking');
+      }
+      if (e.key === '4' && typeof window !== 'undefined') {
+        (window as any).setEvaLogoState?.('listening');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleBookCall = () => {
     window.open(BOOKING_LINK, '_blank');
@@ -38,8 +54,8 @@ export default function Hero() {
           <a href="#pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
             Pricing
           </a>
-          <Button variant="ghost" onClick={handleTalkToEva} data-testid="button-nav-demo">
-            Try Live Demo
+          <Button variant="ghost" onClick={isCallActive ? endCall : startCall} data-testid="button-nav-demo">
+            {isCallActive ? 'End Call' : 'Try Live Demo'}
           </Button>
           <Button onClick={handleBookCall} data-testid="button-nav-book">
             Book a Call
@@ -64,7 +80,7 @@ export default function Hero() {
           <div className="py-8">
             <EvaLogo 
               state={logoState} 
-              onClick={handleTalkToEva}
+              onClick={isCallActive ? endCall : startCall}
               className="mx-auto"
             />
           </div>
@@ -77,8 +93,8 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" onClick={handleTalkToEva} data-testid="button-talk-to-eva">
-                Talk to EVA
+              <Button size="lg" onClick={isCallActive ? endCall : startCall} data-testid="button-talk-to-eva">
+                {isCallActive ? 'End Call' : 'Talk to EVA'}
               </Button>
               <Button size="lg" variant="outline" onClick={handleBookCall} data-testid="button-book-walkthrough">
                 Book a 10-min walkthrough
