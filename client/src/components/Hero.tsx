@@ -8,6 +8,16 @@ import { BOOKING_LINK } from '@/config/vapi';
 export default function Hero() {
   const { logoState, startCall, endCall, isCallActive } = useVapi();
 
+  const handleLogoClick = () => {
+    if (logoState === 'connecting' || isCallActive) {
+      // Cancel/end call if connecting or already active
+      endCall();
+    } else {
+      // Start call if dormant
+      startCall();
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip if user is typing in an input field
@@ -54,8 +64,8 @@ export default function Hero() {
           <a href="#pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
             Pricing
           </a>
-          <Button variant="ghost" onClick={isCallActive ? endCall : startCall} data-testid="button-nav-demo">
-            {isCallActive ? 'End Call' : 'Try Live Demo'}
+          <Button variant="ghost" onClick={handleLogoClick} data-testid="button-nav-demo">
+            {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Try Live Demo'}
           </Button>
           <Button onClick={handleBookCall} data-testid="button-nav-book">
             Book a Call
@@ -80,7 +90,7 @@ export default function Hero() {
           <div className="py-8">
             <EvaLogo 
               state={logoState} 
-              onClick={isCallActive ? endCall : startCall}
+              onClick={handleLogoClick}
               className="mx-auto"
             />
           </div>
@@ -93,8 +103,8 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" onClick={isCallActive ? endCall : startCall} data-testid="button-talk-to-eva">
-                {isCallActive ? 'End Call' : 'Talk to EVA'}
+              <Button size="lg" onClick={handleLogoClick} data-testid="button-talk-to-eva">
+                {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Talk to EVA'}
               </Button>
               <Button size="lg" variant="outline" onClick={handleBookCall} data-testid="button-book-walkthrough">
                 Book a 10-min walkthrough
