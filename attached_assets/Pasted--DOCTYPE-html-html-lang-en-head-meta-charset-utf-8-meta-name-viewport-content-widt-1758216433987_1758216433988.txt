@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EVA – Smooth State Transitions</title>
+<style>
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#fff;color:#0f172a;display:grid;place-items:center;min-height:100vh}
+  h1{font-size:clamp(28px,6vw,56px);margin:12px 0 24px}
+  .kicker{color:rgb(30,28,241);text-transform:uppercase;letter-spacing:.22em;font-weight:700;font-size:12px;margin:0}
+  svg{width:min(900px,92vw);height:auto;display:block}
+
+  .bar{
+    fill:rgb(30,28,241);
+    rx:8;
+    transform-box:fill-box;
+    transform-origin:50% 50%;
+    animation: ripple var(--dur,1400ms) ease-in-out infinite;
+    transition: transform 180ms ease;
+  }
+
+  @keyframes ripple{
+    0%   { transform: scaleY(calc(var(--base,1) + 0*var(--amp,0))); }
+    50%  { transform: scaleY(calc(var(--base,1) - 1*var(--amp,0))); }
+    100% { transform: scaleY(calc(var(--base,1) + 0*var(--amp,0))); }
+  }
+
+  body.state--dormant{
+    --base: 1;
+    --amp:  0;
+    --dur:  1400ms;
+  }
+
+  body.state--connecting{
+    --base: .775; 
+    --amp:  .225; 
+    --dur:  1600ms;
+  }
+
+  body.state--speaking{
+    --base: .75;  
+    --amp:  .25;  
+    --dur:  900ms;
+  }
+
+  /* Listening – soft talking feel (.30 ↔ .10) */
+  body.state--listening{
+    --base: .20;
+    --amp:  .10;
+    --dur:  2000ms;
+  }
+
+  .controls{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .chip{padding:8px 12px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;font-weight:700}
+  .chip[aria-pressed="true"]{border-color:rgb(30,28,241);box-shadow:0 0 0 3px rgba(30,28,241,.18)}
+  .sub{max-width:650px;text-align:center;color:#475569;margin:18px auto 0}
+</style>
+</head>
+<body class="state--dormant">
+  <div style="text-align:center">
+    <p class="kicker">AI Phone Assistant</p>
+    <h1>Your phone answered. Every time.</h1>
+  </div>
+
+  <svg viewBox="0 0 700 320" role="img" aria-label="EVA five-bar animated logo">
+    <g id="bars" transform="translate(350,0)"></g>
+  </svg>
+
+  <div class="controls" role="toolbar" aria-label="Logo state controls">
+    <button class="chip" data-state="dormant"   aria-pressed="true">Dormant</button>
+    <button class="chip" data-state="connecting" aria-pressed="false">Connecting</button>
+    <button class="chip" data-state="speaking"   aria-pressed="false">Speaking</button>
+    <button class="chip" data-state="listening"  aria-pressed="false">Listening</button>
+  </div>
+
+  <p class="sub">EVA greets callers, understands intent, books appointments, and follows up—so you never lose revenue to a missed call again.</p>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const body = document.body;
+  const g = document.getElementById('bars');
+
+  const midY = 160, barWidth = 28, gap = 30;
+  const heights = [120, 180, 240, 180, 120];
+  const count = heights.length;
+  const totalWidth = count * barWidth + (count - 1) * gap;
+  const startX = -totalWidth / 2;
+
+  const bars = heights.map((h,i) => {
+    const x = startX + i * (barWidth + gap);
+    const y = midY - h/2;
+    const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.setAttribute('x', x);
+    r.setAttribute('y', y);
+    r.setAttribute('width', barWidth);
+    r.setAttribute('height', h);
+    r.setAttribute('class', 'bar');
+    g.appendChild(r);
+    return r;
+  });
+
+  const centerIndex = Math.floor((count - 1) / 2);
+  const stagger = 100; 
+  bars.forEach((b,i) => {
+    const delay = Math.abs(i - centerIndex) * stagger;
+    b.style.animationDelay = `${delay}ms`;
+  });
+
+  const setPressed = (name) => {
+    document.querySelectorAll('.chip').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.state === name ? 'true' : 'false');
+    });
+  };
+
+  const setState = (name) => {
+    body.className = `state--${name}`;
+    setPressed(name);
+  };
+
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => setState(btn.dataset.state));
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if (e.key === '1') setState('dormant');
+    if (e.key === '2') setState('connecting');
+    if (e.key === '3') setState('speaking');
+    if (e.key === '4') setState('listening');
+  });
+
+  setState('dormant');
+});
+</script>
+</body>
+</html>
