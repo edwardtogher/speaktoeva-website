@@ -127,6 +127,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
     } catch (error) {
       console.error('Failed to start call:', error);
       setLogoState('dormant');
+      setIsCallActive(false);
       toast({
         title: "Call Failed",
         description: "Couldn't start the call. Please check your microphone permissions.",
@@ -137,10 +138,22 @@ export function VapiProvider({ children }: VapiProviderProps) {
 
   const endCall = () => {
     if (vapi) {
+      // Stop the Vapi call - this cancels ongoing connections and ends active calls
       vapi.stop();
-      // Immediately reset to dormant when user manually ends call
+      
+      // Immediately reset UI state
       setLogoState('dormant');
       setIsCallActive(false);
+      
+      console.log('Call manually ended/cancelled');
+      
+      // Show appropriate toast based on current state
+      if (logoState === 'connecting') {
+        toast({
+          title: "Connection Cancelled",
+          description: "Call connection was cancelled.",
+        });
+      }
     }
   };
 
