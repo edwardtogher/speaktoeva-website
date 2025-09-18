@@ -35,6 +35,8 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
     const delay = Math.abs(index - center) * 140; // 140ms stagger as in original
     
     switch (state) {
+      case 'dormant':
+        return `eva-dormant`;
       case 'connecting':
         return `eva-connecting`;
       case 'speaking':
@@ -42,7 +44,7 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
       case 'listening':
         return `eva-listening`;
       default:
-        return '';
+        return 'eva-dormant'; // fallback to dormant
     }
   };
 
