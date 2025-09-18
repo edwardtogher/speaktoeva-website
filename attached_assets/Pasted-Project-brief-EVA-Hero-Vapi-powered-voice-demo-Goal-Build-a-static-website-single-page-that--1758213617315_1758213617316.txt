@@ -1,0 +1,143 @@
+Project brief: “EVA Hero – Vapi-powered voice demo”
+Goal
+
+Build a static website (single page) that:
+
+shows my animated five-bar EVA logo with four states (dormant, connecting, speaking, listening),
+
+starts a Vapi call when the logo is clicked, and
+
+switches the animation state based on Vapi Web SDK events.
+
+Brand & layout
+
+Background: pure white (#ffffff), no textures or gradients.
+
+Primary brand blue: RGB(30, 28, 241). Use this for the bars and primary buttons.
+
+Hero content (centered, stacked):
+
+Kicker (small, uppercase): “AI Phone Assistant” (in brand blue).
+
+Headline (large): “Your phone answered. Every time.”
+
+The five-bar animated logo (clickable).
+
+Under the logo, a paragraph:
+“EVA greets callers, understands intent, books appointments, and follows up—so you never lose revenue to a missed call again.”
+
+Two buttons: “Talk to EVA” (primary) and “Book a 10-min walkthrough” (secondary).
+
+Three badges: “24/7 coverage”, “Instant handovers”, “CRM updates”.
+
+The logo must animate with the following states:
+
+Dormant (default): five bars at their full configured heights (middle tallest, outers shortest), static.
+
+Connecting: subtle ripple (slow), purely visual “connecting” feedback.
+
+Speaking: stronger ripple between Dormant height and Listening height (never exceeding Dormant).
+
+Listening: all five bars thin and equal height (still visible).
+
+Keep the bars growing/shrinking symmetrically from a horizontal midline (extend up and down equally).
+
+Vapi wiring (client-side, no backend)
+
+Use the Vapi Web SDK (NOT the floating widget).
+
+I will provide:
+
+assistantId: "<ASSISTANT_ID>"
+
+publicKey: "<PUBLIC_KEY>" (safe in browser)
+
+On logo click or “Talk to EVA” button click:
+
+Immediately set animation to Connecting.
+
+Start the Vapi call using the SDK with my assistantId + publicKey.
+
+Map SDK events to animation:
+
+When the call actually starts (e.g., call-start or equivalent ready/connected event): Listening.
+
+While the assistant is speaking (use message/speech status events; role = assistant or speech-started): Speaking.
+
+When the assistant is not speaking / user is expected to talk (role = user transcript events, end of assistant utterance, or speech-ended): Listening.
+
+On call-end or error: Dormant, and show a small non-blocking toast like “Call ended” or “Couldn’t connect”.
+
+Make sure mic permission is requested via the actual user click (logo or CTA) so browsers allow audio.
+
+Expose a tiny helper so we can drive the visual manually if needed:
+window.setEvaLogoState('dormant'|'connecting'|'speaking'|'listening')
+
+Tech notes & structure
+
+Keep it lightweight (plain HTML/CSS/JS or a minimal Vite setup). No heavy frameworks.
+
+Put config in one place:
+
+A small config.js (or inline at top of the script) with assistantId and publicKey.
+
+If Replit wants secrets, store them in Secrets; the public key can be embedded client-side. (Do NOT put any server secrets in the client.)
+
+The animation is implemented in SVG with five rects. The state changes are driven via CSS classes or JS applying scaleY transforms.
+
+Ensure the page is served over HTTPS (Replit does this) so mic permissions work.
+
+Accessibility & UX
+
+The animated logo must be a button (role+keyboard focus) with aria-label="Talk to EVA".
+
+Provide keyboard shortcut as a nice-to-have: hitting Enter when focused on the logo starts the call.
+
+Include a minimal status text region (aria-live=”polite”) to announce “Connecting…”, “Listening…”, “Speaking…”, “Call ended.”
+
+Acceptance criteria (what “done” means)
+
+The site loads with a white background, headline/kicker text, and dormant five-bar logo visible.
+
+Clicking the logo or the “Talk to EVA” button:
+
+Immediately switches to Connecting, then to Listening once the call connects.
+
+During the call:
+
+Bars toggle between Speaking and Listening based on Vapi’s real-time events.
+
+Ending the call:
+
+Returns to Dormant and shows a small toast message.
+
+Colour fidelity:
+
+Bars and primary buttons use rgb(30,28,241) exactly.
+
+Exposes window.setEvaLogoState(...) for manual state testing.
+
+Deployed preview on Replit works with a real mic (prompt appears) and connects using my supplied IDs/keys.
+
+Test plan
+
+Load the site → see Dormant.
+
+Click the logo → see Connecting → then Listening on connect.
+
+Trigger some assistant speech (say “hello”) → bars move to Speaking, then back to Listening after the utterance.
+
+End the call → returns to Dormant and toast appears.
+
+Manually run in console:
+setEvaLogoState('listening'), setEvaLogoState('speaking') etc., and confirm visuals change.
+
+Handover
+
+Provide me with:
+
+The Replit URL for preview.
+
+A single zipped export or Git repo.
+
+A short README with where to set assistantId and publicKey, and where to put my Cal.com link for “Book a 10-min walkthrough”.

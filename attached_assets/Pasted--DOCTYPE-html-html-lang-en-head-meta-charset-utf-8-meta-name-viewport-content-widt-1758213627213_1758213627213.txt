@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EVA – Voice AI That Never Misses A Call</title>
+<meta name="description" content="EVA is your AI phone assistant: answers, qualifies, books, and follows up 24/7. Try the live voice demo or book a call."/>
+<style>
+  :root{
+    --bg: #ffffff;
+    --ring: 30,28,241;
+    --text: #0f172a;
+    --muted: #475569;
+    --bar-color: rgb(30,28,241);
+    --bar-width: 28px;
+    --gap: 30px;
+    --stagger: 140ms;
+    --listen-scale: 0.07;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%;}
+  body{
+    margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+    color: var(--text); background: var(--bg);
+    display: flex; flex-direction: column;
+  }
+
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px clamp(16px,4vw,40px)}
+  .brand{display:flex; align-items:center; gap:12px; font-weight:700}
+  .dot{width:12px; height:12px; border-radius:999px; background:rgb(30,28,241); box-shadow:0 0 0 6px rgba(var(--ring),0.12)}
+  .nav a{color:var(--muted); text-decoration:none; font-weight:600}
+  .cta-nav{display:flex; gap:10px; align-items:center}
+  .btn{appearance:none; border:1px solid rgba(15,23,42,0.08); background:#fff; color:#0f172a; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; transition:transform 120ms ease, box-shadow 150ms ease, border-color 150ms ease}
+  .btn:hover{transform:translateY(-1px); box-shadow:0 8px 22px rgba(2,6,23,0.08)}
+  .btn.primary{ background: rgb(30,28,241); color:#fff; border-color: rgba(var(--ring), .4); box-shadow:0 10px 30px rgba(var(--ring), .25)}
+  .btn.ghost{ background: transparent; color: var(--text); border-color: rgba(2,6,23,0.12)}
+
+  .hero{ flex:1; display:grid; place-items:center; padding: clamp(24px, 5vw, 56px) 16px 48px; }
+  .container{ width:min(1200px, 96vw); display:grid; grid-template-columns: 1fr; gap:28px }
+
+  .stack{ display:grid; place-items:center; gap:18px }
+
+  .headline{ text-align:center; display:grid; gap:14px; }
+  .headline p.kicker{ margin:0; font-weight:700; text-transform:uppercase; font-size:12px; letter-spacing:0.22em; color:rgb(30,28,241) }
+  .headline h1{ font-size: clamp(28px, 6vw, 56px); line-height:1.05; margin:0; letter-spacing:-0.02em }
+
+  .controls{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+  .chip{ padding:8px 12px; border-radius:999px; border:1px solid rgba(2,6,23,0.1); background:#fff; color:#0f172a; cursor:pointer; font-weight:700 }
+  .chip[aria-pressed="true"]{ border-color:rgb(30,28,241); box-shadow:0 0 0 3px rgba(var(--ring),.18) }
+
+  .faint{ color: var(--muted); font-size: 13px; text-align:center; margin-top:10px }
+
+  svg{width:min(900px,92vw); height:auto; display:block; margin-inline:auto}
+  .bar{ transform-box:fill-box; transform-origin:50% 50%; fill:var(--bar-color); rx:8 }
+  .entrance{ transform:scaleY(0); animation:grow 900ms cubic-bezier(.2,.8,.2,1) forwards }
+  @keyframes grow{0%{transform:scaleY(0)} 80%{transform:scaleY(1.05)} 100%{transform:scaleY(1)}}
+  @keyframes rippleSpeak{0%{transform:scaleY(1)} 50%{transform:scaleY(var(--listen-scale))} 100%{transform:scaleY(1)}}
+  @keyframes rippleConnect{0%{transform:scaleY(1)} 50%{transform:scaleY(calc((1 + var(--listen-scale)) / 2))} 100%{transform:scaleY(1)}}
+  .state--dormant .bar{transform:scaleY(1);animation:none}
+  .state--connecting .bar{animation:rippleConnect 1600ms ease-in-out infinite}
+  .state--speaking .bar{animation:rippleSpeak 700ms ease-in-out infinite}
+  .state--listening .bar{animation:none;transform:scaleY(var(--listen-scale))}
+
+  .below-logo{ text-align:center; margin-top:24px; display:grid; gap:16px }
+  .below-logo p{ font-size:18px; max-width:650px; margin:0 auto; color:var(--muted) }
+  .cta-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
+  .badges{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
+  .badge{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:rgba(30,28,241,0.08); color:rgb(30,28,241); font-weight:700; border:1px solid rgba(30,28,241,0.18) }
+</style>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand"><span class="dot"></span><span>EVA</span></div>
+    <div class="cta-nav">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <button class="btn ghost" id="btn-demo">Try Live Demo</button>
+      <button class="btn primary" id="btn-book">Book a Call</button>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="container">
+      <div class="stack">
+        <div class="headline">
+          <p class="kicker">AI Phone Assistant</p>
+          <h1>Your phone answered. Every time.</h1>
+        </div>
+
+        <svg viewBox="0 0 700 320" role="img" aria-label="EVA five-bar animated logo">
+          <g id="bars" transform="translate(350,0)"></g>
+        </svg>
+        <div class="controls" role="toolbar" aria-label="Logo state controls">
+          <button class="chip" data-state="dormant" aria-pressed="true">Dormant</button>
+          <button class="chip" data-state="connecting" aria-pressed="false">Connecting</button>
+          <button class="chip" data-state="speaking" aria-pressed="false">Speaking</button>
+          <button class="chip" data-state="listening" aria-pressed="false">Listening</button>
+        </div>
+        <p class="faint">Tip: press <strong>1</strong>=Dormant, <strong>2</strong>=Connecting, <strong>3</strong>=Speaking, <strong>4</strong>=Listening</p>
+        
+        <div class="below-logo">
+          <p>EVA greets callers, understands intent, books appointments, and follows up—so you never lose revenue to a missed call again.</p>
+          <div class="cta-row">
+            <button class="btn primary">Talk to EVA</button>
+            <button class="btn">Book a 10-min walkthrough</button>
+          </div>
+          <div class="badges">
+            <span class="badge">24/7 coverage</span>
+            <span class="badge">Instant handovers</span>
+            <span class="badge">CRM updates</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  const root = document.documentElement;
+  const g    = document.getElementById('bars');
+  const getVar = n => parseFloat(getComputedStyle(root).getPropertyValue(n));
+  const midY=160, barWidth=getVar('--bar-width'), gap=getVar('--gap');
+  const heights=[120,180,240,180,120];
+  const count=heights.length, totalWidth=count*barWidth+(count-1)*gap, startX=-totalWidth/2;
+  const bars=heights.map((h,i)=>{const x=startX+i*(barWidth+gap);const y=midY-h/2;const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',x);r.setAttribute('y',y);r.setAttribute('width',barWidth);r.setAttribute('height',h);r.setAttribute('class','bar entrance');g.appendChild(r);return r});
+  const center=Math.floor(count/2), baseDelay=90;
+  bars.forEach((r,i)=>{const d=Math.abs(i-center);r.style.animationDelay=(d*baseDelay)+'ms'});
+  function setState(name){document.body.classList.remove('state--dormant','state--connecting','state--speaking','state--listening');document.body.classList.add('state--'+name);document.querySelectorAll('.chip').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.state===name?'true':'false')});if(name!=='dormant'){bars.forEach(r=>r.classList.remove('entrance'))};const stagger=parseFloat(getComputedStyle(root).getPropertyValue('--stagger'))||120;if(name==='connecting'||name==='speaking'){bars.forEach((r,i)=>{const d=Math.abs(i-center);r.style.animationDelay=(d*stagger)+'ms'})} else {bars.forEach(r=>r.style.animationDelay='0ms')}}
+  setState('dormant');
+  document.querySelectorAll('.chip').forEach(btn=>{btn.addEventListener('click',()=>setState(btn.dataset.state))});
+  window.addEventListener('keydown',(e)=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;if(e.key==='1') setState('dormant');if(e.key==='2') setState('connecting');if(e.key==='3') setState('speaking');if(e.key==='4') setState('listening')});
+})();
+</script>
+</body>
+</html>
