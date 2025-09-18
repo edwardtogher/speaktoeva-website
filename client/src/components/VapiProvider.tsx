@@ -22,7 +22,6 @@ export function VapiProvider({ children }: VapiProviderProps) {
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [logoState, setLogoState] = useState<LogoState>('dormant');
-  const [isAssistantSpeaking, setIsAssistantSpeaking] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export function VapiProvider({ children }: VapiProviderProps) {
     vapiInstance.on('call-end', () => {
       console.log('Call ended');
       setIsCallActive(false);
-      setIsAssistantSpeaking(false);
       // Always reset to dormant when call ends, regardless of previous state
       setLogoState('dormant');
       toast({
@@ -53,32 +51,17 @@ export function VapiProvider({ children }: VapiProviderProps) {
       });
     });
 
-    vapiInstance.on('speech-start', () => {
-      console.log('User started speaking');
-      setLogoState('listening');
-    });
-
-    vapiInstance.on('speech-end', () => {
-      console.log('User stopped speaking');
-      // Don't automatically change to speaking - wait for assistant to actually speak
-    });
-
     vapiInstance.on('message', (message) => {
       console.log('Message received:', message);
       
-      // Only use speech-update events for state changes (most reliable)
-      if (message.type === 'speech-update') {
-        if (message.role === 'assistant' && message.status === 'started') {
-          setIsAssistantSpeaking(true);
+      // ONLY use assistant speech-update events (ignore all user speech)
+      if (message.type === 'speech-update' && message.role === 'assistant') {
+        if (message.status === 'started') {
+          console.log('🔊 Assistant started speaking');
           setLogoState('speaking');
-        } else if (message.role === 'assistant' && message.status === 'stopped') {
-          setIsAssistantSpeaking(false);
+        } else if (message.status === 'stopped') {
+          console.log('👂 Assistant stopped speaking');
           setLogoState('listening');
-        } else if (message.role === 'user' && message.status === 'started') {
-          // Only set to listening if assistant is not currently speaking
-          if (!isAssistantSpeaking) {
-            setLogoState('listening');
-          }
         }
       }
     });
@@ -142,7 +125,6 @@ export function VapiProvider({ children }: VapiProviderProps) {
       // Immediately reset UI state
       setLogoState('dormant');
       setIsCallActive(false);
-      setIsAssistantSpeaking(false);
       
       console.log('Call manually ended/cancelled');
       
