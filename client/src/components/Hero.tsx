@@ -79,7 +79,7 @@ export default function Hero() {
           {/* Kicker and Headline */}
           <div className="space-y-4">
             <p className="text-sm font-bold uppercase tracking-wider text-primary">
-              AI Phone Assistant
+              Enhanced Voice Assistant
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
               Your phone answered. Every time.
