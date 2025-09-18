@@ -97,7 +97,7 @@ export default function Hero() {
             {/* Talk to EVA Button */}
             <div className="flex justify-center">
               <Button size="lg" onClick={handleLogoClick} data-testid="button-talk-to-eva">
-                {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Talk to EVA'}
+                {logoState === 'connecting' ? 'Connecting...' : (isCallActive ? 'End Call' : 'Talk to EVA')}
               </Button>
             </div>
           </div>
