@@ -49,7 +49,7 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
   };
 
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
+    <div className={`flex flex-col items-center ${className}`}>
       <button
         onClick={onClick}
         className="group focus:outline-none focus:ring-0 bg-transparent border-none p-0 cursor-pointer"
@@ -89,15 +89,6 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
           </g>
         </svg>
       </button>
-      
-      <div className="text-sm text-muted-foreground" aria-live="polite" data-testid="text-logo-status">
-        <span className="font-medium">
-          {state === 'dormant' && 'Click to speak'}
-          {state === 'connecting' && 'Connecting...'}
-          {state === 'listening' && 'Click to stop'}
-          {state === 'speaking' && 'Click to stop'}
-        </span>
-      </div>
     </div>
   );
 }
