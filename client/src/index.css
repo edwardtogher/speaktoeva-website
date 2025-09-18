@@ -357,7 +357,8 @@
   .eva-listening {
     --base: 0.20;
     --amp: 0.10;
-    --dur: 2000ms;
+    --dur: 1500ms;
     animation: eva-ripple var(--dur) ease-in-out infinite;
+    transition: transform 200ms ease-out;
   }
 }
