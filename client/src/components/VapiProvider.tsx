@@ -64,7 +64,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
     vapiInstance.on('message', (message) => {
       console.log('Message received:', message);
       
-      // Handle speech status updates (more reliable than transcript events)
+      // Only use speech-update events for state changes (most reliable)
       if (message.type === 'speech-update') {
         if (message.role === 'assistant' && message.status === 'started') {
           setLogoState('speaking');
@@ -75,14 +75,7 @@ export function VapiProvider({ children }: VapiProviderProps) {
         }
       }
       
-      // Fallback: Handle transcript events if speech-update events don't cover everything
-      if (message.type === 'transcript') {
-        if (message.role === 'assistant') {
-          setLogoState('speaking');
-        } else if (message.role === 'user') {
-          setLogoState('listening');
-        }
-      }
+      // Note: Removed transcript-based state changes to prevent conflicts
     });
 
     vapiInstance.on('error', (error) => {
