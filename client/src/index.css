@@ -325,4 +325,35 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+
+  /* EVA Logo Animations - matching original design */
+  @keyframes eva-ripple-speak {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(0.07); }
+    100% { transform: scaleY(1); }
+  }
+
+  @keyframes eva-ripple-connect {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(calc((1 + 0.07) / 2)); }
+    100% { transform: scaleY(1); }
+  }
+
+  .eva-dormant {
+    transform: scaleY(1);
+    animation: none;
+  }
+
+  .eva-connecting {
+    animation: eva-ripple-connect 1600ms ease-in-out infinite;
+  }
+
+  .eva-speaking {
+    animation: eva-ripple-speak 700ms ease-in-out infinite;
+  }
+
+  .eva-listening {
+    transform: scaleY(0.07);
+    animation: none;
+  }
 }

@@ -30,14 +30,17 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
     }
   }, []);
 
-  const getStateClasses = (state: LogoState) => {
+  const getAnimationClass = (state: LogoState, index: number) => {
+    const center = Math.floor(heights.length / 2);
+    const delay = Math.abs(index - center) * 140; // 140ms stagger as in original
+    
     switch (state) {
       case 'connecting':
-        return 'animate-pulse';
+        return `eva-connecting`;
       case 'speaking':
-        return 'animate-bounce';
+        return `eva-speaking`;
       case 'listening':
-        return 'scale-y-[0.07]';
+        return `eva-listening`;
       default:
         return '';
     }
@@ -72,10 +75,11 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
                   width={barWidth}
                   height={height}
                   rx={8}
-                  className={`fill-primary transition-all duration-700 ${getStateClasses(state)}`}
+                  className={`fill-primary ${getAnimationClass(state, index)}`}
                   style={{
                     transformOrigin: '50% 50%',
-                    animationDelay: `${delay}ms`,
+                    transformBox: 'fill-box',
+                    animationDelay: `${Math.abs(index - Math.floor(heights.length / 2)) * 140}ms`,
                   }}
                 />
               );
