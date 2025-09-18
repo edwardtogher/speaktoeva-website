@@ -125,13 +125,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Keyboard Shortcuts Hint */}
-          <div className="text-xs text-muted-foreground pt-8">
-            Tip: press <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">1</kbd>=Dormant, 
-            <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">2</kbd>=Connecting, 
-            <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">3</kbd>=Speaking, 
-            <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">4</kbd>=Listening
-          </div>
         </div>
       </div>
     </main>
