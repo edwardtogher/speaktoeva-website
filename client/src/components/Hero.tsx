@@ -4,6 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import EvaLogo from './EvaLogo';
 import { useVapi } from './VapiProvider';
 import { BOOKING_LINK } from '@/config/vapi';
+import { 
+  SiGooglecalendar, 
+  SiSlack, 
+  SiHubspot, 
+  SiCalendly, 
+  SiZapier, 
+  SiWhatsapp, 
+  SiGmail
+} from 'react-icons/si';
+import { MessageSquare, Mail } from 'lucide-react';
 
 export default function Hero() {
   const { logoState, startCall, endCall, isCallActive } = useVapi();
@@ -185,29 +195,32 @@ export default function Hero() {
           {/* Integration logos/pills */}
           <div className="flex flex-wrap gap-4 justify-center items-center">
             {[
-              'Google Calendar',
-              'Slack', 
-              'HubSpot',
-              'Calendly',
-              'Zapier',
-              'WhatsApp',
-              'SMS',
-              'Gmail',
-              'Outlook'
-            ].map((integration) => (
-              <div 
-                key={integration}
-                className="bg-background border rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
-                role="listitem"
-              >
-                <img 
-                  src="" 
-                  alt={`${integration} integration`}
-                  className="hidden"
-                />
-                {integration}
-              </div>
-            ))}
+              { name: 'Google Calendar', icon: SiGooglecalendar },
+              { name: 'Slack', icon: SiSlack },
+              { name: 'HubSpot', icon: SiHubspot },
+              { name: 'Calendly', icon: SiCalendly },
+              { name: 'Zapier', icon: SiZapier },
+              { name: 'WhatsApp', icon: SiWhatsapp },
+              { name: 'SMS', icon: MessageSquare },
+              { name: 'Gmail', icon: SiGmail },
+              { name: 'Outlook', icon: Mail }
+            ].map((integration) => {
+              const IconComponent = integration.icon;
+              return (
+                <div 
+                  key={integration.name}
+                  className="bg-background border rounded-full px-4 py-2 text-sm font-medium text-muted-foreground flex items-center gap-2"
+                  role="listitem"
+                >
+                  <IconComponent 
+                    className="w-4 h-4" 
+                    aria-hidden="true"
+                  />
+                  <span className="sr-only">{integration.name} integration</span>
+                  {integration.name}
+                </div>
+              );
+            })}
           </div>
           
           <p className="text-muted-foreground max-w-2xl mx-auto">
