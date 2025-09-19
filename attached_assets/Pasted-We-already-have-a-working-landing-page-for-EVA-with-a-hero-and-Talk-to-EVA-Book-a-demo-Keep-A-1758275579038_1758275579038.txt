@@ -1,0 +1,86 @@
+We already have a working landing page for EVA with a hero and “Talk to EVA” + “Book a demo.” Keep ALL current styling and layout. Do NOT change the hero. The hero already includes the credibility line “Built on infrastructure proven across 62M+ calls.” Leave that as-is.
+
+Add the following sections directly below the hero and above the footer, using existing fonts/colors/spacing. Keep it responsive, fast, and minimal. Prioritize accessibility (semantic tags, alt text) and SEO (proper heading hierarchy).
+
+Authority Statement Section
+
+Use <section> with an internal anchor id authority.
+
+<h2>: “The future of business calls is here.”
+
+<p>: “Voice AI is changing how companies handle phone calls worldwide — now EVA brings that same technology to small businesses.”
+
+Centered layout, max-width ~720px, plenty of white space.
+
+Integrations Strip
+
+Use <section> with id integrations.
+
+<h2>: “Works with the tools you already use.”
+
+Render a row (wrap on mobile) of neutral, monochrome logo images or pill placeholders if assets aren’t available. Include these items in this order:
+Google Calendar · Slack · HubSpot · Calendly · Zapier · WhatsApp · SMS · Gmail · Outlook
+
+Each item must have descriptive alt text like “Google Calendar integration”, “WhatsApp integration”, “SMS integration”, “Gmail integration”, “Outlook integration”.
+
+Sub-line <p>: “EVA connects with your calendar, CRM, messaging apps, and email — so she fits seamlessly into your workflow.”
+
+Keep everything visually lightweight (no heavy images).
+
+Trust Badges Row (SAFE claims only)
+
+Use <section> with id trust.
+
+Render four pill-style cards in a row (wrap on mobile), subtle shadow, rounded:
+
+“24/7 Availability”
+
+“Enterprise-grade Infrastructure”
+
+“Built on infrastructure proven across 62M+ calls” ← KEEP THIS EXACT WORDING
+
+“Fits into your existing workflow”
+
+Use <ul>/<li> or accessible <div role="list"> with <div role="listitem">.
+
+CTA Repeat Section
+
+Use <section> with id get-started.
+
+<h2>: “Ready to see EVA in action?”
+
+Two buttons side-by-side (stack on mobile):
+
+Primary: “Talk to EVA” (anchor-scroll to the live widget section already on the page)
+
+Secondary: “Book a 10-min demo” (use the existing Calendly link)
+
+Maintain existing button styles (purple primary).
+
+Navigation & linking
+
+If the navbar has “Features / Pricing / Try Demo / Book a Call,” make “Try Demo” anchor to the live widget, and “Book a Call” anchor to #get-started (or open Calendly).
+
+Add skip-to-content link for accessibility.
+
+SEO & accessibility specifics
+
+Use semantic tags: <section>, <h2>, <p>, <ul>.
+
+Heading order should remain valid (no skipping levels).
+
+All logos have descriptive alt text.
+
+Add meaningful ids (authority, integrations, trust, get-started) for anchor links.
+
+Keep copy EXACTLY as provided.
+
+Do NOT add any claims beyond what’s here. No uptime figures, no % improvements, no vague superlatives.
+
+Performance
+
+Avoid large images; prefer SVGs or lightweight placeholders.
+
+Respect current CSS tokens/utility classes; only add minimal CSS if needed.
+
+Test mobile: logos wrap, badges wrap, buttons full-width on small screens.

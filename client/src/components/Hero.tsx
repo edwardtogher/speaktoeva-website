@@ -48,8 +48,36 @@ export default function Hero() {
     window.open(BOOKING_LINK, '_blank');
   };
 
+  const handleScrollToHero = () => {
+    const heroElement = document.getElementById('hero');
+    if (heroElement) {
+      heroElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback to calling EVA if no hero element
+      handleLogoClick();
+    }
+  };
+
+  const handleScrollToGetStarted = () => {
+    const getStartedElement = document.getElementById('get-started');
+    if (getStartedElement) {
+      getStartedElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback to opening booking link
+      handleBookCall();
+    }
+  };
+
   return (
     <main className="min-h-screen flex flex-col">
+      {/* Skip to content link for accessibility */}
+      <a 
+        href="#hero" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
+      >
+        Skip to content
+      </a>
+
       {/* Navigation */}
       <header className="flex items-center justify-between p-4 lg:px-8">
         <div className="flex items-center gap-3">
@@ -58,23 +86,23 @@ export default function Hero() {
         </div>
         
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#features" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
+          <a href="#authority" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
             Features
           </a>
-          <a href="#pricing" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
+          <a href="#trust" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
             Pricing
           </a>
-          <Button variant="ghost" onClick={handleLogoClick} data-testid="button-nav-demo">
-            {(isCallActive || logoState === 'connecting') ? 'End Call' : 'Try Live Demo'}
+          <Button variant="ghost" onClick={handleScrollToHero} data-testid="button-nav-demo">
+            Try Demo
           </Button>
-          <Button onClick={handleBookCall} data-testid="button-nav-book">
+          <Button onClick={handleScrollToGetStarted} data-testid="button-nav-book">
             Book a Call
           </Button>
         </nav>
       </header>
 
       {/* Hero Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-16">
+      <div id="hero" className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {/* Kicker and Headline */}
           <div className="space-y-4">
@@ -134,6 +162,97 @@ export default function Hero() {
 
         </div>
       </div>
+
+      {/* Authority Statement Section */}
+      <section id="authority" className="py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+            The future of business calls is here.
+          </h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            Voice AI is changing how companies handle phone calls worldwide — now EVA brings that same technology to small businesses.
+          </p>
+        </div>
+      </section>
+
+      {/* Integrations Strip */}
+      <section id="integrations" className="py-16 px-4 bg-muted/30">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h2 className="text-3xl font-bold">
+            Works with the tools you already use.
+          </h2>
+          
+          {/* Integration logos/pills */}
+          <div className="flex flex-wrap gap-4 justify-center items-center">
+            {[
+              'Google Calendar',
+              'Slack', 
+              'HubSpot',
+              'Calendly',
+              'Zapier',
+              'WhatsApp',
+              'SMS',
+              'Gmail',
+              'Outlook'
+            ].map((integration) => (
+              <div 
+                key={integration}
+                className="bg-background border rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
+                role="listitem"
+              >
+                <img 
+                  src="" 
+                  alt={`${integration} integration`}
+                  className="hidden"
+                />
+                {integration}
+              </div>
+            ))}
+          </div>
+          
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            EVA connects with your calendar, CRM, messaging apps, and email — so she fits seamlessly into your workflow.
+          </p>
+        </div>
+      </section>
+
+      {/* Trust Badges Row */}
+      <section id="trust" className="py-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <li className="bg-background border rounded-lg p-6 text-center shadow-sm">
+              <h3 className="font-semibold text-foreground">24/7 Availability</h3>
+            </li>
+            <li className="bg-background border rounded-lg p-6 text-center shadow-sm">
+              <h3 className="font-semibold text-foreground">Enterprise-grade Infrastructure</h3>
+            </li>
+            <li className="bg-background border rounded-lg p-6 text-center shadow-sm">
+              <h3 className="font-semibold text-foreground">Built on infrastructure proven across 62M+ calls</h3>
+            </li>
+            <li className="bg-background border rounded-lg p-6 text-center shadow-sm">
+              <h3 className="font-semibold text-foreground">Fits into your existing workflow</h3>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CTA Repeat Section */}
+      <section id="get-started" className="py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-8">
+          <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+            Ready to see EVA in action?
+          </h2>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" onClick={handleLogoClick} data-testid="button-cta-talk-to-eva">
+              Talk to EVA
+            </Button>
+            <Button size="lg" variant="outline" onClick={handleBookCall} data-testid="button-cta-book-demo">
+              Book a 10-min demo
+            </Button>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
