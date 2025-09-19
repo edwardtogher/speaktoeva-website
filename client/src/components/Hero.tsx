@@ -195,15 +195,15 @@ export default function Hero() {
           {/* Integration logos/pills */}
           <div className="flex flex-wrap gap-4 justify-center items-center">
             {[
-              { name: 'Google Calendar', icon: SiGooglecalendar },
-              { name: 'Slack', icon: SiSlack },
-              { name: 'HubSpot', icon: SiHubspot },
-              { name: 'Calendly', icon: SiCalendly },
-              { name: 'Zapier', icon: SiZapier },
-              { name: 'WhatsApp', icon: SiWhatsapp },
-              { name: 'SMS', icon: MessageSquare },
-              { name: 'Gmail', icon: SiGmail },
-              { name: 'Outlook', icon: Mail }
+              { name: 'Google Calendar', icon: SiGooglecalendar, color: 'text-blue-600' },
+              { name: 'Slack', icon: SiSlack, color: 'text-purple-600' },
+              { name: 'HubSpot', icon: SiHubspot, color: 'text-orange-500' },
+              { name: 'Calendly', icon: SiCalendly, color: 'text-blue-500' },
+              { name: 'Zapier', icon: SiZapier, color: 'text-orange-500' },
+              { name: 'WhatsApp', icon: SiWhatsapp, color: 'text-green-500' },
+              { name: 'SMS', icon: MessageSquare, color: 'text-muted-foreground' },
+              { name: 'Gmail', icon: SiGmail, color: 'text-red-500' },
+              { name: 'Outlook', icon: Mail, color: 'text-blue-600' }
             ].map((integration) => {
               const IconComponent = integration.icon;
               return (
@@ -213,7 +213,7 @@ export default function Hero() {
                   role="listitem"
                 >
                   <IconComponent 
-                    className="w-4 h-4" 
+                    className={`w-4 h-4 ${integration.color}`}
                     aria-hidden="true"
                   />
                   <span className="sr-only">{integration.name} integration</span>
@@ -249,23 +249,6 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* CTA Repeat Section */}
-      <section id="get-started" className="py-16 px-4">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
-          <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
-            Ready to see EVA in action?
-          </h2>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={handleLogoClick} data-testid="button-cta-talk-to-eva">
-              Talk to EVA
-            </Button>
-            <Button size="lg" variant="outline" onClick={handleBookCall} data-testid="button-cta-book-demo">
-              Book a 10-min demo
-            </Button>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
