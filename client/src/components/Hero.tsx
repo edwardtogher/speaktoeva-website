@@ -84,6 +84,9 @@ export default function Hero() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
               Your phone answered. Every time.
             </h1>
+            <p className="text-sm text-muted-foreground">
+              Built on infrastructure proven across 62M+ calls.
+            </p>
           </div>
 
           {/* EVA Logo */}
