@@ -14,6 +14,8 @@ import {
   SiGmail
 } from 'react-icons/si';
 import { MessageSquare, Mail } from 'lucide-react';
+import symbolLogo from '@assets/linked in post Artboard 5_1758296315847.png';
+import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 export default function Hero() {
   const { logoState, startCall, endCall, isCallActive } = useVapi();
@@ -89,24 +91,29 @@ export default function Hero() {
       </a>
 
       {/* Navigation */}
-      <header className="flex items-center justify-between p-4 lg:px-8">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/25"></div>
-          <span className="font-bold text-lg">EVA</span>
+      <header className="flex items-center justify-between px-4 lg:px-8 pt-0 pb-4">
+        <div className="flex items-center">
+          <img 
+            src={evaWordmark} 
+            alt="EVA" 
+            className="h-20"
+          />
         </div>
         
         <nav className="hidden md:flex items-center gap-6">
           <a href="#authority" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
             Features
           </a>
-          <a href="#trust" className="text-muted-foreground hover:text-foreground font-medium transition-colors">
-            Pricing
-          </a>
           <Button variant="ghost" onClick={handleScrollToHero} data-testid="button-nav-demo">
             Try Demo
           </Button>
           <Button onClick={handleScrollToGetStarted} data-testid="button-nav-book">
             Book a Call
+          </Button>
+          <Button variant="outline" asChild data-testid="button-nav-login">
+            <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
+              Login
+            </a>
           </Button>
         </nav>
       </header>
@@ -120,7 +127,7 @@ export default function Hero() {
               Enhanced Voice Assistant
             </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
-              Your phone answered. Every time.
+              Your phone answered.<br />Every time.
             </h1>
             <p className="text-sm text-muted-foreground">
               Built on infrastructure proven across 62M+ calls.

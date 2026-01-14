@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=CoFo+Sans+Mono+VF:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -76,9 +78,9 @@
   --chart-4: 260 75% 45%;
   --chart-5: 25 95% 53%;
 
-  --font-sans: Open Sans, sans-serif;
+  --font-sans: "CoFo Sans Mono VF", monospace;
   --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
+  --font-mono: "CoFo Sans Mono VF", monospace;
   --radius: .5rem; /* 8px */
   --shadow-2xs: 0px 2px 0px 0px hsl(220 13% 91% / 0.15);
   --shadow-xs: 0px 2px 0px 0px hsl(220 13% 91% / 0.20);
