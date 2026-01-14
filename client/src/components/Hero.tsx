@@ -13,7 +13,7 @@ import {
   SiWhatsapp, 
   SiGmail
 } from 'react-icons/si';
-import { MessageSquare, Mail } from 'lucide-react';
+import { MessageSquare, Mail, Linkedin } from 'lucide-react';
 import symbolLogo from '@assets/linked in post Artboard 5_1758296315847.png';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
@@ -255,6 +255,24 @@ export default function Hero() {
           </ul>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-4 border-t">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} SpeakToEva. All rights reserved.
+          </p>
+          <a
+            href="https://www.linkedin.com/in/edward-togher"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Linkedin className="w-4 h-4" />
+            Edward Togher
+          </a>
+        </div>
+      </footer>
 
     </main>
   );
