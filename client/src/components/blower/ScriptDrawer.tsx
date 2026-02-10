@@ -14,8 +14,36 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-export default function ScriptDrawer() {
+interface ScriptDrawerProps {
+  batchId?: string;
+}
+
+function getOpening(batchId?: string): { location: string; caseStudy: string } {
+  switch (batchId) {
+    case "farnham-mobiles":
+    case "farnham-landlines":
+      return {
+        location: "I'm based in Farnham",
+        caseStudy: "We've been doing some work with a business up near Weydon School, if you know where that is",
+      };
+    case "wider-surrey":
+      return {
+        location: "I'm based in Surrey",
+        caseStudy: "We've been doing some work with a clinic over in Farnham",
+      };
+    case "indeed-hiring":
+    case "running-ads":
+    default:
+      return {
+        location: "I'm based in Surrey",
+        caseStudy: "We've been doing some work with an osteo clinic in London",
+      };
+  }
+}
+
+export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
   const [open, setOpen] = useState(false);
+  const { location, caseStudy } = getOpening(batchId);
 
   return (
     <>
@@ -37,7 +65,7 @@ export default function ScriptDrawer() {
           <SheetHeader className="text-left mb-4">
             <SheetTitle className="text-white">Call Script</SheetTitle>
             <SheetDescription className="text-zinc-500">
-              UK Physio / Chiro / Osteo cold call
+              Tap the script icon during a call for reference
             </SheetDescription>
           </SheetHeader>
 
@@ -48,48 +76,57 @@ export default function ScriptDrawer() {
                 Opening
               </h3>
               <p className="leading-relaxed">
-                "Hi, is this <b className="text-white">[NAME]</b>? Hey [NAME], my name's Edward -
-                I'm actually just down the road in Farnham. I've been chatting to a few clinics
-                in the area about something I've built. Have you got <b className="text-white">30 seconds</b>?"
-              </p>
-            </section>
-
-            {/* Bridge */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Bridge Question
-              </h3>
-              <p className="leading-relaxed text-green-400 font-medium">
-                "When you're in sessions with patients, what happens to your phone calls?"
+                "Hi there, have I reached <b className="text-white">[clinic name]</b>?
+                Great — am I speaking to the owner?"
               </p>
               <p className="text-zinc-500 text-xs mt-1 italic">
-                SHUT UP AND LISTEN. Let them tell you their pain.
+                If not the owner: "No worries — who's best to speak to about this?" Get a name, move on.
               </p>
             </section>
 
-            {/* Pivot - Calls missed */}
+            {/* Pitch */}
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Pivot (calls get missed)
+                Pitch
               </h3>
               <p className="leading-relaxed">
-                "Yeah, that's literally what every clinic says. So I've built this{" "}
-                <b className="text-white">AI receptionist called Eva</b> - she picks up every call,
-                sounds like a real person, and books patients straight into your calendar.{" "}
-                <b className="text-white">One extra patient a week</b> at 50 quid and she's paid for herself.
-                I could even <b className="text-white">pop over and show you</b> - I'm only 10 minutes away."
+                "I'm Ed — I'll be honest, this is a cold call. Can I get <b className="text-white">30 seconds</b>?"
+              </p>
+              <p className="text-zinc-500 text-xs mt-1 italic">
+                Wait for yes.
+              </p>
+              <p className="leading-relaxed mt-3">
+                "Yeah, so <b className="text-white">{location}</b>. {caseStudy} —
+                building them an AI receptionist to handle their incoming calls, texts, and emails.
+                Basically making sure they <b className="text-white">never miss an enquiry</b>."
               </p>
             </section>
 
-            {/* Pivot - Voicemail */}
+            {/* Demo close */}
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Pivot (goes to voicemail)
+                Demo Close
+              </h3>
+              <p className="leading-relaxed text-green-400 font-medium">
+                "I've actually put together a personalised demo specifically for{" "}
+                <b className="text-white">[clinic name]</b> — could I send that over to you?"
+              </p>
+              <p className="text-zinc-500 text-xs mt-1 italic">
+                If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight over."
+              </p>
+            </section>
+
+            {/* Gatekeeper */}
+            <section>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+                Gatekeeper ("what's this regarding?")
               </h3>
               <p className="leading-relaxed">
-                "How many of those people actually leave a message?{" "}
-                <b className="text-white">85% just hang up</b> and ring the next clinic.
-                You're losing patients you don't even know about. That's exactly why I built Eva."
+                "I'm just a local business, was hoping for a quick word with the owner about their
+                phones. Is he/she around?"
+              </p>
+              <p className="text-zinc-500 text-xs mt-1 italic">
+                Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
               </p>
             </section>
 
@@ -99,24 +136,13 @@ export default function ScriptDrawer() {
                 Objection Handling
               </h3>
               <Accordion type="single" collapsible className="space-y-1">
-                <AccordionItem value="price" className="border-zinc-800 rounded-lg overflow-hidden">
+                <AccordionItem value="not-interested" className="border-zinc-800 rounded-lg overflow-hidden">
                   <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
-                    "How much is it?"
+                    "Not interested"
                   </AccordionTrigger>
                   <AccordionContent className="text-zinc-400 px-3">
-                    "It's <b className="text-white">$299/mo</b>. Less than a receptionist for one day a week, and Eva works 24/7.
-                    Best thing is to hear her first - if she sounds rubbish, the price doesn't matter."
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="ai" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
-                    "AI can't handle my patients"
-                  </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
-                    "Most AI is terrible - I get it. Eva's different. I built one for a company in London and their
-                    customers <b className="text-white">ask for her by name</b>.
-                    I can call your phone right now and you can hear her."
+                    "Totally fair. Just out of curiosity — is it because you've got phone stuff sorted, or just
+                    <b className="text-white"> bad timing</b>?" If bad timing: "When's better to catch you?"
                   </AccordionContent>
                 </AccordionItem>
 
@@ -125,18 +151,9 @@ export default function ScriptDrawer() {
                     "Just send me an email"
                   </AccordionTrigger>
                   <AccordionContent className="text-zinc-400 px-3">
-                    "I can do that. Real talk though - your inbox is probably rammed. Before I send something you'll
-                    never read, is it <b className="text-white">bad timing or genuinely not interested</b>? Either's fine."
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="think" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
-                    "I need to think about it"
-                  </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
-                    "Of course. I'll send you a link so you can <b className="text-white">hear Eva for yourself</b> when
-                    you've got two minutes. Then just reply if you want to chat more. No pressure."
+                    "I can do that — but real talk, your inbox is probably rammed. I've got a
+                    <b className="text-white"> 60-second voice demo</b> I can WhatsApp you instead.
+                    Way quicker than reading an email. Can I send that over?"
                   </AccordionContent>
                 </AccordionItem>
 
@@ -145,33 +162,44 @@ export default function ScriptDrawer() {
                     "I already have a receptionist"
                   </AccordionTrigger>
                   <AccordionContent className="text-zinc-400 px-3">
-                    "Nice. What about <b className="text-white">after 5 or weekends</b>? That's when a lot of online
-                    enquiries come through. Most clinics use Eva as the after-hours backup."
+                    "Nice. What about <b className="text-white">after hours and weekends</b>? That's when
+                    a lot of online enquiries come through. Most clinics use Eva as the backup.
+                    Worth a look at the demo?"
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="not-interested" className="border-zinc-800 rounded-lg overflow-hidden">
+                <AccordionItem value="price" className="border-zinc-800 rounded-lg overflow-hidden">
                   <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
-                    "Not interested" (brush-off)
+                    "How much is it?"
                   </AccordionTrigger>
                   <AccordionContent className="text-zinc-400 px-3">
-                    "Totally fair. Just out of curiosity - is it because you've got phone stuff sorted, or just
-                    <b className="text-white"> bad timing</b>?" If bad timing: "When's better to catch you?"
+                    "It's about <b className="text-white">£250/mo</b> — less than a receptionist for one day a week,
+                    and Eva works 24/7. Best thing is to hear her first though — if she sounds rubbish,
+                    the price doesn't matter."
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="ai" className="border-zinc-800 rounded-lg overflow-hidden">
+                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                    "AI can't handle my patients"
+                  </AccordionTrigger>
+                  <AccordionContent className="text-zinc-400 px-3">
+                    "Most AI is terrible — I get it. That's why I built this differently. I've got a client
+                    in London whose customers <b className="text-white">ask for the AI by name</b>.
+                    Have a listen to the demo and see what you think."
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="think" className="border-zinc-800 rounded-lg overflow-hidden">
+                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                    "I need to think about it"
+                  </AccordionTrigger>
+                  <AccordionContent className="text-zinc-400 px-3">
+                    "Of course. Let me WhatsApp you the demo — have a listen when you've got
+                    <b className="text-white">60 seconds</b>. No pressure, just reply if you want to chat more."
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </section>
-
-            {/* Close */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Close (they want a demo)
-              </h3>
-              <p className="leading-relaxed">
-                "I'm literally down the road. I could <b className="text-white">swing by one morning this week</b> and
-                show you on my laptop. Takes 10 minutes, I'll bring coffee.{" "}
-                <b className="text-white">What day works for you?</b>"
-              </p>
             </section>
 
             {/* Stats */}
@@ -182,8 +210,7 @@ export default function ScriptDrawer() {
               <ul className="space-y-1 text-zinc-400 text-[13px]">
                 <li>85% of callers who get voicemail never call back</li>
                 <li>78% of patients book with whoever answers first</li>
-                <li>Average missed call costs a small business $1,200</li>
-                <li>Solo physio missing 2 calls/week = $100+/week lost</li>
+                <li>One extra patient a week at £50 and she's paid for herself</li>
               </ul>
             </section>
           </div>

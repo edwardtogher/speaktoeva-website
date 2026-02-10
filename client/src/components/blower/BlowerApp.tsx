@@ -159,7 +159,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
       </div>
 
       {/* Script FAB + drawer */}
-      <ScriptDrawer />
+      <ScriptDrawer batchId={activeBatchId ?? undefined} />
 
       {/* Milestone celebrations */}
       <MilestoneOverlay
