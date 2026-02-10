@@ -50,10 +50,10 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
       {/* Floating Action Button */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-zinc-800 border border-zinc-700 shadow-lg flex items-center justify-center hover:bg-zinc-700 active:bg-zinc-600 transition-colors"
+        className="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-blue-600 border border-blue-500 shadow-lg shadow-blue-500/20 flex items-center justify-center hover:bg-blue-500 active:bg-blue-700 transition-colors"
         aria-label="Open call script"
       >
-        <FileText className="w-6 h-6 text-zinc-300" />
+        <FileText className="w-6 h-6 text-white" />
       </button>
 
       {/* Bottom Sheet */}
@@ -62,157 +62,192 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
           side="bottom"
           className="bg-zinc-950 border-zinc-800 max-h-[85vh] overflow-y-auto rounded-t-2xl"
         >
-          <SheetHeader className="text-left mb-4">
-            <SheetTitle className="text-white">Call Script</SheetTitle>
-            <SheetDescription className="text-zinc-500">
-              Tap the script icon during a call for reference
+          <SheetHeader className="text-left mb-5">
+            <SheetTitle className="text-white text-lg">Call Script</SheetTitle>
+            <SheetDescription className="text-zinc-500 text-xs">
+              Tap during a call for reference
             </SheetDescription>
           </SheetHeader>
 
-          <div className="space-y-5 text-[14px] text-zinc-300 pb-6">
-            {/* Opening */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Opening
-              </h3>
-              <p className="leading-relaxed">
-                "Hi there, have I reached <b className="text-white">[clinic name]</b>?
+          <div className="space-y-4 pb-6">
+
+            {/* 1. Opening */}
+            <section className="rounded-xl bg-blue-950/40 border border-blue-800/40 p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-base">1</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-blue-400">
+                  Opening
+                </h3>
+              </div>
+              <p className="text-[15px] leading-relaxed text-zinc-200">
+                "Hi there, have I reached <span className="text-blue-300 font-semibold">[clinic name]</span>?
                 Great — am I speaking to the owner?"
               </p>
-              <p className="text-zinc-500 text-xs mt-1 italic">
-                If not the owner: "No worries — who's best to speak to about this?" Get a name, move on.
-              </p>
+              <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">
+                  If not the owner: "No worries — who's best to speak to about this?" Get a name, move on.
+                </p>
+              </div>
             </section>
 
-            {/* Gatekeeper */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Gatekeeper ("what's this regarding?")
-              </h3>
-              <p className="leading-relaxed">
+            {/* 2. Gatekeeper */}
+            <section className="rounded-xl bg-amber-950/30 border border-amber-800/30 p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-base">2</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                  Gatekeeper
+                </h3>
+                <span className="text-[10px] text-amber-500/70 bg-amber-500/10 px-1.5 py-0.5 rounded font-medium">
+                  IF NEEDED
+                </span>
+              </div>
+              <p className="text-[15px] leading-relaxed text-zinc-200">
                 "I'm just a local business, was hoping for a quick word with the owner about their
                 phones. Is he/she around?"
               </p>
-              <p className="text-zinc-500 text-xs mt-1 italic">
-                Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
-              </p>
+              <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">
+                  Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
+                </p>
+              </div>
             </section>
 
-            {/* Pitch */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Pitch
-              </h3>
-              <p className="leading-relaxed">
-                "I'm Ed — I'll be honest, this is a cold call. Can I get <b className="text-white">30 seconds</b>?"
+            {/* 3. Pitch */}
+            <section className="rounded-xl bg-purple-950/30 border border-purple-800/30 p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-base">3</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-purple-400">
+                  Pitch
+                </h3>
+              </div>
+              <p className="text-[15px] leading-relaxed text-zinc-200">
+                "I'm Ed — I'll be honest, this is a cold call. Can I get <span className="text-purple-300 font-semibold">30 seconds</span>?"
               </p>
-              <p className="text-zinc-500 text-xs mt-1 italic">
-                Wait for yes.
-              </p>
-              <p className="leading-relaxed mt-3">
-                "Yeah, so <b className="text-white">{location}</b>. {caseStudy} —
+              <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">Wait for yes.</p>
+              </div>
+              <p className="text-[15px] leading-relaxed text-zinc-200 mt-3">
+                "Yeah, so <span className="text-purple-300 font-semibold">{location}</span>. {caseStudy} —
                 building them an AI receptionist to handle their incoming calls, texts, and emails.
-                Basically making sure they <b className="text-white">never miss an enquiry</b>."
+                Basically making sure they <span className="text-purple-300 font-semibold">never miss an enquiry</span>."
               </p>
             </section>
 
-            {/* Demo close */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Demo Close
-              </h3>
-              <p className="leading-relaxed text-green-400 font-medium">
+            {/* 4. Demo Close */}
+            <section className="rounded-xl bg-green-950/40 border border-green-800/40 p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-base">4</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-green-400">
+                  Demo Close
+                </h3>
+              </div>
+              <p className="text-[15px] leading-relaxed text-green-300 font-medium">
                 "I've actually put together a personalised demo specifically for{" "}
-                <b className="text-white">[clinic name]</b> — could I send that over to you?"
+                <span className="text-white font-bold">[clinic name]</span> — could I send that over to you?"
               </p>
-              <p className="text-zinc-500 text-xs mt-1 italic">
-                If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight over."
-              </p>
+              <div className="mt-2.5 bg-green-900/20 rounded-lg px-3 py-2 border border-green-800/20">
+                <p className="text-xs text-green-400/80 font-medium">
+                  If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight over."
+                </p>
+              </div>
             </section>
 
             {/* Objection Handlers */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">
-                Objection Handling
-              </h3>
-              <Accordion type="single" collapsible className="space-y-1">
-                <AccordionItem value="not-interested" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+            <section className="rounded-xl bg-zinc-900/50 border border-zinc-800/50 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-base">5</span>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-red-400">
+                  Objection Handling
+                </h3>
+              </div>
+              <Accordion type="single" collapsible className="space-y-1.5">
+                <AccordionItem value="not-interested" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "Not interested"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
                     "Totally fair. Just out of curiosity — is it because you've got phone stuff sorted, or just
-                    <b className="text-white"> bad timing</b>?" If bad timing: "When's better to catch you?"
+                    <span className="text-white font-semibold"> bad timing</span>?" If bad timing: "When's better to catch you?"
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="email" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                <AccordionItem value="email" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "Just send me an email"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
                     "I can do that — but real talk, your inbox is probably rammed. I've got a
-                    <b className="text-white"> 60-second voice demo</b> I can WhatsApp you instead.
+                    <span className="text-white font-semibold"> 60-second voice demo</span> I can WhatsApp you instead.
                     Way quicker than reading an email. Can I send that over?"
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="receptionist" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                <AccordionItem value="receptionist" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "I already have a receptionist"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
-                    "Nice. What about <b className="text-white">after hours and weekends</b>? That's when
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
+                    "Nice. What about <span className="text-white font-semibold">after hours and weekends</span>? That's when
                     a lot of online enquiries come through. Most clinics use Eva as the backup.
                     Worth a look at the demo?"
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="price" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                <AccordionItem value="price" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "How much is it?"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
-                    "It's about <b className="text-white">£250/mo</b> — less than a receptionist for one day a week,
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
+                    "It's about <span className="text-white font-semibold">£250/mo</span> — less than a receptionist for one day a week,
                     and Eva works 24/7. Best thing is to hear her first though — if she sounds rubbish,
                     the price doesn't matter."
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="ai" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                <AccordionItem value="ai" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "AI can't handle my patients"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
                     "Most AI is terrible — I get it. That's why I built this differently. I've got a client
-                    in London whose customers <b className="text-white">ask for the AI by name</b>.
+                    in London whose customers <span className="text-white font-semibold">ask for the AI by name</span>.
                     Have a listen to the demo and see what you think."
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="think" className="border-zinc-800 rounded-lg overflow-hidden">
-                  <AccordionTrigger className="text-sm text-zinc-300 px-3 py-2 hover:no-underline hover:bg-zinc-900">
+                <AccordionItem value="think" className="border-zinc-800/60 rounded-lg overflow-hidden bg-zinc-900/40">
+                  <AccordionTrigger className="text-sm text-red-300/80 px-3 py-2.5 hover:no-underline hover:bg-zinc-800/50">
                     "I need to think about it"
                   </AccordionTrigger>
-                  <AccordionContent className="text-zinc-400 px-3">
+                  <AccordionContent className="text-zinc-300 text-[13px] px-3 leading-relaxed">
                     "Of course. Let me WhatsApp you the demo — have a listen when you've got
-                    <b className="text-white">60 seconds</b>. No pressure, just reply if you want to chat more."
+                    <span className="text-white font-semibold">60 seconds</span>. No pressure, just reply if you want to chat more."
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
             </section>
 
             {/* Stats */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+            <section className="rounded-xl bg-zinc-900/30 border border-zinc-800/30 p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2.5">
                 Stats to Drop
               </h3>
-              <ul className="space-y-1 text-zinc-400 text-[13px]">
-                <li>85% of callers who get voicemail never call back</li>
-                <li>78% of patients book with whoever answers first</li>
-                <li>One extra patient a week at £50 and she's paid for herself</li>
-              </ul>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg">📉</span>
+                  <p className="text-[13px] text-zinc-400">85% of callers who get voicemail <span className="text-white font-medium">never call back</span></p>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg">🏃</span>
+                  <p className="text-[13px] text-zinc-400">78% of patients book with <span className="text-white font-medium">whoever answers first</span></p>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg">💰</span>
+                  <p className="text-[13px] text-zinc-400">One extra patient/week at £50 and <span className="text-white font-medium">she's paid for herself</span></p>
+                </div>
+              </div>
             </section>
+
           </div>
         </SheetContent>
       </Sheet>
