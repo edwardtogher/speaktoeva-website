@@ -5,26 +5,39 @@ import LeadCard from "./LeadCard";
 
 interface LeadListProps {
   filter: FilterKey;
+  batchId?: string;
+  onInterested?: (leadName: string) => void;
   store: {
-    getFilteredLeads: (filter: FilterKey) => Lead[];
+    getFilteredLeads: (filter: FilterKey, batchId?: string) => Lead[];
     dispositions: Record<string, Disposition>;
+    attempts: Record<string, number>;
+    texted: Record<string, boolean>;
     notes: Record<string, string>;
     setDisposition: (leadId: string, disposition: Disposition | null) => void;
     setNote: (leadId: string, text: string) => void;
+    setTexted: (leadId: string) => void;
     startRound2: () => void;
     stats: { round: number; completed: number; total: number };
   };
 }
 
-export default function LeadList({ filter, store }: LeadListProps) {
+export default function LeadList({ filter, store, batchId, onInterested }: LeadListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const leads = store.getFilteredLeads(filter);
+  const leads = store.getFilteredLeads(filter, batchId);
 
   // After setting disposition, auto-expand next uncalled lead
   const handleDisposition = useCallback(
     (leadId: string, disposition: Disposition | null) => {
       store.setDisposition(leadId, disposition);
+
+      // Trigger interested celebration
+      if (disposition === "interested" && onInterested) {
+        const lead = leads.find((l) => l.id === leadId);
+        if (lead) {
+          onInterested(lead.name);
+        }
+      }
 
       if (disposition !== null) {
         // Find next undispositioned lead in the current filtered list
@@ -34,7 +47,6 @@ export default function LeadList({ filter, store }: LeadListProps) {
         );
 
         if (nextUncalled) {
-          // Small delay to let the disposition render, then scroll
           setTimeout(() => {
             setExpandedId(nextUncalled.id);
             const el = document.getElementById(`lead-${nextUncalled.id}`);
@@ -45,7 +57,7 @@ export default function LeadList({ filter, store }: LeadListProps) {
         }
       }
     },
-    [leads, store]
+    [leads, store, onInterested]
   );
 
   const handleToggle = useCallback(
@@ -55,26 +67,20 @@ export default function LeadList({ filter, store }: LeadListProps) {
     []
   );
 
+  const handleSetTexted = useCallback(
+    (leadId: string) => {
+      store.setTexted(leadId);
+    },
+    [store]
+  );
+
   // Empty states
   if (leads.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
         <p className="text-zinc-500 text-lg">
-          {filter === "new" && store.stats.round === 1 && (
-            <>
-              All leads called!
-              <br />
-              <button
-                onClick={store.startRound2}
-                className="mt-4 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors min-h-[48px]"
-              >
-                Start Round 2 - Retries
-              </button>
-            </>
-          )}
-          {filter === "new" && store.stats.round === 2 && "All retries done! Nice work."}
+          {filter === "new" && "All leads in this batch called!"}
           {filter === "follow_ups" && "No follow-ups yet. Keep calling!"}
-          {filter === "wins" && "No wins yet. They're coming!"}
         </p>
       </div>
     );
@@ -88,8 +94,11 @@ export default function LeadList({ filter, store }: LeadListProps) {
           lead={lead}
           disposition={store.dispositions[lead.id] || null}
           expanded={expandedId === lead.id}
+          attempts={store.attempts[lead.id] || 0}
+          texted={store.texted[lead.id] || false}
           onToggle={() => handleToggle(lead.id)}
           onDisposition={(d) => handleDisposition(lead.id, d)}
+          onSetTexted={() => handleSetTexted(lead.id)}
         />
       ))}
     </div>

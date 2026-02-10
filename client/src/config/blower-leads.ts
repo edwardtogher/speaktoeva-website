@@ -9,6 +9,8 @@ export interface Lead {
   notes: string;
   tier: 1 | 2 | 3;
   signal: "hiring" | "ads" | "local" | "hiring+local" | "ads+local";
+  batch: string;
+  batchLabel: string;
 }
 
 // Lead data — compiled from farnham-physio-leads.md, physio-leads.md, uk-physio-chiro-osteo-ad-leads.md
@@ -30,6 +32,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner, also does mobile physio covering Haslemere/Liphook/Liss. Based at IN2 Training gym",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "foster-chiropractic",
@@ -41,6 +45,8 @@ export const LEADS: Lead[] = [
     notes: "Small independent clinic, 12 Old Compton Lane",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "coombe-house-clinic",
@@ -52,6 +58,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner (Fleur Robertson), founded 2017. Cambridge House, East Street",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "charlotte-hunt-osteopaths",
@@ -63,6 +71,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner, also has Coulsdon clinic. School hours Mon/Wed/Thu",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "farnham-natural-therapy-clinic",
@@ -74,6 +84,8 @@ export const LEADS: Lead[] = [
     notes: "Multi-therapist clinic, Hones Business Park",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "physio-in-motion",
@@ -86,6 +98,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner (James Leyland), Waverley Clinic, East Street",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "midas-physiotherapy",
@@ -98,6 +112,8 @@ export const LEADS: Lead[] = [
     notes: "Small clinic est. 2009, Farnham Business Park. Has both landline and mobile",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "back-on-track-chiropractic",
@@ -110,6 +126,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner (Sukie Brockman), Alexander House, Waverley Lane",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "farnham-physiotherapy-sports-clinic",
@@ -122,6 +140,8 @@ export const LEADS: Lead[] = [
     notes: "Established clinic, 20 Firgrove Hill. WhatsApp number available. 15+ yrs experience, open 6 days",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "dr-sean-chiropractor",
@@ -133,6 +153,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner, 27+ years experience. Stockton Avenue, Fleet",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "front-foot-physiotherapy",
@@ -144,6 +166,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner (Katherine), serves Camberley/Farnborough/Fleet. The Hatches",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "health-at-hart",
@@ -155,6 +179,8 @@ export const LEADS: Lead[] = [
     notes: "20+ years experience, cranial osteopathy. Old Post Office, High Street. Serves Fleet/Hook area",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "foundations-physio",
@@ -166,6 +192,8 @@ export const LEADS: Lead[] = [
     notes: "Covers Bordon, Aldershot, Farnham. Also has hydrotherapy",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "mansfield-park-physiotherapy",
@@ -177,6 +205,8 @@ export const LEADS: Lead[] = [
     notes: "Small team, Mansfield Business Park. Physio + osteopathy",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "vfh-healthcare",
@@ -188,6 +218,8 @@ export const LEADS: Lead[] = [
     notes: "Solo practitioner (Vanessa Hayward), osteopath + acupuncturist. Oriental Road",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "petersfield-osteopathy",
@@ -199,6 +231,8 @@ export const LEADS: Lead[] = [
     notes: "Independent registered osteopath",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "encourage-movement",
@@ -210,6 +244,8 @@ export const LEADS: Lead[] = [
     notes: "Based at Guildford Spectrum",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "align-osteopathic-clinic",
@@ -222,6 +258,8 @@ export const LEADS: Lead[] = [
     notes: "Near Fleet station, also cranial osteo + acupuncture",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "jw-osteopathy",
@@ -233,6 +271,8 @@ export const LEADS: Lead[] = [
     notes: "Solo (Jeremy Webb, 12 yrs), Basepoint Business Centre",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
   {
     id: "lightwater-physiotherapy",
@@ -244,6 +284,8 @@ export const LEADS: Lead[] = [
     notes: "Solo (Shirley-Ann Walters, 30+ yrs), est. 2001",
     tier: 1,
     signal: "local",
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
   },
 
   // --- Landline-only local leads ---
@@ -257,6 +299,8 @@ export const LEADS: Lead[] = [
     notes: "Over-50s specialists. The Old Bakehouse, Clayton Court",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "bourne-chiropractic-rehab",
@@ -268,6 +312,8 @@ export const LEADS: Lead[] = [
     notes: "Small team (Lucy Vickers + massage therapist), The Bourne",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "elstead-chiropractic-clinic",
@@ -279,6 +325,8 @@ export const LEADS: Lead[] = [
     notes: "Independent clinic serving Farnham area",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "farnham-chiropractic-clinic",
@@ -290,6 +338,8 @@ export const LEADS: Lead[] = [
     notes: "1 South Avenue, Heath End",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "balanced-back-2-health",
@@ -301,6 +351,8 @@ export const LEADS: Lead[] = [
     notes: "Small independent, Tilford Road, Churt",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "farnham-osteopathic-practice",
@@ -312,6 +364,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 1989, solo (Chris Pinches, 38+ yrs). 2 Bishops Road",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "meadowside-osteopathy",
@@ -323,6 +377,8 @@ export const LEADS: Lead[] = [
     notes: "Hurlands Business Centre",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "outline-health",
@@ -334,6 +390,8 @@ export const LEADS: Lead[] = [
     notes: "Dare's Farm, Ewshot. Also Odiham clinic",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "healthcare-hub",
@@ -345,6 +403,8 @@ export const LEADS: Lead[] = [
     notes: "Osteo, paediatric osteo, massage, pilates. The Granary, Tongham",
     tier: 2,
     signal: "local",
+    batch: "farnham-landlines",
+    batchLabel: "Farnham Landlines",
   },
   {
     id: "guildford-physiotherapy-sports-clinic",
@@ -356,6 +416,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 80+ years, central Guildford. 6 Onslow Road",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "bevan-wilson-physiotherapy",
@@ -367,6 +429,8 @@ export const LEADS: Lead[] = [
     notes: "20+ years, clinics in Godalming, Guildford, Wonersh",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "guildford-chiropractic-centre",
@@ -378,6 +442,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 1953, Burchatts Farm Barn, Stoke Park",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "guildford-spine-centre",
@@ -389,6 +455,8 @@ export const LEADS: Lead[] = [
     notes: "10 yrs est., 229-235 High Street. Family-friendly",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "gw-osteopathy",
@@ -400,6 +468,8 @@ export const LEADS: Lead[] = [
     notes: "Multiple practitioners, Wharf Road + Stoughton locations",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "care-for-health",
@@ -411,6 +481,8 @@ export const LEADS: Lead[] = [
     notes: "Chiro + sports therapy + physio. Fox House, Station Approach",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "lucks-yard-clinic",
@@ -422,6 +494,8 @@ export const LEADS: Lead[] = [
     notes: "Award-winning, est. 2007. Chiro, physio, massage, nutrition",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "surrey-osteopathic-care",
@@ -433,6 +507,8 @@ export const LEADS: Lead[] = [
     notes: "15+ years, cranial osteopathy specialist",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "cranleigh-osteopathic-practice",
@@ -444,6 +520,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 23+ years, The Old Bakery, 39 High Street. Osteo + physio",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "the-haslemere-clinic",
@@ -455,6 +533,8 @@ export const LEADS: Lead[] = [
     notes: "Multi-disciplinary: 8 osteopaths, sports massage, counselling",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "haslemere-chiropractic-clinic",
@@ -466,6 +546,8 @@ export const LEADS: Lead[] = [
     notes: "Independent, 40 West Street",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "clinic-on-the-hill",
@@ -477,6 +559,8 @@ export const LEADS: Lead[] = [
     notes: "Osteopathy + acupuncture, 2B High Street",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "heathercroft-osteopaths",
@@ -488,6 +572,8 @@ export const LEADS: Lead[] = [
     notes: "Independent practice, Pine View Close",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "aldershot-physio",
@@ -499,6 +585,8 @@ export const LEADS: Lead[] = [
     notes: "Physio, osteopathy, pilates. Independent clinic. Note: 0208 number unusual for area, may be shared booking service",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "farnborough-physio",
@@ -510,6 +598,8 @@ export const LEADS: Lead[] = [
     notes: "Modern private clinic, centre of Farnborough. Note: May be Surrey Physio brand - verify independence",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "fleet-osteopathic-clinic",
@@ -521,6 +611,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 1983, longest-standing in area. 6 Kings Road",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "hart-physio",
@@ -532,6 +624,8 @@ export const LEADS: Lead[] = [
     notes: "Est. 25+ years, Kings Road, Fleet",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "thorpes-physiotherapy",
@@ -543,6 +637,8 @@ export const LEADS: Lead[] = [
     notes: "Award-winning, 2 locations: Sandhurst + Fleet",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "camberley-physiotherapy-sports-injury",
@@ -554,6 +650,8 @@ export const LEADS: Lead[] = [
     notes: "Attached to Upper Gordon Road Surgery",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "avenue-physiotherapy",
@@ -565,6 +663,8 @@ export const LEADS: Lead[] = [
     notes: "St Mary's Corner, 110 Frimley Road. Full-time reception",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "camberley-osteopathic-clinic",
@@ -576,6 +676,8 @@ export const LEADS: Lead[] = [
     notes: "272 Gordon Avenue. Pain & injury specialists",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "osteopathic-consultancy",
@@ -587,6 +689,8 @@ export const LEADS: Lead[] = [
     notes: "Complex/chronic pain specialist, 3 Milden Close",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "lightwater-health-chiropractic",
@@ -598,6 +702,8 @@ export const LEADS: Lead[] = [
     notes: "1 The Square, Lightwater. Independent",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "victoria-clinic-woking",
@@ -609,6 +715,8 @@ export const LEADS: Lead[] = [
     notes: "40+ years est., Chobham Road. Chiro, osteo, acupuncture",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "optimal-health-inspired",
@@ -620,6 +728,8 @@ export const LEADS: Lead[] = [
     notes: "Milestone House, Portsmouth Road, Send",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "petersfield-physiotherapy-sports-injury",
@@ -631,6 +741,8 @@ export const LEADS: Lead[] = [
     notes: "Based in Liss, near Hampshire/Surrey/Sussex borders",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "body-and-mind-physiotherapy",
@@ -642,6 +754,8 @@ export const LEADS: Lead[] = [
     notes: "Sports injuries + women's health. Stanbridge Farm, Sussex Road",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "wenham-osteopathy",
@@ -653,6 +767,8 @@ export const LEADS: Lead[] = [
     notes: "Solo (Helen Mathieson), Wenham Manor Farmhouse",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "back-to-active-osteopathy",
@@ -664,6 +780,8 @@ export const LEADS: Lead[] = [
     notes: "Thorpe Court, Thorpe Close. Independent",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "medstead-osteopathic-practice",
@@ -675,6 +793,8 @@ export const LEADS: Lead[] = [
     notes: "Osteo, chiro, acupuncture. Lymington Barns",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "alton-pain-clinic",
@@ -686,6 +806,8 @@ export const LEADS: Lead[] = [
     notes: "First Floor, 70 High Street. MSK + injections",
     tier: 2,
     signal: "local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
 
   // ============================================================
@@ -703,6 +825,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Saturday Receptionist (4-5 hrs/wk) at 12.50/hr. Contact TBC. Local to Farnham area (GU46)",
     tier: 2,
     signal: "hiring+local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "prosport-physiotherapy",
@@ -714,6 +838,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring FT Receptionist. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "romsey-physiotherapy-clinic",
@@ -725,6 +851,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Admin (PT) at 13.25/hr. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "lyfe-health-bristol-downend",
@@ -736,6 +864,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Sunday Receptionist (PT) at 12.71/hr. URGENT. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "transform-wellness",
@@ -747,6 +877,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Front Desk Receptionist (PT). NEW listing. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "physio-co-uk",
@@ -758,6 +890,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring FT + PT Receptionists across 4+ sites. Contact: careers@physio.co.uk",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "southfields-physiotherapy",
@@ -769,6 +903,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Admin & Customer Services Manager (FT). Contact: hr@southfieldsphysio.co.uk",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "cambridge-physiotherapy-clinic",
@@ -780,6 +916,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Admin (PT, 3 days/wk). Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "the-treatment-room-group-uk",
@@ -791,6 +929,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Medical Admin/Receptionist (PT, 24 hrs/wk) at 12.60-13/hr. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "begg-practice",
@@ -802,6 +942,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Reception/Admin (FT) at 12.21/hr. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "bury-chiropractic",
@@ -813,6 +955,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Front Desk / Sales / Customer Service (FT+PT). URGENT. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "healthwise-chiropractic",
@@ -824,6 +968,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Admin. Contact via website",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "emerald-chiropractic",
@@ -835,6 +981,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring PT Clinic Assistant (min 11 hrs/wk). Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "bodyevolve-spinal-health",
@@ -846,6 +994,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Chiro Assistant/Receptionist (PT, 1yr maternity cover) at 12.50/hr. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "life-balance-chiropractic",
@@ -857,6 +1007,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Chiro Assistant/Receptionist (PT) at 13.06/hr. Contact TBC",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "corehealth-chiropractic",
@@ -868,6 +1020,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Clinical Assistant (PT) at 12.25/hr",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "willow-chiropractic",
@@ -879,6 +1033,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Front of House Receptionist",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "aberdeen-chiropractic-clinic",
@@ -890,6 +1046,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Clinical Assistant at 9.50-12/hr",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "st-johns-osteopathy-acupuncture",
@@ -901,6 +1059,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Receptionist/Office Admin",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "london-school-of-osteopathy",
@@ -912,6 +1072,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Clinical Receptionist. Contact: jobs@lso.ac.uk",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
   {
     id: "pure-sports-medicine",
@@ -923,6 +1085,8 @@ export const LEADS: Lead[] = [
     notes: "Hiring Clinical Receptionist (FT) at 23k/yr. 7 clinics across London",
     tier: 3,
     signal: "hiring",
+    batch: "indeed-hiring",
+    batchLabel: "Indeed Hiring",
   },
 
   // ============================================================
@@ -941,6 +1105,8 @@ export const LEADS: Lead[] = [
     notes: "Running Google Ads. 22-26 High Street. 4.8 stars (145 reviews). Paying for Google Ads + SEO",
     tier: 2,
     signal: "ads+local",
+    batch: "wider-surrey",
+    batchLabel: "Wider Surrey",
   },
   {
     id: "ldn-physio",
@@ -952,6 +1118,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Jul 2024. 4 clinics: Old Street, Hackney Central, Elephant & Castle, Kentish Town",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "ba-physiotherapy",
@@ -963,6 +1131,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Aug 2024. Two locations: Leicestershire + Warwickshire",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "osteo-and-physio",
@@ -974,6 +1144,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger/Threads ads since May 2025. Multi-site group across Devon/Somerset. Free discovery consultations",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "er-physiotherapy",
@@ -985,6 +1157,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since May 2025. Award-winning team, 2 clinics in Aberdeen",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "davenport-house-clinic",
@@ -996,6 +1170,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since Nov 2025. Chiropody, podiatry and physiotherapy",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "wdc-physiotherapy-sports-injury-clinic",
@@ -1008,6 +1184,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Jul 2025. Sports injury clinic, also offers Pilates",
     tier: 2,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "cleve-chiropractic-physiotherapy-centre",
@@ -1019,6 +1197,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Jul 2022. Long-running advertiser (4+ years). Est. 2003. The Old School House, 20A Cossham Street",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "midlands-physiotherapy",
@@ -1030,6 +1210,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Mar 2024. 20+ years serving Worcestershire. Run by John Pryce",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "manchester-chiropractors",
@@ -1041,6 +1223,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since Jun 2025. Limited-time offer ads (49.95). 28 Swan Street, Manchester",
     tier: 2,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "chichester-chiropractic-health-centre",
@@ -1052,6 +1236,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Jan 2025. Unit 5 The Courtyard, Vinnetrow Business Park",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "littlehampton-natural-health-centre",
@@ -1063,6 +1249,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads since Nov 2024. 10c Granville Road. Mon-Thu 9-6, Fri 9-1",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "worthing-osteopathic-wellbeing-clinic",
@@ -1074,6 +1262,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger/Threads ads since Sep 2025. 140 South Street",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "sussex-back-pain-clinic",
@@ -1085,6 +1275,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since Jun 2025. 58 New Church Road. Also IDD Therapy line 01273201866",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "msk-osteopath",
@@ -1096,6 +1288,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since Nov 2019. Very long-running advertiser (6+ years). Osteopathy + acupuncture",
     tier: 2,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "the-rainham-osteopathic-clinic",
@@ -1107,6 +1301,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram ads. 2 Birling Avenue",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "revitalize-health-fitness-clinic",
@@ -1118,6 +1314,8 @@ export const LEADS: Lead[] = [
     notes: "Running Facebook/Instagram/Messenger ads since Aug 2025. 168 Windmill Street. Open 6am-8pm Mon-Sun",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "the-lancaster-clinic",
@@ -1129,6 +1327,8 @@ export const LEADS: Lead[] = [
     notes: "Running Instagram ads. Sucklings Yard, Church St",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "mcr-injury-clinic",
@@ -1140,6 +1340,8 @@ export const LEADS: Lead[] = [
     notes: "Running Google Ads. 3 Moorside Road. 5.0 stars (497 reviews). High-intent ad spend",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
   {
     id: "ideal-physio",
@@ -1151,5 +1353,21 @@ export const LEADS: Lead[] = [
     notes: "Running Google Ads. Princes Exchange, Princes Square. 5.0 stars (53 reviews)",
     tier: 3,
     signal: "ads",
+    batch: "running-ads",
+    batchLabel: "Running Ads",
   },
 ];
+
+// --- Batch helper ---
+export function getBatches(): { id: string; label: string; count: number }[] {
+  const batchMap = new Map<string, { label: string; count: number }>();
+  for (const lead of LEADS) {
+    const existing = batchMap.get(lead.batch);
+    if (existing) {
+      existing.count++;
+    } else {
+      batchMap.set(lead.batch, { label: lead.batchLabel, count: 1 });
+    }
+  }
+  return Array.from(batchMap.entries()).map(([id, data]) => ({ id, ...data }));
+}

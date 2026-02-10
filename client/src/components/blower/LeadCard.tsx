@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, MessageSquare } from "lucide-react";
+import { Phone, MessageSquare, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
@@ -10,8 +10,11 @@ interface LeadCardProps {
   lead: Lead;
   disposition: Disposition | null;
   expanded: boolean;
+  attempts: number;
+  texted: boolean;
   onToggle: () => void;
   onDisposition: (d: Disposition | null) => void;
+  onSetTexted: () => void;
 }
 
 const TYPE_LABEL: Record<Lead["type"], string> = {
@@ -47,18 +50,19 @@ export default function LeadCard({
   lead,
   disposition,
   expanded,
+  attempts,
+  texted,
   onToggle,
   onDisposition,
+  onSetTexted,
 }: LeadCardProps) {
   const [justCalled, setJustCalled] = useState(false);
 
   const showTextButton = disposition === "no_answer";
+  const showTextReminder = attempts >= 3 && !texted && disposition === "no_answer";
 
-  // Tapping the collapsed card expands it (ready to call)
-  // The CALL button actually initiates the phone call
   const handleCall = () => {
     setJustCalled(true);
-    // The tel: link handles the actual call
   };
 
   return (
@@ -73,7 +77,7 @@ export default function LeadCard({
             : "bg-zinc-900/60 border-zinc-800/50"
       )}
     >
-      {/* Collapsed: name + town + type — tap to expand */}
+      {/* Collapsed: name + town + type + badges -- tap to expand */}
       <button
         onClick={onToggle}
         className={cn(
@@ -88,7 +92,7 @@ export default function LeadCard({
           )}
         </div>
 
-        {/* Lead info — one tight line */}
+        {/* Lead info */}
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <span className={cn(
             "font-semibold truncate text-[15px]",
@@ -101,10 +105,26 @@ export default function LeadCard({
           </span>
         </div>
 
-        {/* Type label — compact */}
-        <span className="text-[10px] text-zinc-600 font-medium flex-shrink-0 uppercase">
-          {TYPE_LABEL[lead.type]}
-        </span>
+        {/* Badges area */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Attempt badge */}
+          {attempts > 0 && (
+            <span className="text-[10px] text-zinc-600 font-medium tabular-nums bg-zinc-800/60 px-1.5 py-0.5 rounded">
+              x{attempts}
+            </span>
+          )}
+          {/* Texted badge */}
+          {texted && (
+            <span className="text-[10px] text-green-600 font-medium flex items-center gap-0.5 bg-green-950/30 px-1.5 py-0.5 rounded">
+              <Check className="w-2.5 h-2.5" />
+              Texted
+            </span>
+          )}
+          {/* Type label */}
+          <span className="text-[10px] text-zinc-600 font-medium uppercase">
+            {TYPE_LABEL[lead.type]}
+          </span>
+        </div>
       </button>
 
       {/* Expanded: call button + dispositions */}
@@ -134,6 +154,7 @@ export default function LeadCard({
                 {showTextButton && (
                   <a
                     href={getSmsUrl(lead.phone, DEFAULT_SMS)}
+                    onClick={() => onSetTexted()}
                     className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 font-medium text-sm transition-colors active:bg-zinc-700"
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -142,7 +163,17 @@ export default function LeadCard({
                 )}
               </div>
 
-              {/* Disposition — always visible when expanded */}
+              {/* Text reminder for 3+ attempts without texting */}
+              {showTextReminder && (
+                <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-amber-950/30 border border-amber-800/30">
+                  <span className="text-sm">📱</span>
+                  <span className="text-xs text-amber-400/80">
+                    Called {attempts} times with no answer — try texting?
+                  </span>
+                </div>
+              )}
+
+              {/* Disposition -- always visible when expanded */}
               <DispositionBar
                 active={disposition}
                 onSelect={(d) => {

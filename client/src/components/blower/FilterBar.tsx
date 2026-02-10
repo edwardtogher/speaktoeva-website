@@ -5,18 +5,20 @@ interface FilterBarProps {
   activeFilter: FilterKey;
   onFilterChange: (filter: FilterKey) => void;
   counts: Record<FilterKey, number>;
+  batchId?: string;
+  exhaustedCount?: number;
 }
 
-const FILTERS: { key: FilterKey; label: string; emptyLabel?: string }[] = [
+const FILTERS: { key: FilterKey; label: string }[] = [
   { key: "new", label: "New" },
   { key: "follow_ups", label: "Follow-ups" },
-  { key: "wins", label: "Wins" },
 ];
 
 export default function FilterBar({
   activeFilter,
   onFilterChange,
   counts,
+  exhaustedCount = 0,
 }: FilterBarProps) {
   return (
     <div className="bg-zinc-950/80 backdrop-blur-sm border-b border-zinc-800/30 px-3 py-2">
@@ -46,6 +48,13 @@ export default function FilterBar({
           </button>
         ))}
       </div>
+
+      {/* Exhausted note */}
+      {exhaustedCount > 0 && (
+        <p className="text-[11px] text-zinc-600 text-center mt-1.5 tabular-nums">
+          {exhaustedCount} exhausted (5+ attempts)
+        </p>
+      )}
     </div>
   );
 }
