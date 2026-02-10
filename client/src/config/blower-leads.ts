@@ -21,6 +21,20 @@ export const LEADS: Lead[] = [
   // FARNHAM LOCAL LEADS (signal: "local")
   // ============================================================
 
+  // --- Test lead (safe to call) ---
+  {
+    id: "test-lead",
+    name: "TEST — Delete Me Later",
+    type: "physio" as const,
+    town: "Farnham",
+    phone: "07700900000",
+    notes: "BT test number — safe to dial, won't connect to anyone",
+    tier: 1 as const,
+    signal: "hiring" as const,
+    batch: "farnham-mobiles",
+    batchLabel: "Farnham Mobiles",
+  },
+
   // --- Priority leads (mobile numbers) ---
   {
     id: "back-to-action-physiotherapy",
