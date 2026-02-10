@@ -80,15 +80,11 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
                 </h3>
               </div>
               <p className="text-[15px] leading-relaxed text-zinc-200">
-                "Hi there, have I reached <span className="text-blue-300 font-semibold">[clinic name]</span>?
-                Great — am I speaking to the owner?"
-              </p>
-              <p className="text-[15px] leading-relaxed text-zinc-200 mt-3">
-                "I'm Ed — I'll be honest, this is a cold call. Can I get <span className="text-blue-300 font-semibold">30 seconds</span>?"
+                "Hey, how are you? So my name's Edward — I'll be honest, this is a cold call. Can I get <span className="text-blue-300 font-semibold">30 seconds</span>?"
               </p>
               <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
                 <p className="text-xs text-zinc-500 italic">
-                  Wait for yes. If not the owner: "No worries — who's best to speak to about this?"
+                  If yes → go to Pitch. If "what's this about?" → go to Gatekeeper.
                 </p>
               </div>
             </section>
@@ -105,12 +101,11 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
                 </span>
               </div>
               <p className="text-[15px] leading-relaxed text-zinc-200">
-                "I'm just a local business, was hoping for a quick word with the owner about their
-                phones. Is he/she around?"
+                "I'm just a local business, was hoping to have a quick word with the owner about their phones. <span className="text-amber-300 font-semibold">Are you the owner?</span>"
               </p>
               <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
                 <p className="text-xs text-zinc-500 italic">
-                  Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
+                  If not the owner: "No worries — who's best to speak to?" Get a name, move on.
                 </p>
               </div>
             </section>
@@ -139,8 +134,7 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
                 </h3>
               </div>
               <p className="text-[15px] leading-relaxed text-green-300 font-medium">
-                "I've actually put together a personalised demo specifically for{" "}
-                <span className="text-white font-bold">[clinic name]</span> — could I send that over to you?"
+                "I've actually put together a personalised demo specifically for your clinic — could I send that over to you?"
               </p>
               <div className="mt-2.5 bg-green-900/20 rounded-lg px-3 py-2 border border-green-800/20">
                 <p className="text-xs text-green-400/80 font-medium">
