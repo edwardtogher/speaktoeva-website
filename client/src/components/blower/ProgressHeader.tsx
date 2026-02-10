@@ -37,37 +37,33 @@ export default function ProgressHeader({
   if (mode === "batches") {
     return (
       <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 py-3">
-        <div className="flex items-center gap-4 pr-20">
-          {/* Today's call count */}
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-sm text-zinc-500">Today:</span>
-            <span className="text-2xl font-black tabular-nums text-white">
-              {todayCalls}
-            </span>
-            <span className="text-sm text-zinc-500">
-              call{todayCalls !== 1 ? "s" : ""}
-            </span>
-          </div>
+        {/* Big today counter */}
+        <div className="flex items-baseline gap-1.5 pr-20">
+          <span className="text-3xl font-black tabular-nums text-white">
+            {todayCalls}
+          </span>
+          <span className="text-sm text-zinc-500">
+            call{todayCalls !== 1 ? "s" : ""} today
+          </span>
+        </div>
 
-          {/* Streak */}
-          {dailyStreak > 0 && (
-            <span
-              className={cn(
-                "text-sm font-semibold tabular-nums flex items-center gap-1",
-                dailyStreak >= 5 && "animate-pulse"
-              )}
-            >
-              <span>🔥</span>
-              <span className="text-orange-400">Day {dailyStreak}</span>
+        {/* Stats row: streak + PB */}
+        <div className="flex items-center gap-4 mt-1 pr-20">
+          <span
+            className={cn(
+              "text-sm font-semibold tabular-nums flex items-center gap-1",
+              dailyStreak >= 5 && "animate-pulse"
+            )}
+          >
+            <span>🔥</span>
+            <span className={dailyStreak > 0 ? "text-orange-400" : "text-zinc-600"}>
+              {dailyStreak > 0 ? `Day ${dailyStreak}` : "No streak"}
             </span>
-          )}
+          </span>
 
-          {/* Personal best */}
-          {personalBest && (
-            <span className="text-xs text-zinc-600 tabular-nums flex-shrink-0">
-              PB: {personalBest.calls} ({formatPBDate(personalBest.date)})
-            </span>
-          )}
+          <span className="text-xs text-zinc-600 tabular-nums flex-shrink-0">
+            PB: {personalBest ? `${personalBest.calls} (${formatPBDate(personalBest.date)})` : "—"}
+          </span>
         </div>
       </div>
     );

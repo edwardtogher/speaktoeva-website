@@ -92,6 +92,11 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
                 {stats.exhausted} exhausted
               </span>
             )}
+            {stats.called > 0 && (
+              <span className="text-zinc-500 tabular-nums">
+                {stats.called} called
+              </span>
+            )}
             {stats.interested === 0 && stats.followUps === 0 && stats.called === 0 && (
               <span className="text-zinc-600">Not started</span>
             )}

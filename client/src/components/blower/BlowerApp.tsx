@@ -57,6 +57,16 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const activeBatch = batches.find((b) => b.id === activeBatchId);
   const batchStats = activeBatchId ? store.getBatchStats(activeBatchId) : null;
 
+  // Batch-scoped filter counts (not global 101)
+  const batchFilterCounts = useMemo(() => {
+    if (!activeBatchId) return store.filterCounts;
+    return {
+      new: store.getFilteredLeads("new", activeBatchId).length,
+      follow_ups: store.getFilteredLeads("follow_ups", activeBatchId).length,
+      wins: store.getFilteredLeads("wins", activeBatchId).length,
+    };
+  }, [activeBatchId, store]);
+
   // --- History View ---
   if (view === "history") {
     return (
@@ -132,7 +142,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
         <FilterBar
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-          counts={store.filterCounts}
+          counts={batchFilterCounts}
           batchId={activeBatchId ?? undefined}
           exhaustedCount={batchStats?.exhausted ?? 0}
         />
