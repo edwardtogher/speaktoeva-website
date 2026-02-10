@@ -83,9 +83,12 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
                 "Hi there, have I reached <span className="text-blue-300 font-semibold">[clinic name]</span>?
                 Great — am I speaking to the owner?"
               </p>
+              <p className="text-[15px] leading-relaxed text-zinc-200 mt-3">
+                "I'm Ed — I'll be honest, this is a cold call. Can I get <span className="text-blue-300 font-semibold">30 seconds</span>?"
+              </p>
               <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
                 <p className="text-xs text-zinc-500 italic">
-                  If not the owner: "No worries — who's best to speak to about this?" Get a name, move on.
+                  Wait for yes. If not the owner: "No worries — who's best to speak to about this?"
                 </p>
               </div>
             </section>
@@ -121,12 +124,6 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
                 </h3>
               </div>
               <p className="text-[15px] leading-relaxed text-zinc-200">
-                "I'm Ed — I'll be honest, this is a cold call. Can I get <span className="text-purple-300 font-semibold">30 seconds</span>?"
-              </p>
-              <div className="mt-2.5 bg-zinc-900/60 rounded-lg px-3 py-2">
-                <p className="text-xs text-zinc-500 italic">Wait for yes.</p>
-              </div>
-              <p className="text-[15px] leading-relaxed text-zinc-200 mt-3">
                 "Yeah, so <span className="text-purple-300 font-semibold">{location}</span>. {caseStudy} —
                 building them an AI receptionist to handle their incoming calls, texts, and emails.
                 Basically making sure they <span className="text-purple-300 font-semibold">never miss an enquiry</span>."
