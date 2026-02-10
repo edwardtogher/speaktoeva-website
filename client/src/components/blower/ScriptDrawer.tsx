@@ -70,6 +70,20 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
           </SheetHeader>
 
           <div className="space-y-5 text-[14px] text-zinc-300 pb-6">
+            {/* Gatekeeper */}
+            <section>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+                Gatekeeper ("what's this regarding?")
+              </h3>
+              <p className="leading-relaxed">
+                "I'm just a local business, was hoping for a quick word with the owner about their
+                phones. Is he/she around?"
+              </p>
+              <p className="text-zinc-500 text-xs mt-1 italic">
+                Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
+              </p>
+            </section>
+
             {/* Opening */}
             <section>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
@@ -113,20 +127,6 @@ export default function ScriptDrawer({ batchId }: ScriptDrawerProps) {
               </p>
               <p className="text-zinc-500 text-xs mt-1 italic">
                 If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight over."
-              </p>
-            </section>
-
-            {/* Gatekeeper */}
-            <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
-                Gatekeeper ("what's this regarding?")
-              </h3>
-              <p className="leading-relaxed">
-                "I'm just a local business, was hoping for a quick word with the owner about their
-                phones. Is he/she around?"
-              </p>
-              <p className="text-zinc-500 text-xs mt-1 italic">
-                Don't pitch the receptionist. If owner's not there, ask when's best to catch them.
               </p>
             </section>
 
