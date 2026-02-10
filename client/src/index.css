@@ -363,4 +363,13 @@
     animation: eva-ripple var(--dur) ease-in-out infinite;
     transition: transform 200ms ease-out;
   }
+
+  /* Hide scrollbar but keep scroll functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

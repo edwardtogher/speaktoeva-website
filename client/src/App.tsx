@@ -4,13 +4,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { VapiProvider } from "@/components/VapiProvider";
-import Hero from "@/components/Hero";
+import LandingPage from "@/components/LandingPage";
+import BlowerPage from "@/pages/blower";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Hero} />
+      <Route path="/" component={LandingPage} />
+      <Route path="/call" component={BlowerPage} />
       <Route component={NotFound} />
     </Switch>
   );
