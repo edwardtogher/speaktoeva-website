@@ -1,12 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
 import { LogOut, History } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
-import { getBatches } from "@/config/blower-leads";
-import { useBlowerStore, type FilterKey } from "@/hooks/use-blower-store";
+import { getBatches, LEADS } from "@/config/blower-leads";
+import { useBlowerStore, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
 import ProgressHeader from "./ProgressHeader";
 import FilterBar from "./FilterBar";
 import LeadList from "./LeadList";
-import ScriptDrawer from "./ScriptDrawer";
+import CallingMode from "./CallingMode";
 import MilestoneOverlay from "./MilestoneOverlay";
 import BatchCard from "./BatchCard";
 import HistoryView from "./HistoryView";
@@ -23,6 +24,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
   const [view, setView] = useState<AppView>("batches");
   const [interestedLead, setInterestedLead] = useState<{ name: string } | null>(null);
+  const [callingLeadId, setCallingLeadId] = useState<string | null>(null);
 
   const user = useMemo(
     () => BLOWER_USERS.find((u) => u.username === username),
@@ -53,6 +55,54 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     setView("batches");
   };
 
+  // Start calling mode when user taps Call on a lead
+  const handleStartCall = useCallback((leadId: string) => {
+    setCallingLeadId(leadId);
+  }, []);
+
+  // Handle CallingMode completion (disposition set)
+  const handleCallingComplete = useCallback(
+    (disposition: Disposition, note: string, tags: string[]) => {
+      if (!callingLeadId) return;
+
+      // Save disposition, note, and tags
+      store.setDisposition(callingLeadId, disposition);
+      if (note) store.setNote(callingLeadId, note);
+      store.setTags(callingLeadId, tags);
+
+      // Trigger interested celebration
+      if (disposition === "interested") {
+        const lead = LEADS.find((l) => l.id === callingLeadId);
+        if (lead) {
+          setInterestedLead({ name: lead.name });
+        }
+      }
+
+      // Exit calling mode
+      setCallingLeadId(null);
+
+      // Auto-advance: find next uncalled lead in batch
+      if (activeBatchId) {
+        const batchLeads = store.getFilteredLeads("new", activeBatchId);
+        const nextUncalled = batchLeads.find(
+          (l) => l.id !== callingLeadId && !store.dispositions[l.id]
+        );
+        if (nextUncalled) {
+          setTimeout(() => {
+            const el = document.getElementById(`lead-${nextUncalled.id}`);
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 200);
+        }
+      }
+    },
+    [callingLeadId, store, activeBatchId]
+  );
+
+  // Handle CallingMode back (exit without disposition)
+  const handleCallingBack = useCallback(() => {
+    setCallingLeadId(null);
+  }, []);
+
   // Find active batch label
   const activeBatch = batches.find((b) => b.id === activeBatchId);
   const batchStats = activeBatchId ? store.getBatchStats(activeBatchId) : null;
@@ -66,6 +116,11 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
       wins: store.getFilteredLeads("wins", activeBatchId).length,
     };
   }, [activeBatchId, store]);
+
+  // Find the lead for CallingMode
+  const callingLead = callingLeadId
+    ? LEADS.find((l) => l.id === callingLeadId) ?? null
+    : null;
 
   // --- History View ---
   if (view === "history") {
@@ -155,11 +210,24 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
           store={store}
           batchId={activeBatchId ?? undefined}
           onInterested={(leadName) => setInterestedLead({ name: leadName })}
+          onStartCall={handleStartCall}
         />
       </div>
 
-      {/* Script FAB + drawer */}
-      <ScriptDrawer batchId={activeBatchId ?? undefined} />
+      {/* Calling Mode overlay */}
+      <AnimatePresence>
+        {callingLead && callingLeadId && (
+          <CallingMode
+            key={callingLeadId}
+            lead={callingLead}
+            batchId={activeBatchId ?? undefined}
+            existingNote={store.notes[callingLeadId] || ""}
+            existingTags={store.tags[callingLeadId] || []}
+            onComplete={handleCallingComplete}
+            onBack={handleCallingBack}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Milestone celebrations */}
       <MilestoneOverlay

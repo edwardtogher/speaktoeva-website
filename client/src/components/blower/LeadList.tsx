@@ -7,6 +7,7 @@ interface LeadListProps {
   filter: FilterKey;
   batchId?: string;
   onInterested?: (leadName: string) => void;
+  onStartCall?: (leadId: string) => void;
   store: {
     getFilteredLeads: (filter: FilterKey, batchId?: string) => Lead[];
     dispositions: Record<string, Disposition>;
@@ -21,7 +22,7 @@ interface LeadListProps {
   };
 }
 
-export default function LeadList({ filter, store, batchId, onInterested }: LeadListProps) {
+export default function LeadList({ filter, store, batchId, onInterested, onStartCall }: LeadListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const leads = store.getFilteredLeads(filter, batchId);
@@ -99,6 +100,7 @@ export default function LeadList({ filter, store, batchId, onInterested }: LeadL
           onToggle={() => handleToggle(lead.id)}
           onDisposition={(d) => handleDisposition(lead.id, d)}
           onSetTexted={() => handleSetTexted(lead.id)}
+          onStartCall={onStartCall ? () => onStartCall(lead.id) : undefined}
         />
       ))}
     </div>

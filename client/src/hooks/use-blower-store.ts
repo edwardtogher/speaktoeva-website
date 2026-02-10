@@ -33,6 +33,7 @@ interface BlowerState {
   attempts: Record<string, number>;       // leadId -> number of call attempts
   texted: Record<string, boolean>;        // leadId -> whether they've been texted
   dailyStats: Record<string, DayStats>;   // date string -> stats
+  tags: Record<string, string[]>;         // leadId -> array of tag strings
 }
 
 export type FilterKey =
@@ -120,6 +121,7 @@ function loadState(username: string): BlowerState {
       if (!parsed.attempts) parsed.attempts = {};
       if (!parsed.texted) parsed.texted = {};
       if (!parsed.dailyStats) parsed.dailyStats = {};
+      if (!parsed.tags) parsed.tags = {};
       return parsed;
     }
   } catch {
@@ -133,6 +135,7 @@ function loadState(username: string): BlowerState {
     attempts: {},
     texted: {},
     dailyStats: {},
+    tags: {},
   };
 }
 
@@ -311,6 +314,13 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     }));
   }, []);
 
+  const setTags = useCallback((leadId: string, tags: string[]) => {
+    setState((prev) => ({
+      ...prev,
+      tags: { ...prev.tags, [leadId]: tags },
+    }));
+  }, []);
+
   // --- Filters ---
 
   const getFilteredLeads = useCallback(
@@ -427,6 +437,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     callLog: state.callLog,
     attempts: state.attempts,
     texted: state.texted,
+    tags: state.tags,
     dailyStats: state.dailyStats,
     stats,
     filterCounts,
@@ -436,6 +447,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     setDisposition,
     setNote,
     setTexted,
+    setTags,
     startRound2,
     getFilteredLeads,
     getBatchStats,

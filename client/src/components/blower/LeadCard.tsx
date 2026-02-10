@@ -15,6 +15,7 @@ interface LeadCardProps {
   onToggle: () => void;
   onDisposition: (d: Disposition | null) => void;
   onSetTexted: () => void;
+  onStartCall?: () => void;
 }
 
 const TYPE_LABEL: Record<Lead["type"], string> = {
@@ -55,6 +56,7 @@ export default function LeadCard({
   onToggle,
   onDisposition,
   onSetTexted,
+  onStartCall,
 }: LeadCardProps) {
   const [justCalled, setJustCalled] = useState(false);
 
@@ -63,6 +65,9 @@ export default function LeadCard({
 
   const handleCall = () => {
     setJustCalled(true);
+    if (onStartCall) {
+      onStartCall();
+    }
   };
 
   return (
