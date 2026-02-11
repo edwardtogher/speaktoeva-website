@@ -10,6 +10,8 @@ interface PipelineViewProps {
   notes: Record<string, string>;
   onSetStage: (leadId: string, stage: PipelineStage) => void;
   onBack: () => void;
+  /** When true, renders without sticky header, back button, or swipe-back gesture */
+  embedded?: boolean;
 }
 
 interface StageConfig {
@@ -107,6 +109,7 @@ export default function PipelineView({
   notes,
   onSetStage,
   onBack,
+  embedded = false,
 }: PipelineViewProps) {
   // Group leads by stage
   const grouped: Record<PipelineStage, Lead[]> = {
@@ -322,36 +325,46 @@ export default function PipelineView({
 
   return (
     <div
-      className="min-h-[100dvh] bg-[#F2F2F7] text-zinc-900 flex flex-col"
+      className={embedded ? "bg-[#F2F2F7] text-zinc-900 flex flex-col" : "min-h-[100dvh] bg-[#F2F2F7] text-zinc-900 flex flex-col"}
       style={{
         fontFamily: "'Inter', sans-serif",
-        transform: swipeX > 0 ? `translateX(${swipeX}px)` : undefined,
-        transition: isSwipingRef.current ? "none" : "transform 0.2s ease-out",
-        opacity: swipeX > 0 ? 1 - swipeX / 500 : 1,
+        ...(!embedded && swipeX > 0
+          ? {
+              transform: `translateX(${swipeX}px)`,
+              transition: isSwipingRef.current ? "none" : "transform 0.2s ease-out",
+              opacity: 1 - swipeX / 500,
+            }
+          : {}),
       }}
-      onTouchStart={onContainerTouchStart}
-      onTouchMove={onContainerTouchMove}
-      onTouchEnd={onContainerTouchEnd}
+      {...(!embedded
+        ? {
+            onTouchStart: onContainerTouchStart,
+            onTouchMove: onContainerTouchMove,
+            onTouchEnd: onContainerTouchEnd,
+          }
+        : {})}
     >
-      {/* Sticky header */}
-      <div className="sticky top-0 z-40 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-        <div className="flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
-          <button
-            onClick={onBack}
-            className="p-2 -ml-2 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-lg font-bold text-zinc-900">Pipeline</h1>
-          <span className="text-sm text-zinc-400 ml-1">
-            {leads.length} lead{leads.length !== 1 ? "s" : ""}
-          </span>
+      {/* Sticky header — only in standalone mode */}
+      {!embedded && (
+        <div className="sticky top-0 z-40 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <div className="flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
+            <button
+              onClick={onBack}
+              className="p-2 -ml-2 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-lg font-bold text-zinc-900">Pipeline</h1>
+            <span className="text-sm text-zinc-400 ml-1">
+              {leads.length} lead{leads.length !== 1 ? "s" : ""}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Scrollable stage sections */}
-      <div className="flex-1 overflow-y-auto pb-[max(env(safe-area-inset-bottom),24px)]">
+      <div className={embedded ? "pb-6" : "flex-1 overflow-y-auto pb-[max(env(safe-area-inset-bottom),24px)]"}>
         {leads.length === 0 ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-zinc-400 text-lg">No leads in the pipeline yet</p>

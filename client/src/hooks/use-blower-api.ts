@@ -145,3 +145,26 @@ export function useStartRound2Mutation(userId: string) {
     },
   });
 }
+
+// --- Leaderboard ---
+
+export interface LeaderboardEntry {
+  userId: string;
+  username: string;
+  totalCalls: number;
+  todayCalls: number;
+  interested: number;
+  winRate: number;
+  currentStreak: number;
+  personalBest: { calls: number; date: string } | null;
+  last7Days: number[];
+}
+
+export function useLeaderboard() {
+  return useQuery<LeaderboardEntry[]>({
+    queryKey: ["blower", "leaderboard"],
+    queryFn: () => apiFetch<LeaderboardEntry[]>("/api/stats/leaderboard"),
+    staleTime: 60_000,
+    refetchOnWindowFocus: true,
+  });
+}

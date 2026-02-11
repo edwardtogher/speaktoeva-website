@@ -4,6 +4,18 @@ import { ArrowLeft, PhoneMissed, ThumbsUp, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
+import {
+  ScriptOpening,
+  ScriptOpeningHint,
+  ScriptGatekeeper,
+  ScriptGatekeeperHint,
+  ScriptCallbackOpening,
+  ScriptCallbackOpeningHint,
+  ScriptPitch,
+  ScriptDemoClose,
+  ScriptObjections,
+  ScriptStats,
+} from "@/config/blower-scripts";
 
 // --- Types ---
 
@@ -195,17 +207,9 @@ export default function CallingMode({
               </span>
             </div>
             <div className="px-4 pb-4">
-              <p className="text-[15px] leading-relaxed text-zinc-800">
-                "Oh hey,{" "}
-                <span className="text-amber-600 font-semibold">cheers for ringing back</span>.
-                Sorry, I'm not actually a patient — bit of a cold call. I'm Ed, I'm based just
-                down the road in Farnham.{" "}
-                <span className="text-amber-600 font-semibold">Have you got 30 seconds?</span>"
-              </p>
+              <ScriptCallbackOpening />
               <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <p className="text-xs text-zinc-500 italic">
-                  If yes → go straight to Pitch below. Same script from here.
-                </p>
+                <ScriptCallbackOpeningHint />
               </div>
             </div>
           </div>
@@ -218,14 +222,9 @@ export default function CallingMode({
               </span>
             </div>
             <div className="px-4 pb-4">
-              <p className="text-[15px] leading-relaxed text-zinc-800">
-                "Hey, how are you? So my name's Edward — I'll be honest, this is a cold call. Can I
-                get <span className="text-blue-600 font-semibold">30 seconds</span>?"
-              </p>
+              <ScriptOpening />
               <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <p className="text-xs text-zinc-500 italic">
-                  If yes - go to Pitch. If "what's this about?" - go to Gatekeeper.
-                </p>
+                <ScriptOpeningHint />
               </div>
             </div>
           </div>
@@ -244,15 +243,9 @@ export default function CallingMode({
               </span>
             </div>
             <div className="px-4 pb-4">
-              <p className="text-[15px] leading-relaxed text-zinc-800">
-                "I'm just a local business, was hoping to have a quick word with the owner about
-                their phones.{" "}
-                <span className="text-amber-600 font-semibold">Are you the owner?</span>"
-              </p>
+              <ScriptGatekeeper />
               <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <p className="text-xs text-zinc-500 italic">
-                  If not the owner: "No worries — who's best to speak to?" Get a name, move on.
-                </p>
+                <ScriptGatekeeperHint />
               </div>
             </div>
           </div>
@@ -267,13 +260,7 @@ export default function CallingMode({
             </span>
           </div>
           <div className="px-4 pb-4">
-            <p className="text-[15px] leading-relaxed text-zinc-800">
-              "Yeah, so{" "}
-              <span className="text-purple-600 font-semibold">{location}</span>. {caseStudy} —
-              building them an AI receptionist to handle their incoming calls, texts, and emails.
-              Basically making sure they{" "}
-              <span className="text-purple-600 font-semibold">never miss an enquiry</span>."
-            </p>
+            <ScriptPitch location={location} caseStudy={caseStudy} />
           </div>
         </div>
 
@@ -286,16 +273,7 @@ export default function CallingMode({
             </span>
           </div>
           <div className="px-4 pb-4">
-            <p className="text-[15px] leading-relaxed text-green-700 font-medium">
-              "I've actually put together a personalised demo specifically for your clinic — could
-              I send that over to you?"
-            </p>
-            <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2 border border-green-200/50">
-              <p className="text-xs text-green-600 font-medium">
-                If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight
-                over."
-              </p>
-            </div>
+            <ScriptDemoClose />
           </div>
         </div>
 
@@ -307,80 +285,8 @@ export default function CallingMode({
               Objections
             </span>
           </div>
-          <div className="px-4 pb-4 space-y-2">
-            {/* Objection: I just call them back */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"I just call them back"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "Yeah, but when your{" "}
-                <span className="text-zinc-900 font-semibold">patients</span> ring and nobody picks
-                up — do they wait? Or do they just Google the next physio and book there?"
-              </p>
-            </div>
-
-            {/* Objection: Not interested */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"Not interested"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "Totally fair. Just out of curiosity — is it because you've got phone stuff
-                sorted, or just
-                <span className="text-zinc-900 font-semibold"> bad timing</span>?" If bad timing:
-                "When's better to catch you?"
-              </p>
-            </div>
-
-            {/* Objection: Just send me an email */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"Just send me an email"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "I can do that — but real talk, your inbox is probably rammed. I've got a
-                <span className="text-zinc-900 font-semibold"> 60-second voice demo</span> I can
-                WhatsApp you instead. Way quicker than reading an email. Can I send that over?"
-              </p>
-            </div>
-
-            {/* Objection: I already have a receptionist */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"I already have a receptionist"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "Nice. What about{" "}
-                <span className="text-zinc-900 font-semibold">after hours and weekends</span>?
-                That's when a lot of online enquiries come through. Most clinics use Eva as the
-                backup. Worth a look at the demo?"
-              </p>
-            </div>
-
-            {/* Objection: How much is it? */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"How much is it?"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "It's about{" "}
-                <span className="text-zinc-900 font-semibold">&pound;250/mo</span> — less than a
-                receptionist for one day a week, and Eva works 24/7. Best thing is to hear her
-                first though — if she sounds rubbish, the price doesn't matter."
-              </p>
-            </div>
-
-            {/* Objection: AI can't handle my patients */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"AI can't handle my patients"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "Most AI is terrible — I get it. That's why I built this differently. I've got a
-                client in London whose customers{" "}
-                <span className="text-zinc-900 font-semibold">ask for the AI by name</span>. Have a
-                listen to the demo and see what you think."
-              </p>
-            </div>
-
-            {/* Objection: I need to think about it */}
-            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
-              <p className="text-sm text-red-500 font-medium mb-1">"I need to think about it"</p>
-              <p className="text-zinc-700 text-[13px] leading-relaxed">
-                "Of course. Let me WhatsApp you the demo — have a listen when you've got
-                <span className="text-zinc-900 font-semibold"> 60 seconds</span>. No pressure, just
-                reply if you want to chat more."
-              </p>
-            </div>
+          <div className="px-4 pb-4">
+            <ScriptObjections />
           </div>
         </div>
 
@@ -392,28 +298,8 @@ export default function CallingMode({
               Stats to Drop
             </span>
           </div>
-          <div className="px-4 pb-4 space-y-2.5">
-            <div className="flex items-start gap-2.5">
-              <span className="text-sm text-zinc-500 mt-0.5">1.</span>
-              <p className="text-[14px] text-zinc-500">
-                85% of callers who get voicemail{" "}
-                <span className="text-zinc-900 font-medium">never call back</span>
-              </p>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <span className="text-sm text-zinc-500 mt-0.5">2.</span>
-              <p className="text-[14px] text-zinc-500">
-                78% of patients book with{" "}
-                <span className="text-zinc-900 font-medium">whoever answers first</span>
-              </p>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <span className="text-sm text-zinc-500 mt-0.5">3.</span>
-              <p className="text-[14px] text-zinc-500">
-                One extra patient/week at &pound;50 and{" "}
-                <span className="text-zinc-900 font-medium">she's paid for herself</span>
-              </p>
-            </div>
+          <div className="px-4 pb-4">
+            <ScriptStats />
           </div>
         </div>
       </div>

@@ -181,6 +181,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/stats/leaderboard", async (_req: Request, res: Response) => {
+    try {
+      const leaderboard = await storage.getLeaderboard();
+      res.json(leaderboard);
+    } catch (err) {
+      res.status(500).json({ message: "Failed to fetch leaderboard" });
+    }
+  });
+
   // ── Call Logs ──
 
   app.get("/api/call-logs", async (req: Request, res: Response) => {

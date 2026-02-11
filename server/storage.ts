@@ -68,6 +68,18 @@ export interface BatchStats {
   callback: number;
 }
 
+export interface LeaderboardEntry {
+  userId: string;
+  username: string;
+  totalCalls: number;
+  todayCalls: number;
+  interested: number;
+  winRate: number;
+  currentStreak: number;
+  personalBest: { calls: number; date: string } | null;
+  last7Days: number[];
+}
+
 export interface IStorage {
   init?(): Promise<void>;
 
@@ -107,6 +119,9 @@ export interface IStorage {
   // Bulk fetches for state endpoint
   getAllDailyStats(userId: string): Promise<DailyStats[]>;
   getAllLeadTags(): Promise<LeadTag[]>;
+
+  // Leaderboard
+  getLeaderboard(): Promise<LeaderboardEntry[]>;
 }
 
 // ─── Database Storage ────────────────────────────────────
@@ -546,6 +561,97 @@ export class DatabaseStorage implements IStorage {
   async getAllLeadTags(): Promise<LeadTag[]> {
     return this.db.select().from(leadTags);
   }
+
+  // ── Leaderboard ──
+
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    const allUsers = await this.db.select().from(users);
+    const today = todayDateString();
+
+    // Build last 7 days date strings (oldest first)
+    const last7Dates: string[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      last7Dates.push(d.toISOString().slice(0, 10));
+    }
+
+    const entries: LeaderboardEntry[] = [];
+
+    for (const user of allUsers) {
+      // Fetch all daily_stats rows for this user
+      const rows = await this.db
+        .select()
+        .from(dailyStats)
+        .where(eq(dailyStats.userId, user.id))
+        .orderBy(desc(dailyStats.date));
+
+      // All-time aggregates
+      let totalCalls = 0;
+      let interestedTotal = 0;
+      let todayCalls = 0;
+      let bestCalls = 0;
+      let bestDate: string | null = null;
+
+      // Build a map for quick date lookups
+      const dateMap = new Map<string, number>();
+
+      for (const row of rows) {
+        totalCalls += row.totalCalls;
+        interestedTotal += row.interested;
+        dateMap.set(row.date, row.totalCalls);
+
+        if (row.date === today) {
+          todayCalls = row.totalCalls;
+        }
+
+        if (row.totalCalls > bestCalls) {
+          bestCalls = row.totalCalls;
+          bestDate = row.date;
+        }
+      }
+
+      // Win rate
+      const winRate = totalCalls > 0 ? Math.round((interestedTotal / totalCalls) * 100 * 10) / 10 : 0;
+
+      // Personal best
+      const personalBest = bestDate ? { calls: bestCalls, date: bestDate } : null;
+
+      // Last 7 days sparkline
+      const last7Days = last7Dates.map((d) => dateMap.get(d) ?? 0);
+
+      // Current streak: count consecutive days with >= 1 call, backwards from today
+      let currentStreak = 0;
+      let checkDate = new Date();
+      while (true) {
+        const dateStr = checkDate.toISOString().slice(0, 10);
+        const calls = dateMap.get(dateStr);
+        if (calls && calls >= 1) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+
+      entries.push({
+        userId: user.id,
+        username: user.username,
+        totalCalls,
+        todayCalls,
+        interested: interestedTotal,
+        winRate,
+        currentStreak,
+        personalBest,
+        last7Days,
+      });
+    }
+
+    // Sort by totalCalls descending
+    entries.sort((a, b) => b.totalCalls - a.totalCalls);
+
+    return entries;
+  }
 }
 
 // ─── Memory Storage (fallback) ───────────────────────────
@@ -589,6 +695,7 @@ export class MemStorage implements IStorage {
   async setLeadTags(): Promise<void> {}
   async getAllDailyStats(): Promise<DailyStats[]> { return []; }
   async getAllLeadTags(): Promise<LeadTag[]> { return []; }
+  async getLeaderboard(): Promise<LeaderboardEntry[]> { return []; }
 }
 
 // ─── Export ──────────────────────────────────────────────
