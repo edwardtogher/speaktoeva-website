@@ -23,8 +23,8 @@ export const LEADS: Lead[] = [
 
   // --- Test lead (safe to call) ---
   {
-    id: "test-lead",
-    name: "TEST — Delete Me Later",
+    id: "test-lead-2",
+    name: "TEST — CallingMode Test",
     type: "physio" as const,
     town: "Farnham",
     phone: "07700900000",
