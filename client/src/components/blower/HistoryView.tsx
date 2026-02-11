@@ -2,6 +2,8 @@ import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CallLogEntry, Disposition } from "@/hooks/use-blower-store";
+import { LEADS } from "@/config/blower-leads";
 
 interface DayStats {
   date: string;
@@ -16,6 +18,7 @@ interface DayStats {
 interface HistoryViewProps {
   dailyStats: Record<string, DayStats>;
   dailyStreak: number;
+  callLog: CallLogEntry[];
   onBack: () => void;
 }
 
@@ -42,9 +45,23 @@ function formatTime(ts: number | null): string {
   return `${hour}:${m}${ampm}`;
 }
 
+function dispositionDotColor(d: Disposition): string {
+  switch (d) {
+    case "interested": return "bg-green-500";
+    case "not_interested": return "bg-red-400";
+    case "no_answer": return "bg-zinc-300";
+  }
+}
+
+function getLeadName(leadId: string): string {
+  const lead = LEADS.find((l) => l.id === leadId);
+  return lead ? lead.name : leadId;
+}
+
 export default function HistoryView({
   dailyStats,
   dailyStreak,
+  callLog,
   onBack,
 }: HistoryViewProps) {
   // Sort days newest first
@@ -192,6 +209,41 @@ export default function HistoryView({
                   {formatTime(day.lastCallAt)}
                 </p>
               )}
+
+              {/* Individual calls */}
+              {(() => {
+                const dayCalls = callLog
+                  .filter(
+                    (entry) =>
+                      new Date(entry.timestamp).toISOString().slice(0, 10) ===
+                      day.date
+                  )
+                  .sort((a, b) => b.timestamp - a.timestamp);
+                if (dayCalls.length === 0) return null;
+                return (
+                  <div className="border-t border-gray-100 mt-3 pt-3 space-y-1.5">
+                    {dayCalls.map((entry, j) => (
+                      <div
+                        key={`${entry.leadId}-${entry.timestamp}-${j}`}
+                        className="flex items-center gap-2"
+                      >
+                        <span
+                          className={cn(
+                            "w-2 h-2 rounded-full flex-shrink-0",
+                            dispositionDotColor(entry.disposition)
+                          )}
+                        />
+                        <span className="text-xs text-zinc-400 tabular-nums w-[52px] flex-shrink-0">
+                          {formatTime(entry.timestamp)}
+                        </span>
+                        <span className="text-sm text-zinc-700 truncate">
+                          {getLeadName(entry.leadId)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </motion.div>
           ))
         )}

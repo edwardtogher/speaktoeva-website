@@ -43,23 +43,25 @@ export default function ProgressHeader({
       <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] pt-[max(env(safe-area-inset-top),12px)] pb-4">
         {/* Top row: history + logout */}
         {(onHistory || onLogout) && (
-          <div className="flex items-center justify-end gap-1 px-3 pb-1">
+          <div className="flex items-center justify-end gap-2 px-3 pb-1">
             {onHistory && (
               <button
                 onClick={onHistory}
-                className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                className="bg-[#F2F2F7] rounded-full px-3 py-2 flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
                 aria-label="Call history"
               >
-                <History className="w-4 h-4" />
+                <History className="w-5 h-5" />
+                <span className="text-sm font-medium">History</span>
               </button>
             )}
             {onLogout && (
               <button
                 onClick={onLogout}
-                className="p-2 rounded-lg text-zinc-400 hover:text-zinc-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                className="bg-[#F2F2F7] rounded-full px-3 py-2 flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
                 aria-label="Logout"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-5 h-5" />
+                <span className="text-sm font-medium">Logout</span>
               </button>
             )}
           </div>

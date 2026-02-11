@@ -220,6 +220,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
       <HistoryView
         dailyStats={store.dailyStats}
         dailyStreak={dailyStreak}
+        callLog={store.callLog}
         onBack={() => setView("batches")}
       />
     );
@@ -250,7 +251,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               />
             </div>
 
-            {/* Batch cards */}
+            {/* Batch cards + interested leads */}
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
               <h2 className="text-2xl font-black text-indigo-600 pt-2 pb-1">Batches</h2>
               {batches.map((batch) => (
@@ -261,6 +262,51 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                   onTap={() => handleBatchTap(batch.id)}
                 />
               ))}
+
+              {/* Interested leads section */}
+              {(() => {
+                const interestedLeadIds = store.getFilteredLeads("wins");
+                if (interestedLeadIds.length === 0) return null;
+                return (
+                  <>
+                    <h2 className="text-2xl font-black text-indigo-600 pt-4 pb-1">Interested</h2>
+                    {interestedLeadIds.map((lead) => (
+                      <div
+                        key={lead.id}
+                        className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-4 py-3.5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-[15px] text-zinc-900 truncate">
+                              {lead.name}
+                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-sm text-zinc-500">{lead.town}</span>
+                              <span className="text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full px-2 py-0.5">
+                                {lead.type}
+                              </span>
+                            </div>
+                            {store.notes[lead.id] && (
+                              <p className="text-sm text-zinc-400 mt-1 truncate">
+                                {store.notes[lead.id]}
+                              </p>
+                            )}
+                          </div>
+                          <a
+                            href={`tel:${lead.phone}`}
+                            className="ml-3 flex-shrink-0 p-2 text-indigo-500 hover:text-indigo-700 transition-colors"
+                            aria-label={`Call ${lead.name}`}
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                );
+              })()}
             </div>
           </motion.div>
         ) : (
