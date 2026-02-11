@@ -1,17 +1,53 @@
-# SpeakToEva.com Website
+# SpeakToEva.com — Website + Call App
 
-Live website at speaktoeva.com. Auto-deploys via Vercel when you push to GitHub.
+This repo serves two things:
+1. **Landing page** at speaktoeva.com (`/`)
+2. **Blower call app** at speaktoeva.com/call (`/call`)
+
+Auto-deploys via Vercel when you push to GitHub.
+
+---
+
+## Architecture (Three Layers)
+
+```
+speaktoeva.com/call (Vercel)          speaktoeva.com/ (Vercel)
+   React frontend                       Landing page
+        │
+        ▼
+blower-api-production.up.railway.app (Railway)
+   Express backend — business logic, auth, API
+        │
+        ▼
+Supabase (project zwtbcrkpdpwwptbkujxp, "blower" schema)
+   PostgreSQL — leads, calls, dispositions, follow-ups, texts
+   THIS IS THE CRM
+```
+
+**Frontend:** React + TypeScript + Vite + Tailwind, hosted on Vercel
+**Backend:** Express.js on Railway (`blower-api-production.up.railway.app`)
+**Database:** Supabase PostgreSQL (`blower` schema)
+
+---
 
 ## Workflow
 
-1. Edit files in this folder
-2. Commit and push to GitHub
-3. Vercel auto-deploys (~15 seconds)
-4. Changes live at speaktoeva.com
+```bash
+# Frontend changes (landing page or call app):
+git add . && git commit -m "message" && git push   # Vercel auto-deploys (~15s)
+
+# Backend changes: deployed separately on Railway
+vercel                                              # Vercel CLI (logs, domains)
+gh repo view                                        # GitHub info
+```
 
 **GitHub repo:** github.com/edwardtogher/speaktoeva-website
 
-## Key Files to Edit
+---
+
+## Landing Page (/)
+
+### Key Files
 
 | File | What It Controls |
 |------|------------------|
@@ -21,39 +57,20 @@ Live website at speaktoeva.com. Auto-deploys via Vercel when you push to GitHub.
 | `client/src/config/vapi.ts` | VAPI keys and booking link |
 | `.env.local` | Environment variables (VAPI keys) |
 
-## Features
+### Features
 
-- **Login button** → dash.speaktoeva.com (Chat-Dash white label for Theo)
-- **Talk to EVA button** → VAPI voice demo
-- **Book a Call** → Cal.com link
-- **Footer** → Copyright + LinkedIn link
+- **Login button** -> dash.speaktoeva.com
+- **Talk to EVA button** -> VAPI voice demo
+- **Book a Call** -> Cal.com link
+- **Footer** -> Copyright + LinkedIn link
 
-## Tech Stack
+---
 
-- React + TypeScript
-- Vite build
-- Tailwind CSS
-- VAPI for voice widget
-- Hosted on Vercel
+## Blower Call App (/call)
 
-## Commands
+Mobile-first cold calling app for Ed and his team to blitz UK physio/chiro/osteo leads. Installed as an iOS PWA.
 
-```bash
-# From this folder:
-git add . && git commit -m "message" && git push   # Deploy changes
-vercel                                              # Vercel CLI (logs, domains)
-gh repo view                                        # GitHub info
-```
-
-## Blower — Cold Calling CRM (speaktoeva.com/call)
-
-Mobile-first cold calling app for Ed and his team to blitz UK physio/chiro/osteo leads. Lives at `/call` route, installed as an iOS PWA.
-
-### Architecture
-
-100% client-side. No backend. All state in localStorage keyed by username. Lead data and user credentials compiled into the JS bundle. Auth is a simple client-side gate (not security-critical).
-
-### Key Files
+### Key Files (Frontend)
 
 | File | What It Does |
 |------|-------------|
@@ -68,35 +85,78 @@ Mobile-first cold calling app for Ed and his team to blitz UK physio/chiro/osteo
 | `client/src/components/blower/ProgressHeader.tsx` | Sticky header with stats, back button, logout |
 | `client/src/components/blower/HistoryView.tsx` | Past call sessions with individual call log |
 | `client/src/components/blower/MilestoneOverlay.tsx` | Celebration animations at call milestones |
-| `client/src/config/blower-leads.ts` | All leads + batch definitions (getBatches(), LEADS array) |
-| `client/src/config/blower-users.ts` | User credentials + lead assignments |
-| `client/src/hooks/use-blower-store.ts` | localStorage-backed state (dispositions, notes, stages, attempts, call log) |
 
 ### Home Screen Layout (top to bottom)
 
 1. **Interested** (green) — Pipeline card. Tap to enter CRM pipeline view. Shows stage breakdown.
-2. **Gold** (amber) — Follow-up leads (no-answer leads that need calling back). Tap to enter Gold dialler.
+2. **Gold** (amber) — Follow-up leads (no-answer leads that need calling back). Auto-calculated callbacks.
 3. **Batches** (indigo) — Cold lead batches. Tap a batch to enter its dialler.
+
+### Gold Section (Follow-Up Queue)
+
+Leads who didn't answer get queued in Gold with auto-calculated callback times. The follow-up cadence is:
+
+**7 calls + 3 texts over 14 days:**
+- Day 0: Initial call
+- Day 1: Text #1
+- Day 2: Call #2
+- Day 4: Call #3 + Text #2
+- Day 7: Call #4
+- Day 9: Call #5 + Text #3
+- Day 11: Call #6
+- Day 14: Call #7 (final attempt)
+
+Leads cycle through Gold until the cadence completes or they pick up.
 
 ### Pipeline Stages
 
-Interested leads progress: **Send Demo** → **Demo Sent** → **Booked** → **Won**. Leads can be moved via advance buttons or drag-and-drop (long-press 300ms to pick up).
+Interested leads progress: **Send Demo** -> **Demo Sent** -> **Booked** -> **Won**. Leads can be moved via advance buttons or drag-and-drop (long-press 300ms to pick up).
 
-### Multi-User System
+---
 
-- Each user defined in `blower-users.ts` with username, password, and `assignedLeadIds` ("all" or specific ID array)
-- State is per-user in localStorage (keyed by username)
-- **Known gap:** Batches show globally on home screen regardless of assigned leads. When onboarding new users, either filter batches to only show ones containing that user's leads, or add an `assignedBatches` field to user config.
+## CRM (Supabase — blower schema)
 
-### Adding Leads
+**Project:** zwtbcrkpdpwwptbkujxp
+**Schema:** `blower`
 
-Edit `blower-leads.ts`. Each lead: `{ id, name, type, town, phone, website, notes, batch }`. Add to appropriate batch in the batches array.
+When Ed says "CRM" he means this database. All leads, call history, dispositions, follow-up schedules, and text logs live here.
 
-### Adding Users
+The Railway backend bridges the frontend to Supabase via `/api/state/:userId` endpoints.
 
-Edit `blower-users.ts`. Add entry with `{ username, password, assignedLeadIds }`. Push to deploy.
+**Note:** This is separate from Eva's CRM (`public` schema, contacts/interactions tables) which is for people Eva should recognise on inbound calls.
 
-### Design System
+---
+
+## Railway Backend
+
+**URL:** blower-api-production.up.railway.app
+
+Express server with business logic. Key endpoint pattern:
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/state/:userId` | Fetch user's full state from Supabase |
+| `POST /api/state/:userId` | Save user's state to Supabase |
+| `POST /api/leads/import` | Bulk import new leads into the CRM |
+
+### Adding New Lead Batches
+
+1. Compile leads (from Indeed, Reed, Google Ads library, etc.)
+2. Format as JSON array with required fields (name, phone, type, town, batch, etc.)
+3. `POST /api/leads/import` to the Railway backend
+4. Leads appear in the call app under the specified batch
+
+---
+
+## Multi-User System
+
+- Each user has credentials stored in the backend
+- State is per-user in Supabase (keyed by userId)
+- **Known gap:** Batches show globally on home screen regardless of assigned leads. When onboarding new users, either filter batches to only show ones containing that user's leads, or add an `assignedBatches` field.
+
+---
+
+## Design System
 
 Apple News-inspired iOS look:
 - Background: `#F2F2F7` (iOS system gray)
@@ -112,12 +172,20 @@ Apple News-inspired iOS look:
 - iOS standalone PWAs cache aggressively — users must delete and re-add from home screen to get updates
 - No service worker — just iOS standalone mode behaviour
 
+---
+
+## Retired Predecessors
+
+- **cold-call-crm/** (Python/Streamlit, SQLite, localhost:5001) — replaced by this app
+- **uk-dialler/** (single HTML page, localStorage, 40 leads) — replaced by this app
+
+---
+
 ## Notes
 
 - Originally built on Replit, migrated to GitHub/Vercel 14 Jan 2026
 - Replit remnants in `.local/` folder (can ignore)
 - `attached_assets/` has images used on the site
-- `design_guidelines.md` has original design specs from Replit
 
 ## When Ed Says...
 
@@ -127,3 +195,5 @@ Apple News-inspired iOS look:
 | "Change the headline" | Edit `client/src/components/Hero.tsx` |
 | "Check if site is working" | Visit speaktoeva.com or run `vercel` |
 | "Show me the code" | Read files in `client/src/` |
+| "Add leads to the CRM" | Format JSON, POST /api/leads/import to Railway backend |
+| "Check the CRM" | Query Supabase blower schema |
