@@ -197,6 +197,225 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ── Blower State (bridge for frontend localStorage shape) ──
+
+  // Resolve username to DB user ID (UUID), creating user if needed
+  async function resolveUserId(username: string): Promise<string> {
+    let user = await storage.getUserByUsername(username);
+    if (!user) {
+      user = await storage.createUser({ username, password: username });
+    }
+    return user.id;
+  }
+
+  app.get("/api/state/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = await resolveUserId(req.params.userId);
+
+      // Fetch all data in parallel
+      const [allLeads, callLogRows, allTags, allDailyStats] = await Promise.all([
+        storage.getLeads({ limit: 10000 }),
+        storage.getCallLogs({ userId, limit: 10000 }),
+        storage.getAllLeadTags(),
+        storage.getAllDailyStats(userId),
+      ]);
+
+      // Build dispositions, notes, attempts, texted maps from leads
+      const dispositions: Record<string, string> = {};
+      const notes: Record<string, string> = {};
+      const attempts: Record<string, number> = {};
+      const texted: Record<string, boolean> = {};
+
+      for (const lead of allLeads) {
+        // Map DB statuses to the frontend's 3-value Disposition type
+        if (lead.status === "no_answer" || lead.status === "voicemail") {
+          dispositions[lead.id] = "no_answer";
+        } else if (lead.status === "interested" || lead.status === "callback") {
+          dispositions[lead.id] = "interested";
+        } else if (lead.status === "not_interested") {
+          dispositions[lead.id] = "not_interested";
+        }
+        // "new" and "exhausted" are not mapped — they stay absent from the dispositions record
+
+        if (lead.notes) {
+          notes[lead.id] = lead.notes;
+        }
+
+        if (lead.attemptCount > 0) {
+          attempts[lead.id] = lead.attemptCount;
+        }
+
+        if (lead.textedAt) {
+          texted[lead.id] = true;
+        }
+      }
+
+      // Build callLog array from call_logs table
+      const callLog = callLogRows.map((log) => ({
+        leadId: log.leadId,
+        disposition: log.disposition === "voicemail" ? "no_answer"
+          : log.disposition === "callback" ? "interested"
+          : log.disposition,
+        timestamp: new Date(log.timestamp).getTime(),
+        round: log.round,
+      }));
+
+      // Build dailyStats map
+      const dailyStatsMap: Record<string, {
+        date: string;
+        calls: number;
+        noAnswer: number;
+        interested: number;
+        notInterested: number;
+        firstCallAt: number;
+        lastCallAt: number;
+      }> = {};
+
+      for (const row of allDailyStats) {
+        dailyStatsMap[row.date] = {
+          date: row.date,
+          calls: row.totalCalls,
+          noAnswer: row.noAnswer,
+          interested: row.interested,
+          notInterested: row.notInterested,
+          firstCallAt: row.firstCallAt ? new Date(row.firstCallAt).getTime() : 0,
+          lastCallAt: row.lastCallAt ? new Date(row.lastCallAt).getTime() : 0,
+        };
+      }
+
+      // Build tags map
+      const tags: Record<string, string[]> = {};
+      for (const row of allTags) {
+        if (!tags[row.leadId]) tags[row.leadId] = [];
+        tags[row.leadId].push(row.tag);
+      }
+
+      res.json({
+        dispositions,
+        notes,
+        callLog,
+        currentRound: 1,
+        attempts,
+        texted,
+        dailyStats: dailyStatsMap,
+        tags,
+        stages: {},
+      });
+    } catch (err) {
+      console.error("GET /api/state/:userId error:", err);
+      res.status(500).json({ message: "Failed to fetch state" });
+    }
+  });
+
+  app.post("/api/state/:userId/disposition", async (req: Request, res: Response) => {
+    try {
+      const userId = await resolveUserId(req.params.userId);
+      const body = z
+        .object({
+          leadId: z.string().min(1),
+          disposition: z.union([
+            z.enum(["no_answer", "interested", "not_interested"]),
+            z.null(),
+          ]),
+        })
+        .safeParse(req.body);
+
+      if (!body.success) {
+        return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
+      }
+
+      const { leadId, disposition } = body.data;
+
+      if (disposition === null) {
+        // Clear disposition — reset lead to "new" and clear attempts
+        await storage.updateLead(leadId, { status: "new", attemptCount: 0 } as any);
+      } else {
+        // Map frontend disposition to DB disposition for logCallDisposition
+        await storage.logCallDisposition(leadId, userId, { disposition: disposition as Disposition });
+      }
+
+      res.json({ ok: true });
+    } catch (err: any) {
+      if (err.message?.includes("not found")) {
+        return res.status(404).json({ message: err.message });
+      }
+      console.error("POST /api/state/:userId/disposition error:", err);
+      res.status(500).json({ message: "Failed to set disposition" });
+    }
+  });
+
+  app.post("/api/state/:userId/note", async (req: Request, res: Response) => {
+    try {
+      const body = z
+        .object({
+          leadId: z.string().min(1),
+          text: z.string(),
+        })
+        .safeParse(req.body);
+
+      if (!body.success) {
+        return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
+      }
+
+      await storage.updateLead(body.data.leadId, { notes: body.data.text } as any);
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("POST /api/state/:userId/note error:", err);
+      res.status(500).json({ message: "Failed to set note" });
+    }
+  });
+
+  app.post("/api/state/:userId/texted", async (req: Request, res: Response) => {
+    try {
+      const body = z
+        .object({
+          leadId: z.string().min(1),
+        })
+        .safeParse(req.body);
+
+      if (!body.success) {
+        return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
+      }
+
+      await storage.markLeadTexted(body.data.leadId, "");
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("POST /api/state/:userId/texted error:", err);
+      res.status(500).json({ message: "Failed to mark texted" });
+    }
+  });
+
+  app.post("/api/state/:userId/tags", async (req: Request, res: Response) => {
+    try {
+      const body = z
+        .object({
+          leadId: z.string().min(1),
+          tags: z.array(z.string().min(1)),
+        })
+        .safeParse(req.body);
+
+      if (!body.success) {
+        return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
+      }
+
+      await storage.setLeadTags(body.data.leadId, body.data.tags);
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("POST /api/state/:userId/tags error:", err);
+      res.status(500).json({ message: "Failed to set tags" });
+    }
+  });
+
+  app.post("/api/state/:userId/stage", async (_req: Request, res: Response) => {
+    // Stages not yet in DB — acknowledge and return OK
+    res.json({ ok: true });
+  });
+
+  app.post("/api/state/:userId/round", async (_req: Request, res: Response) => {
+    // Round is a client concept for now — acknowledge and return OK
+    res.json({ ok: true });
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

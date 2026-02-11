@@ -1,8 +1,20 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { storage } from "./storage";
 
 const app = express();
+app.use(cors({
+  origin: [
+    "https://speaktoeva.com",
+    "https://www.speaktoeva.com",
+    "https://blower-api-production.up.railway.app",
+    "http://localhost:5000",
+    "http://localhost:5001",
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -37,6 +49,12 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize database (sets search_path for Supabase pooler)
+  if (storage.init) {
+    await storage.init();
+    log("database initialized (blower schema)");
+  }
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -52,8 +70,11 @@ app.use((req, res, next) => {
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
-  } else {
+  } else if (!process.env.API_ONLY) {
     serveStatic(app);
+  } else {
+    // API-only mode (Railway) — add a health check
+    app.get("/", (_req, res) => res.json({ status: "ok", service: "blower-api" }));
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT

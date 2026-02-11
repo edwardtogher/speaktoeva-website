@@ -1,6 +1,6 @@
 import { eq, and, or, ilike, sql, desc, asc, lte, gte, count, isNull } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import {
   type User,
   type InsertUser,
@@ -69,6 +69,8 @@ export interface BatchStats {
 }
 
 export interface IStorage {
+  init?(): Promise<void>;
+
   // Users
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -101,6 +103,10 @@ export interface IStorage {
 
   // Tags
   setLeadTags(leadId: string, tags: string[]): Promise<void>;
+
+  // Bulk fetches for state endpoint
+  getAllDailyStats(userId: string): Promise<DailyStats[]>;
+  getAllLeadTags(): Promise<LeadTag[]>;
 }
 
 // ─── Database Storage ────────────────────────────────────
@@ -108,9 +114,17 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   private db;
 
+  private client;
+
   constructor(databaseUrl: string) {
-    const pool = new Pool({ connectionString: databaseUrl });
-    this.db = drizzle(pool, { schema });
+    // pgSchema("blower") in schema.ts handles all table prefixing
+    this.client = postgres(databaseUrl, { ssl: "require" });
+    this.db = drizzle(this.client, { schema });
+  }
+
+  /** Initialize database connection (verify connectivity) */
+  async init() {
+    await this.client`SELECT 1`;
   }
 
   // ── Users ──
@@ -518,6 +532,20 @@ export class DatabaseStorage implements IStorage {
       );
     }
   }
+
+  // ── Bulk fetches for state endpoint ──
+
+  async getAllDailyStats(userId: string): Promise<DailyStats[]> {
+    return this.db
+      .select()
+      .from(dailyStats)
+      .where(eq(dailyStats.userId, userId))
+      .orderBy(desc(dailyStats.date));
+  }
+
+  async getAllLeadTags(): Promise<LeadTag[]> {
+    return this.db.select().from(leadTags);
+  }
 }
 
 // ─── Memory Storage (fallback) ───────────────────────────
@@ -559,6 +587,8 @@ export class MemStorage implements IStorage {
   async getCallLogs(): Promise<CallLog[]> { return []; }
   async getBatches(): Promise<{ batch: string; batchLabel: string | null; count: number }[]> { return []; }
   async setLeadTags(): Promise<void> {}
+  async getAllDailyStats(): Promise<DailyStats[]> { return []; }
+  async getAllLeadTags(): Promise<LeadTag[]> { return []; }
 }
 
 // ─── Export ──────────────────────────────────────────────

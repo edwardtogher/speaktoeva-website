@@ -1,6 +1,6 @@
 import { sql, relations } from "drizzle-orm";
 import {
-  pgTable,
+  pgSchema,
   text,
   varchar,
   integer,
@@ -12,9 +12,13 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// All tables live in the "blower" schema (not public)
+// This ensures Drizzle generates "blower"."table_name" in all SQL
+const blower = pgSchema("blower");
+
 // ─── Users ───────────────────────────────────────────────
 
-export const users = pgTable("users", {
+export const users = blower.table("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
@@ -56,7 +60,7 @@ export const leadSignalEnum = z.enum([
   "compound",
 ]);
 
-export const leads = pgTable(
+export const leads = blower.table(
   "leads",
   {
     id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -131,7 +135,7 @@ export const dispositionEnum = z.enum([
 ]);
 export type Disposition = z.infer<typeof dispositionEnum>;
 
-export const callLogs = pgTable(
+export const callLogs = blower.table(
   "call_logs",
   {
     id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -167,7 +171,7 @@ export type CallLog = typeof callLogs.$inferSelect;
 
 // ─── Daily Stats ─────────────────────────────────────────
 
-export const dailyStats = pgTable(
+export const dailyStats = blower.table(
   "daily_stats",
   {
     id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -208,7 +212,7 @@ export type DailyStats = typeof dailyStats.$inferSelect;
 
 // ─── Lead Tags ───────────────────────────────────────────
 
-export const leadTags = pgTable(
+export const leadTags = blower.table(
   "lead_tags",
   {
     id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),

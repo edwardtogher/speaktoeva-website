@@ -1,7 +1,16 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { LEADS, type Lead } from "@/config/blower-leads";
+import {
+  useBlowerState,
+  useSetDispositionMutation,
+  useSetNoteMutation,
+  useSetTextedMutation,
+  useSetTagsMutation,
+  useSetStageMutation,
+  useStartRound2Mutation,
+} from "./use-blower-api";
 
-// --- Types ---
+// --- Types (unchanged — all components import from here) ---
 
 export type Disposition =
   | "no_answer"
@@ -32,11 +41,11 @@ interface BlowerState {
   notes: Record<string, string>;
   callLog: CallLogEntry[];
   currentRound: number;
-  attempts: Record<string, number>;       // leadId -> number of call attempts
-  texted: Record<string, boolean>;        // leadId -> whether they've been texted
-  dailyStats: Record<string, DayStats>;   // date string -> stats
-  tags: Record<string, string[]>;         // leadId -> array of tag strings
-  stages: Record<string, PipelineStage>;  // leadId -> pipeline stage
+  attempts: Record<string, number>;
+  texted: Record<string, boolean>;
+  dailyStats: Record<string, DayStats>;
+  tags: Record<string, string[]>;
+  stages: Record<string, PipelineStage>;
 }
 
 export type FilterKey =
@@ -57,12 +66,14 @@ export interface BatchStats {
   noAnswer: number;
   interested: number;
   notInterested: number;
-  followUps: number;   // no_answer leads with attempts < 5
-  exhausted: number;   // no_answer leads with attempts >= 5
+  followUps: number;
+  exhausted: number;
 }
 
 const STREAK_GAP_MS = 5 * 60 * 1000; // 5 minutes
 const STATE_CHANGE_EVENT = "blower-state-change";
+
+// --- localStorage helpers (kept as fallback) ---
 
 function getStorageKey(username: string) {
   return `blower_${username}`;
@@ -70,7 +81,7 @@ function getStorageKey(username: string) {
 
 function getTodayDateString(): string {
   const now = new Date();
-  return now.toISOString().slice(0, 10); // "2026-02-11"
+  return now.toISOString().slice(0, 10);
 }
 
 function getEmptyDayStats(date: string): DayStats {
@@ -85,7 +96,6 @@ function getEmptyDayStats(date: string): DayStats {
   };
 }
 
-// Migration: convert old 6-disposition data to new 3-disposition model
 function migrateDispositions(dispositions: Record<string, string>): Record<string, Disposition> {
   const migrated: Record<string, Disposition> = {};
   for (const [id, d] of Object.entries(dispositions)) {
@@ -106,7 +116,6 @@ function migrateDispositions(dispositions: Record<string, string>): Record<strin
         migrated[id] = "interested";
         break;
       default:
-        // Unknown — skip
         break;
     }
   }
@@ -118,9 +127,7 @@ function loadState(username: string): BlowerState {
     const raw = localStorage.getItem(getStorageKey(username));
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Migrate old disposition values
       parsed.dispositions = migrateDispositions(parsed.dispositions || {});
-      // Migration: add new fields if they don't exist
       if (!parsed.attempts) parsed.attempts = {};
       if (!parsed.texted) parsed.texted = {};
       if (!parsed.dailyStats) parsed.dailyStats = {};
@@ -131,6 +138,10 @@ function loadState(username: string): BlowerState {
   } catch {
     // corrupted — start fresh
   }
+  return emptyState();
+}
+
+function emptyState(): BlowerState {
   return {
     dispositions: {},
     notes: {},
@@ -148,6 +159,8 @@ function saveState(username: string, state: BlowerState) {
   localStorage.setItem(getStorageKey(username), JSON.stringify(state));
   window.dispatchEvent(new CustomEvent(STATE_CHANGE_EVENT));
 }
+
+// --- Pure computation helpers (unchanged) ---
 
 function computeStreak(callLog: CallLogEntry[]): number {
   if (callLog.length === 0) return 0;
@@ -168,13 +181,11 @@ function computeDailyStreak(dailyStats: Record<string, DayStats>): number {
   let streak = 0;
   const date = new Date(today);
 
-  // Walk backwards from today
   for (let i = 0; i < 365; i++) {
     const dateStr = date.toISOString().slice(0, 10);
     const stats = dailyStats[dateStr];
 
     if (!stats || stats.calls === 0) {
-      // If this is today and we have no calls yet, don't break streak — just skip
       if (i === 0) {
         date.setDate(date.getDate() - 1);
         continue;
@@ -185,10 +196,8 @@ function computeDailyStreak(dailyStats: Record<string, DayStats>): number {
     if (stats.calls >= 10) {
       streak++;
     } else if (dateStr === today) {
-      // Today is in-progress (has calls but < 10) — count it, don't break
       streak++;
     } else {
-      // Past day with < 10 calls — breaks the streak
       break;
     }
 
@@ -208,10 +217,42 @@ function computePersonalBest(dailyStats: Record<string, DayStats>): { calls: num
   return best;
 }
 
-// --- Hook ---
+// --- Hook (API-backed with localStorage fallback) ---
 
 export function useBlowerStore(username: string, assignedLeadIds: string[] | "all") {
+  // Local state — starts from localStorage, gets overwritten by API when available
   const [state, setState] = useState<BlowerState>(() => loadState(username));
+  const apiSyncedRef = useRef(false);
+
+  // React Query: fetch state from API
+  const { data: apiState, isError: apiError } = useBlowerState(username);
+
+  // API mutations
+  const dispositionMut = useSetDispositionMutation(username);
+  const noteMut = useSetNoteMutation(username);
+  const textedMut = useSetTextedMutation(username);
+  const tagsMut = useSetTagsMutation(username);
+  const stageMut = useSetStageMutation(username);
+  const round2Mut = useStartRound2Mutation(username);
+
+  // When API data arrives, use it as source of truth
+  useEffect(() => {
+    if (apiState && !apiError) {
+      const merged: BlowerState = {
+        dispositions: apiState.dispositions || {},
+        notes: apiState.notes || {},
+        callLog: apiState.callLog || [],
+        currentRound: apiState.currentRound || 1,
+        attempts: apiState.attempts || {},
+        texted: apiState.texted || {},
+        dailyStats: apiState.dailyStats || {},
+        tags: apiState.tags || {},
+        stages: apiState.stages || {},
+      };
+      setState(merged);
+      apiSyncedRef.current = true;
+    }
+  }, [apiState, apiError]);
 
   // Assigned leads for this user
   const leads = useMemo<Lead[]>(() => {
@@ -220,21 +261,24 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     return LEADS.filter((l) => idSet.has(l.id));
   }, [assignedLeadIds]);
 
-  // Sync from localStorage when other components dispatch the event
+  // Sync from localStorage when other components dispatch the event (fallback only)
   useEffect(() => {
     const handler = () => {
-      setState(loadState(username));
+      // Only use localStorage sync if API is not working
+      if (!apiSyncedRef.current) {
+        setState(loadState(username));
+      }
     };
     window.addEventListener(STATE_CHANGE_EVENT, handler);
     return () => window.removeEventListener(STATE_CHANGE_EVENT, handler);
   }, [username]);
 
-  // Persist on every state change
+  // Always persist to localStorage as a backup
   useEffect(() => {
     saveState(username, state);
   }, [username, state]);
 
-  // --- Mutators ---
+  // --- Mutators (optimistic local update + fire-and-forget API call) ---
 
   const setDisposition = useCallback(
     (leadId: string, disposition: Disposition | null) => {
@@ -248,7 +292,6 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
         const today = getTodayDateString();
 
         if (disposition === null) {
-          // Toggle off — remove disposition, remove last log entry for this lead
           delete newDispositions[leadId];
           const lastIdx = newCallLog.findLastIndex((e) => e.leadId === leadId);
           if (lastIdx !== -1) {
@@ -263,17 +306,14 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
             round: prev.currentRound,
           });
 
-          // Auto-set pipeline stage for interested leads
           if (disposition === "interested" && !newStages[leadId]) {
             newStages[leadId] = "send_demo";
           }
 
-          // Track attempts for no_answer
           if (disposition === "no_answer") {
             newAttempts[leadId] = (newAttempts[leadId] || 0) + 1;
           }
 
-          // Update daily stats
           if (!newDailyStats[today]) {
             newDailyStats[today] = getEmptyDayStats(today);
           }
@@ -284,7 +324,6 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
             todayStats.firstCallAt = now;
           }
 
-          // Increment disposition counter
           if (disposition === "no_answer") todayStats.noAnswer++;
           else if (disposition === "interested") todayStats.interested++;
           else if (disposition === "not_interested") todayStats.notInterested++;
@@ -301,8 +340,11 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
           stages: newStages,
         };
       });
+
+      // Fire API call (non-blocking)
+      dispositionMut.mutate({ leadId, disposition });
     },
-    []
+    [dispositionMut]
   );
 
   const setNote = useCallback((leadId: string, text: string) => {
@@ -310,37 +352,47 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
       ...prev,
       notes: { ...prev.notes, [leadId]: text },
     }));
-  }, []);
+
+    noteMut.mutate({ leadId, text });
+  }, [noteMut]);
 
   const startRound2 = useCallback(() => {
     setState((prev) => ({
       ...prev,
       currentRound: 2,
     }));
-  }, []);
+
+    round2Mut.mutate();
+  }, [round2Mut]);
 
   const setTexted = useCallback((leadId: string) => {
     setState((prev) => ({
       ...prev,
       texted: { ...prev.texted, [leadId]: true },
     }));
-  }, []);
+
+    textedMut.mutate({ leadId });
+  }, [textedMut]);
 
   const setTags = useCallback((leadId: string, tags: string[]) => {
     setState((prev) => ({
       ...prev,
       tags: { ...prev.tags, [leadId]: tags },
     }));
-  }, []);
+
+    tagsMut.mutate({ leadId, tags });
+  }, [tagsMut]);
 
   const setStage = useCallback((leadId: string, stage: PipelineStage) => {
     setState((prev) => ({
       ...prev,
       stages: { ...prev.stages, [leadId]: stage },
     }));
-  }, []);
 
-  // --- Filters ---
+    stageMut.mutate({ leadId, stage });
+  }, [stageMut]);
+
+  // --- Filters (unchanged logic) ---
 
   const getFilteredLeads = useCallback(
     (filter: FilterKey, batchId?: string): Lead[] => {
@@ -350,8 +402,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
         case "new":
           return pool.filter((l) => {
             const d = state.dispositions[l.id];
-            if (!d) return true; // never called
-            // In round 2, no_answer leads become "new" again (ready to retry)
+            if (!d) return true;
             if (state.currentRound === 2 && d === "no_answer") {
               return true;
             }
@@ -360,7 +411,6 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
         case "follow_ups":
           return pool.filter((l) => {
             if (state.dispositions[l.id] !== "no_answer") return false;
-            // Only show leads with < 5 attempts (not exhausted)
             const attempts = state.attempts[l.id] || 0;
             return attempts < 5;
           });
@@ -373,7 +423,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     [leads, state.dispositions, state.currentRound, state.attempts]
   );
 
-  // --- Batch Stats ---
+  // --- Batch Stats (unchanged logic) ---
 
   const getBatchStats = useCallback(
     (batchId: string): BatchStats => {
@@ -410,7 +460,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     [leads, state.dispositions, state.attempts]
   );
 
-  // --- Computed Stats ---
+  // --- Computed Stats (unchanged logic) ---
 
   const stats = useMemo<BlowerStats>(() => {
     const total = leads.length;
@@ -424,7 +474,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     };
   }, [leads, state.dispositions, state.callLog, state.currentRound]);
 
-  // --- Daily Stats ---
+  // --- Daily Stats (unchanged logic) ---
 
   const getTodayStats = useCallback((): DayStats => {
     const today = getTodayDateString();
@@ -439,7 +489,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     return computePersonalBest(state.dailyStats);
   }, [state.dailyStats]);
 
-  // --- Filter Counts ---
+  // --- Filter Counts (unchanged logic) ---
 
   const filterCounts = useMemo(() => {
     return {
@@ -448,6 +498,8 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
       wins: getFilteredLeads("wins").length,
     };
   }, [getFilteredLeads]);
+
+  // --- Return same interface as before ---
 
   return {
     leads,

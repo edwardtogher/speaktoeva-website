@@ -1,0 +1,146 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_BASE } from "@/config/api";
+import type {
+  Disposition,
+  PipelineStage,
+  CallLogEntry,
+  DayStats,
+} from "./use-blower-store";
+
+// --- API fetch helper ---
+
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`API ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+// --- Types matching API responses ---
+
+export interface ApiState {
+  dispositions: Record<string, Disposition>;
+  notes: Record<string, string>;
+  callLog: CallLogEntry[];
+  currentRound: number;
+  attempts: Record<string, number>;
+  texted: Record<string, boolean>;
+  dailyStats: Record<string, DayStats>;
+  tags: Record<string, string[]>;
+  stages: Record<string, PipelineStage>;
+}
+
+// --- Query keys ---
+
+const keys = {
+  state: (userId: string) => ["blower", "state", userId] as const,
+};
+
+// --- Queries ---
+
+export function useBlowerState(userId: string) {
+  return useQuery<ApiState>({
+    queryKey: keys.state(userId),
+    queryFn: () => apiFetch<ApiState>(`/api/state/${userId}`),
+    staleTime: 30_000, // 30s — we do optimistic updates, so staleness is OK
+    refetchOnWindowFocus: true,
+    retry: 1,
+  });
+}
+
+// --- Mutations ---
+
+export function useSetDispositionMutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: {
+      leadId: string;
+      disposition: Disposition | null;
+    }) =>
+      apiFetch(`/api/state/${userId}/disposition`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
+
+export function useSetNoteMutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { leadId: string; text: string }) =>
+      apiFetch(`/api/state/${userId}/note`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
+
+export function useSetTextedMutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { leadId: string }) =>
+      apiFetch(`/api/state/${userId}/texted`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
+
+export function useSetTagsMutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { leadId: string; tags: string[] }) =>
+      apiFetch(`/api/state/${userId}/tags`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
+
+export function useSetStageMutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { leadId: string; stage: PipelineStage }) =>
+      apiFetch(`/api/state/${userId}/stage`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
+
+export function useStartRound2Mutation(userId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () =>
+      apiFetch(`/api/state/${userId}/round`, {
+        method: "POST",
+        body: JSON.stringify({ round: 2 }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.state(userId) });
+    },
+  });
+}
