@@ -1,4 +1,4 @@
-import { ArrowLeft, History, LogOut } from "lucide-react";
+import { ArrowLeft, Clock, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
@@ -40,70 +40,70 @@ export default function ProgressHeader({
   // --- Batch list mode: daily summary ---
   if (mode === "batches") {
     return (
-      <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] pt-[max(env(safe-area-inset-top),12px)] pb-4">
-        {/* Top row: history + logout */}
+      <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] pt-[max(env(safe-area-inset-top),16px)] pb-2.5">
+        {/* Top row: history (left) + logout (right) */}
         {(onHistory || onLogout) && (
-          <div className="flex items-center justify-end gap-2 px-3 pb-1">
-            {onHistory && (
-              <button
-                onClick={onHistory}
-                className="bg-[#F2F2F7] rounded-full px-3 py-2 flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
-                aria-label="Call history"
-              >
-                <History className="w-5 h-5" />
-                <span className="text-sm font-medium">History</span>
-              </button>
-            )}
-            {onLogout && (
-              <button
-                onClick={onLogout}
-                className="bg-[#F2F2F7] rounded-full px-3 py-2 flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
-                aria-label="Logout"
-              >
-                <LogOut className="w-5 h-5" />
-                <span className="text-sm font-medium">Logout</span>
-              </button>
-            )}
+          <div className="flex items-center justify-between px-3 pb-2">
+            <div>
+              {onHistory && (
+                <button
+                  onClick={onHistory}
+                  className="bg-[#F2F2F7] rounded-full p-2.5 flex items-center justify-center text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
+                  aria-label="Call history"
+                >
+                  <Clock className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            <div>
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="bg-[#F2F2F7] rounded-full p-2.5 flex items-center justify-center text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
+                  aria-label="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Big centered call count */}
-        <div className="flex flex-col items-center pb-3">
-          <span className="text-6xl font-black tabular-nums text-zinc-900 leading-none">
-            {todayCalls}
-          </span>
-          <span className="text-sm text-zinc-500 mt-1">
-            call{todayCalls !== 1 ? "s" : ""} today
-          </span>
-        </div>
-
-        {/* Stats pills row */}
-        <div className="flex items-center justify-center gap-3 px-4">
-          <div
-            className={cn(
-              "flex items-center gap-1.5 bg-[#F2F2F7] rounded-full px-3 py-1.5",
-              dailyStreak >= 5 && "animate-pulse"
-            )}
-          >
-            <span className="text-sm">🔥</span>
-            <span className={cn(
-              "text-sm font-semibold tabular-nums",
-              dailyStreak > 0 ? "text-orange-400" : "text-zinc-400"
-            )}>
-              {dailyStreak > 0 ? `Day ${dailyStreak}` : "No streak"}
+        {/* Compact stats row: call count left, streak + PB right */}
+        <div className="flex items-center justify-between px-4">
+          {/* Call count */}
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-black tabular-nums text-zinc-900 leading-none">
+              {todayCalls}
+            </span>
+            <span className="text-sm text-zinc-500">
+              call{todayCalls !== 1 ? "s" : ""} today
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-[#F2F2F7] rounded-full px-3 py-1.5">
-            <span className="text-sm">🏆</span>
-            <span className="text-sm font-semibold tabular-nums text-zinc-600">
-              {personalBest ? `${personalBest.calls}` : "\u2014"}
-            </span>
-            {personalBest && (
-              <span className="text-xs text-zinc-400">
-                {formatPBDate(personalBest.date)}
+          {/* Stats pills */}
+          <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                "flex items-center gap-1 bg-[#F2F2F7] rounded-full px-2.5 py-1",
+                dailyStreak >= 5 && "animate-pulse"
+              )}
+            >
+              <span className="text-xs">🔥</span>
+              <span className={cn(
+                "text-xs font-semibold tabular-nums",
+                dailyStreak > 0 ? "text-orange-400" : "text-zinc-400"
+              )}>
+                {dailyStreak > 0 ? `${dailyStreak}d` : "0"}
               </span>
-            )}
+            </div>
+
+            <div className="flex items-center gap-1 bg-[#F2F2F7] rounded-full px-2.5 py-1">
+              <span className="text-xs">🏆</span>
+              <span className="text-xs font-semibold tabular-nums text-zinc-600">
+                {personalBest ? `${personalBest.calls}` : "\u2014"}
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { Trophy } from "lucide-react";
 
 export type TabKey = "batches" | "gold" | "pipeline" | "scripts" | "leaderboard";
 
@@ -13,6 +14,7 @@ interface HomeTabBarProps {
 interface TabDef {
   key: TabKey;
   label: string;
+  icon?: React.ReactNode;
   count?: number;
 }
 
@@ -30,7 +32,7 @@ export default function HomeTabBar({
     { key: "gold", label: "Gold", count: goldCount },
     { key: "pipeline", label: "Pipeline", count: pipelineCount },
     { key: "scripts", label: "Scripts" },
-    { key: "leaderboard", label: "Leaderboard" },
+    { key: "leaderboard", label: "Board", icon: <Trophy className="w-3.5 h-3.5" /> },
   ];
 
   // Scroll active tab into view on mount and tab change
@@ -57,7 +59,7 @@ export default function HomeTabBar({
     <div className="bg-white/90 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
       <div
         ref={scrollRef}
-        className="home-tab-scroll flex items-center gap-2 px-4 py-2 overflow-x-auto"
+        className="home-tab-scroll flex items-center gap-1.5 px-3 py-1.5 overflow-x-auto"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -77,17 +79,18 @@ export default function HomeTabBar({
               ref={isActive ? activeRef : undefined}
               onClick={() => onTabChange(tab.key)}
               className={cn(
-                "flex-shrink-0 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold min-h-[44px] transition-colors",
+                "flex-shrink-0 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold min-h-[36px] transition-colors",
                 isActive
                   ? "bg-indigo-600 text-white"
                   : "bg-[#F2F2F7] text-zinc-500"
               )}
             >
+              {tab.icon && <span className="flex-shrink-0">{tab.icon}</span>}
               {tab.label}
               {showCount && (
                 <span
                   className={cn(
-                    "rounded-full text-xs px-1.5 tabular-nums",
+                    "rounded-full text-[10px] px-1.5 tabular-nums leading-tight",
                     isActive
                       ? "bg-white/20 text-white/90"
                       : "bg-zinc-300/50 text-zinc-500"
