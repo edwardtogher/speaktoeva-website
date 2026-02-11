@@ -52,7 +52,7 @@ export default function DispositionBar({ active, onSelect }: DispositionBarProps
             )}
           >
             <Icon className="w-5 h-5" />
-            <span className="text-[12px] leading-tight">{label}</span>
+            <span className="text-[13px] leading-tight">{label}</span>
           </button>
         );
       })}

@@ -52,7 +52,7 @@ export default function HistoryView({
     .map(([, stats]) => stats);
 
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col">
+    <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Header */}
       <div className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
         <div className="flex items-center gap-3 px-4 py-3">

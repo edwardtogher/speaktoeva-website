@@ -28,7 +28,7 @@ export default function FilterBar({
             key={key}
             onClick={() => onFilterChange(key)}
             className={cn(
-              "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[40px]",
+              "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px]",
               activeFilter === key
                 ? "bg-zinc-100 text-zinc-900"
                 : "bg-zinc-800/50 text-zinc-400 active:bg-zinc-800"

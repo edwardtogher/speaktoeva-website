@@ -36,7 +36,7 @@ export default function ProgressHeader({
   // --- Batch list mode: daily summary ---
   if (mode === "batches") {
     return (
-      <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 py-3">
+      <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
         {/* Big today counter */}
         <div className="flex items-baseline gap-1.5 pr-20">
           <span className="text-3xl font-black tabular-nums text-white">
@@ -73,7 +73,7 @@ export default function ProgressHeader({
   const pct = batchTotal > 0 ? (batchCalled / batchTotal) * 100 : 0;
 
   return (
-    <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 py-3">
+    <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
       <div className="flex items-center justify-between mb-2">
         {/* Back + batch name */}
         <div className="flex items-center gap-2 min-w-0">

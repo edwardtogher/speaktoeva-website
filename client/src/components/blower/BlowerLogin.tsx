@@ -26,7 +26,7 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 flex items-center justify-center px-4">
+    <div className="min-h-[100dvh] bg-zinc-950 flex items-center justify-center px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
       <motion.form
         onSubmit={handleSubmit}
         animate={shake ? { x: [0, -12, 12, -12, 12, 0] } : {}}

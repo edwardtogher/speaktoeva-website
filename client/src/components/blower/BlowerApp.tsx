@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { LogOut, History } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
 import { getBatches, LEADS } from "@/config/blower-leads";
@@ -133,108 +133,123 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     );
   }
 
-  // --- Batch List View ---
-  if (view === "batches") {
-    return (
-      <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col">
-        {/* Header — daily stats + controls */}
-        <div className="sticky top-0 z-40 relative">
-          <ProgressHeader
-            mode="batches"
-            todayCalls={todayStats.calls}
-            dailyStreak={dailyStreak}
-            personalBest={personalBest}
-          />
-          {/* Action icons */}
-          <div className="absolute top-3 right-3 flex items-center gap-1">
-            <button
-              onClick={() => setView("history")}
-              className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Call history"
-            >
-              <History className="w-4 h-4" />
-            </button>
-            <button
-              onClick={onLogout}
-              className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Batch cards */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
-          {batches.map((batch) => (
-            <BatchCard
-              key={batch.id}
-              batch={batch}
-              stats={store.getBatchStats(batch.id)}
-              onTap={() => handleBatchTap(batch.id)}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // --- Batch Dialler View ---
+  // --- Batch List / Dialler with view transitions ---
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col">
-      {/* Sticky header area */}
-      <div className="sticky top-0 z-40">
-        <ProgressHeader
-          mode="dialler"
-          batchLabel={activeBatch?.label}
-          batchCalled={batchStats?.called ?? 0}
-          batchTotal={batchStats?.total ?? 0}
-          todayCalls={todayStats.calls}
-          dailyStreak={dailyStreak}
-          personalBest={personalBest}
-          onBack={handleBackToBatches}
-        />
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          counts={batchFilterCounts}
-          batchId={activeBatchId ?? undefined}
-          exhaustedCount={batchStats?.exhausted ?? 0}
-        />
-      </div>
+    <AnimatePresence mode="wait">
+      {view === "batches" ? (
+        <motion.div
+          key="batches"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.15 }}
+          className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          {/* Header — daily stats + controls */}
+          <div className="sticky top-0 z-40 relative">
+            <ProgressHeader
+              mode="batches"
+              todayCalls={todayStats.calls}
+              dailyStreak={dailyStreak}
+              personalBest={personalBest}
+            />
+            {/* Action icons */}
+            <div className="absolute top-3 right-3 flex items-center gap-1">
+              <button
+                onClick={() => setView("history")}
+                className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Call history"
+              >
+                <History className="w-4 h-4" />
+              </button>
+              <button
+                onClick={onLogout}
+                className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
 
-      {/* Scrollable lead list */}
-      <div className="flex-1 overflow-y-auto pb-24">
-        <LeadList
-          filter={activeFilter}
-          store={store}
-          batchId={activeBatchId ?? undefined}
-          onInterested={(leadName) => setInterestedLead({ name: leadName })}
-          onStartCall={handleStartCall}
-        />
-      </div>
+          {/* Batch cards */}
+          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+            {batches.map((batch) => (
+              <BatchCard
+                key={batch.id}
+                batch={batch}
+                stats={store.getBatchStats(batch.id)}
+                onTap={() => handleBatchTap(batch.id)}
+              />
+            ))}
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="dialler"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 20 }}
+          transition={{ duration: 0.15 }}
+          className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          {/* Sticky header area */}
+          <div className="sticky top-0 z-40">
+            <ProgressHeader
+              mode="dialler"
+              batchLabel={activeBatch?.label}
+              batchCalled={batchStats?.called ?? 0}
+              batchTotal={batchStats?.total ?? 0}
+              todayCalls={todayStats.calls}
+              dailyStreak={dailyStreak}
+              personalBest={personalBest}
+              onBack={handleBackToBatches}
+            />
+            <FilterBar
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+              counts={batchFilterCounts}
+              batchId={activeBatchId ?? undefined}
+              exhaustedCount={batchStats?.exhausted ?? 0}
+            />
+          </div>
 
-      {/* Calling Mode overlay */}
-      <AnimatePresence>
-        {callingLead && callingLeadId && (
-          <CallingMode
-            key={callingLeadId}
-            lead={callingLead}
-            batchId={activeBatchId ?? undefined}
-            existingNote={store.notes[callingLeadId] || ""}
-            existingTags={store.tags[callingLeadId] || []}
-            onComplete={handleCallingComplete}
-            onBack={handleCallingBack}
+          {/* Scrollable lead list */}
+          <div className="flex-1 overflow-y-auto pb-24">
+            <LeadList
+              filter={activeFilter}
+              store={store}
+              batchId={activeBatchId ?? undefined}
+              onInterested={(leadName) => setInterestedLead({ name: leadName })}
+              onStartCall={handleStartCall}
+            />
+          </div>
+
+          {/* Calling Mode overlay */}
+          <AnimatePresence>
+            {callingLead && callingLeadId && (
+              <CallingMode
+                key={callingLeadId}
+                lead={callingLead}
+                batchId={activeBatchId ?? undefined}
+                existingNote={store.notes[callingLeadId] || ""}
+                existingTags={store.tags[callingLeadId] || []}
+                onComplete={handleCallingComplete}
+                onBack={handleCallingBack}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Milestone celebrations */}
+          <MilestoneOverlay
+            completed={todayStats.calls}
+            interestedLead={interestedLead}
+            onInterestedDismiss={() => setInterestedLead(null)}
           />
-        )}
-      </AnimatePresence>
-
-      {/* Milestone celebrations */}
-      <MilestoneOverlay
-        completed={todayStats.calls}
-        interestedLead={interestedLead}
-        onInterestedDismiss={() => setInterestedLead(null)}
-      />
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

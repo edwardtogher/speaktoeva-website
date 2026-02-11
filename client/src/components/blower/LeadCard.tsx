@@ -87,7 +87,7 @@ export default function LeadCard({
         onClick={onToggle}
         className={cn(
           "w-full flex items-center gap-3 px-4 text-left",
-          expanded ? "py-3" : "py-3.5"
+          expanded ? "py-3" : "py-3.5 min-h-[52px] active:bg-zinc-800/60"
         )}
       >
         {/* Disposition indicator */}
@@ -139,7 +139,7 @@ export default function LeadCard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 space-y-3">
