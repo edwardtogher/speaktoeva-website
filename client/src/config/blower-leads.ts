@@ -1370,6 +1370,71 @@ export const LEADS: Lead[] = [
     batch: "running-ads",
     batchLabel: "Running Ads",
   },
+
+  // ============================================================
+  // BRISTOL PHYSIOS — Max's test batch
+  // ============================================================
+
+  {
+    id: "bristol-1",
+    name: "Bristol Physio",
+    type: "physio" as const,
+    town: "Bristol",
+    phone: "01179237506",
+    notes: "Google Maps lead",
+    tier: 2 as const,
+    signal: "local" as const,
+    batch: "bristol-physios",
+    batchLabel: "Bristol Physios",
+  },
+  {
+    id: "bristol-2",
+    name: "The Physio Clinic Bristol",
+    type: "physio" as const,
+    town: "Bristol",
+    phone: "01454540066",
+    notes: "Google Maps lead",
+    tier: 2 as const,
+    signal: "local" as const,
+    batch: "bristol-physios",
+    batchLabel: "Bristol Physios",
+  },
+  {
+    id: "bristol-3",
+    name: "Comfort Health",
+    type: "physio" as const,
+    town: "Bristol",
+    phone: "01173731053",
+    notes: "Google Maps lead",
+    tier: 2 as const,
+    signal: "local" as const,
+    batch: "bristol-physios",
+    batchLabel: "Bristol Physios",
+  },
+  {
+    id: "bristol-4",
+    name: "Rise Physiotherapy",
+    type: "physio" as const,
+    town: "Bristol",
+    phone: "07881912334",
+    notes: "Google Maps lead",
+    tier: 2 as const,
+    signal: "local" as const,
+    batch: "bristol-physios",
+    batchLabel: "Bristol Physios",
+  },
+  {
+    id: "bristol-5",
+    name: "ProActive Physiotherapy",
+    type: "physio" as const,
+    town: "Bristol",
+    phone: "01174624177",
+    notes: "Google Maps lead",
+    tier: 2 as const,
+    signal: "local" as const,
+    batch: "bristol-physios",
+    batchLabel: "Bristol Physios",
+  },
 ];
 
 // --- Batch helper ---
