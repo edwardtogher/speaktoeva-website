@@ -12,11 +12,10 @@ export const BLOWER_USERS: BlowerUser[] = [
     displayName: "Ed",
     assignedLeadIds: "all",
   },
-  // Add friends here:
-  // {
-  //   username: "joe",
-  //   password: "joe",
-  //   displayName: "Joe",
-  //   assignedLeadIds: ["lead-id-1", "lead-id-2"],
-  // },
+  {
+    username: "maximilian",
+    password: "maximilian",
+    displayName: "Max",
+    assignedLeadIds: "all",
+  },
 ];
