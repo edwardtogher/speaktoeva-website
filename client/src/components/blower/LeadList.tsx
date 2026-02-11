@@ -97,6 +97,7 @@ export default function LeadList({ filter, store, batchId, onInterested, onStart
           expanded={expandedId === lead.id}
           attempts={store.attempts[lead.id] || 0}
           texted={store.texted[lead.id] || false}
+          note={store.notes[lead.id] || undefined}
           onToggle={() => handleToggle(lead.id)}
           onDisposition={(d) => handleDisposition(lead.id, d)}
           onSetTexted={() => handleSetTexted(lead.id)}

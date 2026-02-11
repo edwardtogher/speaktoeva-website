@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut, History } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
@@ -133,123 +133,180 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     );
   }
 
+  // --- Swipe-back gesture for dialler view ---
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleDiallerTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    // Only track if starting near left edge (within 40px)
+    if (touch.clientX <= 40) {
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    } else {
+      touchStartRef.current = null;
+    }
+  }, []);
+
+  const handleDiallerTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = Math.abs(touch.clientY - touchStartRef.current.y);
+    touchStartRef.current = null;
+    // Require >80px right swipe from left edge, more horizontal than vertical
+    if (dx > 80 && dx > dy) {
+      handleBackToBatches();
+    }
+  }, [handleBackToBatches]);
+
+  // --- Swipe between New / Follow-ups tabs ---
+  const tabTouchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTabSwipeStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    tabTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+
+  const handleTabSwipeEnd = useCallback((e: React.TouchEvent) => {
+    if (!tabTouchStartRef.current) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - tabTouchStartRef.current.x;
+    const dy = Math.abs(touch.clientY - tabTouchStartRef.current.y);
+    tabTouchStartRef.current = null;
+    // Require >60px horizontal, more horizontal than vertical
+    if (Math.abs(dx) > 60 && Math.abs(dx) > dy) {
+      if (dx < 0 && activeFilter === "new") {
+        // Swipe left -> Follow-ups
+        setActiveFilter("follow_ups");
+      } else if (dx > 0 && activeFilter === "follow_ups") {
+        // Swipe right -> New
+        setActiveFilter("new");
+      }
+    }
+  }, [activeFilter]);
+
   // --- Batch List / Dialler with view transitions ---
   return (
-    <AnimatePresence mode="wait">
-      {view === "batches" ? (
-        <motion.div
-          key="batches"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.15 }}
-          className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {/* Header — daily stats + controls */}
-          <div className="sticky top-0 z-40 relative">
-            <ProgressHeader
-              mode="batches"
-              todayCalls={todayStats.calls}
-              dailyStreak={dailyStreak}
-              personalBest={personalBest}
-            />
-            {/* Action icons */}
-            <div className="absolute top-3 right-3 flex items-center gap-1">
-              <button
-                onClick={() => setView("history")}
-                className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                aria-label="Call history"
-              >
-                <History className="w-4 h-4" />
-              </button>
-              <button
-                onClick={onLogout}
-                className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                aria-label="Logout"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+    <div className="relative min-h-[100dvh] bg-zinc-950" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <AnimatePresence mode="wait">
+        {view === "batches" ? (
+          <motion.div
+            key="batches"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+          >
+            {/* Header — daily stats + controls */}
+            <div className="sticky top-0 z-40 relative">
+              <ProgressHeader
+                mode="batches"
+                todayCalls={todayStats.calls}
+                dailyStreak={dailyStreak}
+                personalBest={personalBest}
+              />
+              {/* Action icons */}
+              <div className="absolute top-3 right-3 flex items-center gap-1">
+                <button
+                  onClick={() => setView("history")}
+                  className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Call history"
+                >
+                  <History className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={onLogout}
+                  className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Batch cards */}
-          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
-            {batches.map((batch) => (
-              <BatchCard
-                key={batch.id}
-                batch={batch}
-                stats={store.getBatchStats(batch.id)}
-                onTap={() => handleBatchTap(batch.id)}
+            {/* Batch cards */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+              {batches.map((batch) => (
+                <BatchCard
+                  key={batch.id}
+                  batch={batch}
+                  stats={store.getBatchStats(batch.id)}
+                  onTap={() => handleBatchTap(batch.id)}
+                />
+              ))}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="dialler"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+            onTouchStart={handleDiallerTouchStart}
+            onTouchEnd={handleDiallerTouchEnd}
+          >
+            {/* Sticky header area */}
+            <div className="sticky top-0 z-40">
+              <ProgressHeader
+                mode="dialler"
+                batchLabel={activeBatch?.label}
+                batchCalled={batchStats?.called ?? 0}
+                batchTotal={batchStats?.total ?? 0}
+                todayCalls={todayStats.calls}
+                dailyStreak={dailyStreak}
+                personalBest={personalBest}
+                onBack={handleBackToBatches}
               />
-            ))}
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="dialler"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
-          transition={{ duration: 0.15 }}
-          className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {/* Sticky header area */}
-          <div className="sticky top-0 z-40">
-            <ProgressHeader
-              mode="dialler"
-              batchLabel={activeBatch?.label}
-              batchCalled={batchStats?.called ?? 0}
-              batchTotal={batchStats?.total ?? 0}
-              todayCalls={todayStats.calls}
-              dailyStreak={dailyStreak}
-              personalBest={personalBest}
-              onBack={handleBackToBatches}
-            />
-            <FilterBar
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-              counts={batchFilterCounts}
-              batchId={activeBatchId ?? undefined}
-              exhaustedCount={batchStats?.exhausted ?? 0}
-            />
-          </div>
-
-          {/* Scrollable lead list */}
-          <div className="flex-1 overflow-y-auto pb-24">
-            <LeadList
-              filter={activeFilter}
-              store={store}
-              batchId={activeBatchId ?? undefined}
-              onInterested={(leadName) => setInterestedLead({ name: leadName })}
-              onStartCall={handleStartCall}
-            />
-          </div>
-
-          {/* Calling Mode overlay */}
-          <AnimatePresence>
-            {callingLead && callingLeadId && (
-              <CallingMode
-                key={callingLeadId}
-                lead={callingLead}
+              <FilterBar
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+                counts={batchFilterCounts}
                 batchId={activeBatchId ?? undefined}
-                existingNote={store.notes[callingLeadId] || ""}
-                existingTags={store.tags[callingLeadId] || []}
-                onComplete={handleCallingComplete}
-                onBack={handleCallingBack}
+                exhaustedCount={batchStats?.exhausted ?? 0}
               />
-            )}
-          </AnimatePresence>
+            </div>
 
-          {/* Milestone celebrations */}
-          <MilestoneOverlay
-            completed={todayStats.calls}
-            interestedLead={interestedLead}
-            onInterestedDismiss={() => setInterestedLead(null)}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
+            {/* Scrollable lead list with tab swipe */}
+            <div
+              className="flex-1 overflow-y-auto pb-24"
+              onTouchStart={handleTabSwipeStart}
+              onTouchEnd={handleTabSwipeEnd}
+            >
+              <LeadList
+                filter={activeFilter}
+                store={store}
+                batchId={activeBatchId ?? undefined}
+                onInterested={(leadName) => setInterestedLead({ name: leadName })}
+                onStartCall={handleStartCall}
+              />
+            </div>
+
+            {/* Calling Mode overlay */}
+            <AnimatePresence>
+              {callingLead && callingLeadId && (
+                <CallingMode
+                  key={callingLeadId}
+                  lead={callingLead}
+                  batchId={activeBatchId ?? undefined}
+                  existingNote={store.notes[callingLeadId] || ""}
+                  existingTags={store.tags[callingLeadId] || []}
+                  onComplete={handleCallingComplete}
+                  onBack={handleCallingBack}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Milestone celebrations */}
+            <MilestoneOverlay
+              completed={todayStats.calls}
+              interestedLead={interestedLead}
+              onInterestedDismiss={() => setInterestedLead(null)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

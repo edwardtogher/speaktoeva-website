@@ -12,6 +12,7 @@ interface LeadCardProps {
   expanded: boolean;
   attempts: number;
   texted: boolean;
+  note?: string;
   onToggle: () => void;
   onDisposition: (d: Disposition | null) => void;
   onSetTexted: () => void;
@@ -53,6 +54,7 @@ export default function LeadCard({
   expanded,
   attempts,
   texted,
+  note,
   onToggle,
   onDisposition,
   onSetTexted,
@@ -98,16 +100,23 @@ export default function LeadCard({
         </div>
 
         {/* Lead info */}
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <span className={cn(
-            "font-semibold truncate text-[15px]",
-            disposition ? "text-zinc-500" : "text-white"
-          )}>
-            {lead.name}
-          </span>
-          <span className="text-[11px] text-zinc-600 flex-shrink-0">
-            {lead.town}
-          </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className={cn(
+              "font-semibold truncate text-[15px]",
+              disposition ? "text-zinc-500" : "text-white"
+            )}>
+              {lead.name}
+            </span>
+            <span className="text-[11px] text-zinc-600 flex-shrink-0">
+              {lead.town}
+            </span>
+          </div>
+          {!expanded && note && (
+            <p className="text-xs text-zinc-500 truncate mt-0.5">
+              {note.length > 40 ? note.slice(0, 40) + "..." : note}
+            </p>
+          )}
         </div>
 
         {/* Badges area */}
@@ -175,6 +184,13 @@ export default function LeadCard({
                   <span className="text-xs text-amber-400/80">
                     Called {attempts} times with no answer — try texting?
                   </span>
+                </div>
+              )}
+
+              {/* Note display */}
+              {note && (
+                <div className="rounded-lg bg-zinc-800/50 px-3 py-2">
+                  <p className="text-sm text-zinc-400 whitespace-pre-wrap">{note}</p>
                 </div>
               )}
 

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
@@ -42,7 +43,7 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
           : "bg-zinc-900 border-zinc-800 active:bg-zinc-800/80"
       )}
     >
-      {/* Top row: emoji + label + progress fraction */}
+      {/* Top row: emoji + label + progress fraction + chevron */}
       <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2.5 min-w-0">
           <span className="text-lg flex-shrink-0">{emoji}</span>
@@ -55,9 +56,12 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
             {batch.label}
           </span>
         </div>
-        <span className="text-sm tabular-nums text-zinc-400 flex-shrink-0 ml-2">
-          {stats.called}/{stats.total}
-        </span>
+        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+          <span className="text-sm tabular-nums text-zinc-400">
+            {stats.called}/{stats.total}
+          </span>
+          <ChevronRight className="w-4 h-4 text-zinc-600" />
+        </div>
       </div>
 
       {/* Progress bar — thin */}
