@@ -123,29 +123,45 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     : null;
 
   // --- Swipe-back gesture for dialler view ---
+  const [diallerSwipeX, setDiallerSwipeX] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const isDiallerSwipingRef = useRef(false);
 
   const handleDiallerTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
-    // Only track if starting near left edge (within 40px)
-    if (touch.clientX <= 40) {
+    if (touch.clientX <= 50) {
       touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+      isDiallerSwipingRef.current = false;
     } else {
       touchStartRef.current = null;
     }
   }, []);
 
-  const handleDiallerTouchEnd = useCallback((e: React.TouchEvent) => {
+  const handleDiallerTouchMove = useCallback((e: React.TouchEvent) => {
     if (!touchStartRef.current) return;
-    const touch = e.changedTouches[0];
+    const touch = e.touches[0];
     const dx = touch.clientX - touchStartRef.current.x;
     const dy = Math.abs(touch.clientY - touchStartRef.current.y);
-    touchStartRef.current = null;
-    // Require >80px right swipe from left edge, more horizontal than vertical
-    if (dx > 80 && dx > dy) {
-      handleBackToBatches();
+    if (dx > 10 && dx > dy) {
+      isDiallerSwipingRef.current = true;
+      setDiallerSwipeX(Math.min(dx, 300));
     }
-  }, [handleBackToBatches]);
+  }, []);
+
+  const handleDiallerTouchEnd = useCallback(() => {
+    if (!touchStartRef.current) { setDiallerSwipeX(0); return; }
+    touchStartRef.current = null;
+    if (isDiallerSwipingRef.current && diallerSwipeX > 100) {
+      setDiallerSwipeX(400);
+      setTimeout(() => {
+        handleBackToBatches();
+        setDiallerSwipeX(0);
+      }, 150);
+    } else {
+      setDiallerSwipeX(0);
+    }
+    isDiallerSwipingRef.current = false;
+  }, [diallerSwipeX, handleBackToBatches]);
 
   // --- Swipe between New / Follow-ups tabs ---
   const tabTouchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -229,7 +245,13 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
             className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+            style={{
+              transform: diallerSwipeX > 0 ? `translateX(${diallerSwipeX}px)` : undefined,
+              transition: isDiallerSwipingRef.current ? "none" : "transform 0.2s ease-out",
+              opacity: diallerSwipeX > 0 ? 1 - diallerSwipeX / 500 : 1,
+            }}
             onTouchStart={handleDiallerTouchStart}
+            onTouchMove={handleDiallerTouchMove}
             onTouchEnd={handleDiallerTouchEnd}
           >
             {/* Sticky header area */}

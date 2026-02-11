@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,11 +52,60 @@ export default function HistoryView({
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([, stats]) => stats);
 
+  // Swipe-back gesture
+  const [swipeX, setSwipeX] = useState(0);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const isSwipingRef = useRef(false);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (touch.clientX <= 50) {
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+      isSwipingRef.current = false;
+    } else {
+      touchStartRef.current = null;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = Math.abs(touch.clientY - touchStartRef.current.y);
+    if (dx > 10 && dx > dy) {
+      isSwipingRef.current = true;
+      setSwipeX(Math.min(dx, 300));
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStartRef.current) return;
+    touchStartRef.current = null;
+    if (isSwipingRef.current && swipeX > 100) {
+      setSwipeX(400);
+      setTimeout(onBack, 150);
+    } else {
+      setSwipeX(0);
+    }
+    isSwipingRef.current = false;
+  }, [swipeX, onBack]);
+
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div
+      className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+      style={{
+        fontFamily: "'Inter', sans-serif",
+        transform: swipeX > 0 ? `translateX(${swipeX}px)` : undefined,
+        transition: isSwipingRef.current ? "none" : "transform 0.2s ease-out",
+        opacity: swipeX > 0 ? 1 - swipeX / 500 : 1,
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Header */}
       <div className="sticky top-0 z-40 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
           <button
             onClick={onBack}
             className="p-2 -ml-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
