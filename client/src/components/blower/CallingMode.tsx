@@ -6,13 +6,11 @@ import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
 import {
   ScriptOpening,
-  ScriptOpeningHint,
   ScriptGatekeeper,
-  ScriptGatekeeperHint,
-  ScriptCallbackOpening,
-  ScriptCallbackOpeningHint,
+  ScriptGoldCallbackOpening,
   ScriptPitch,
   ScriptDemoClose,
+  ScriptClose,
   ScriptObjections,
   ScriptStats,
 } from "@/config/blower-scripts";
@@ -194,23 +192,17 @@ export default function CallingMode({
 
       {/* ===== SCROLLABLE SCRIPT (PLAIN TEXT CARDS) ===== */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[140px] space-y-3">
-        {/* 1. Opening — different script for callback (Gold) leads */}
+        {/* 1. Opening — different script for follow-up (Gold) leads */}
         {isCallback ? (
           <div className="rounded-2xl bg-amber-50 border border-amber-300/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
             <div className="px-4 py-3 flex items-center gap-2">
               <span className="text-[13px] font-bold text-amber-700 tabular-nums">1</span>
               <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-                Callback Opening
-              </span>
-              <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
-                THEY RANG BACK
+                Follow-Up Opening
               </span>
             </div>
             <div className="px-4 pb-4">
-              <ScriptCallbackOpening />
-              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <ScriptCallbackOpeningHint />
-              </div>
+              <ScriptGoldCallbackOpening />
             </div>
           </div>
         ) : (
@@ -223,9 +215,6 @@ export default function CallingMode({
             </div>
             <div className="px-4 pb-4">
               <ScriptOpening />
-              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <ScriptOpeningHint />
-              </div>
             </div>
           </div>
         )}
@@ -244,9 +233,6 @@ export default function CallingMode({
             </div>
             <div className="px-4 pb-4">
               <ScriptGatekeeper />
-              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-                <ScriptGatekeeperHint />
-              </div>
             </div>
           </div>
         )}
@@ -264,42 +250,41 @@ export default function CallingMode({
           </div>
         </div>
 
-        {/* 4. Demo Close */}
+        {/* Demo Close */}
         <div className="rounded-2xl bg-green-50 border border-green-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
             <span className="text-[13px] font-bold text-green-700 tabular-nums">{isCallback ? 3 : 4}</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-green-700">
-              Demo Close
-            </span>
+            <span className="text-xs font-bold uppercase tracking-wider text-green-700">Demo Close</span>
           </div>
-          <div className="px-4 pb-4">
-            <ScriptDemoClose />
-          </div>
+          <div className="px-4 pb-4"><ScriptDemoClose /></div>
         </div>
 
-        {/* 5. Objections */}
+        {/* Close */}
+        <div className="rounded-2xl bg-emerald-50 border border-emerald-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+          <div className="px-4 py-3 flex items-center gap-2">
+            <span className="text-[13px] font-bold text-emerald-700 tabular-nums">{isCallback ? 4 : 5}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Close</span>
+            <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded font-medium">IF YES</span>
+          </div>
+          <div className="px-4 pb-4"><ScriptClose /></div>
+        </div>
+
+        {/* Objections */}
         <div className="rounded-2xl bg-white border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-red-600 tabular-nums">{isCallback ? 4 : 5}</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-red-600">
-              Objections
-            </span>
+            <span className="text-[13px] font-bold text-red-600 tabular-nums">{isCallback ? 5 : 6}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-red-600">Objections</span>
           </div>
-          <div className="px-4 pb-4">
-            <ScriptObjections />
-          </div>
+          <div className="px-4 pb-4"><ScriptObjections /></div>
         </div>
 
-        {/* 6. Stats to Drop */}
+        {/* Stats to Drop */}
         <div className="rounded-2xl bg-gray-50 border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-zinc-500 tabular-nums">{isCallback ? 5 : 6}</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-              Stats to Drop
-            </span>
+            <span className="text-[13px] font-bold text-zinc-500 tabular-nums">{isCallback ? 6 : 7}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Stats to Drop</span>
           </div>
-          <div className="px-4 pb-4">
-            <ScriptStats />
+          <div className="px-4 pb-4"><ScriptStats />
           </div>
         </div>
       </div>

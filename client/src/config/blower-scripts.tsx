@@ -44,36 +44,31 @@ export function ScriptGatekeeperHint() {
   );
 }
 
-// --- Callback Opening ---
+// --- Gold Callback Opening (YOU'RE calling THEM back) ---
 
-export function ScriptCallbackOpening({
-  accentColor = "text-amber-600",
-}: {
-  accentColor?: string;
-}) {
+export function ScriptGoldCallbackOpening() {
+  return (
+    <p className="text-[15px] leading-relaxed text-zinc-800">
+      "Hey, I{" "}
+      <span className="text-amber-600 font-semibold">gave you a ring the other day</span>
+      — just following up. I'm Ed, based in Farnham. Sorry, not a patient —{" "}
+      <span className="text-amber-600 font-semibold">have you got 30 seconds?</span>"
+    </p>
+  );
+}
+
+// --- Calling Back NOW Opening (THEY'RE calling YOU back) ---
+
+export function ScriptCallingBackNowOpening() {
   return (
     <p className="text-[15px] leading-relaxed text-zinc-800">
       "Oh hey,{" "}
-      <span className={`${accentColor} font-semibold`}>cheers for ringing back</span>.
+      <span className="text-teal-600 font-semibold">cheers for ringing back</span>.
       Sorry, I'm not actually a patient — bit of a cold call. I'm Ed, I'm based just
       down the road in Farnham.{" "}
-      <span className={`${accentColor} font-semibold`}>Have you got 30 seconds?</span>"
+      <span className="text-teal-600 font-semibold">Have you got 30 seconds?</span>"
     </p>
   );
-}
-
-export function ScriptCallbackOpeningHint() {
-  return (
-    <p className="text-xs text-zinc-500 italic">
-      If yes → go straight to Pitch below. Same script from here.
-    </p>
-  );
-}
-
-// --- Calling Back NOW Opening (uses same callback text but teal accent) ---
-
-export function ScriptCallingBackNowOpening() {
-  return <ScriptCallbackOpening accentColor="text-teal-600" />;
 }
 
 // --- Calling Back NOW Pitch (unique hook) ---

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import {
   ScriptOpening,
   ScriptGatekeeper,
-  ScriptCallbackOpening,
+  ScriptGoldCallbackOpening,
   ScriptCallingBackNowOpening,
   ScriptCallingBackNowPitch,
   ScriptPitch,
@@ -106,14 +106,14 @@ function NewCallFullScript() {
 function GoldCallbackFullScript() {
   return (
     <div className="space-y-3">
-      {/* 1. Callback Opening */}
+      {/* 1. Follow-Up Opening */}
       <div className="rounded-2xl bg-amber-50 border border-amber-300/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-amber-700 tabular-nums">1</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Callback Opening</span>
-          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">THEY RANG BACK</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Follow-Up Opening</span>
+          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">YOU'RE CALLING BACK</span>
         </div>
-        <div className="px-4 pb-4"><ScriptCallbackOpening /></div>
+        <div className="px-4 pb-4"><ScriptGoldCallbackOpening /></div>
       </div>
 
       {/* 2. Pitch */}
