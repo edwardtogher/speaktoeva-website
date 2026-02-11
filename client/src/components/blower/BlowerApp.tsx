@@ -198,30 +198,15 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
           >
             {/* Header — daily stats + controls */}
-            <div className="sticky top-0 z-40 relative">
+            <div className="sticky top-0 z-40">
               <ProgressHeader
                 mode="batches"
                 todayCalls={todayStats.calls}
                 dailyStreak={dailyStreak}
                 personalBest={personalBest}
+                onHistory={() => setView("history")}
+                onLogout={onLogout}
               />
-              {/* Action icons */}
-              <div className="absolute top-3 right-3 flex items-center gap-1">
-                <button
-                  onClick={() => setView("history")}
-                  className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                  aria-label="Call history"
-                >
-                  <History className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={onLogout}
-                  className="p-2 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                  aria-label="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
             </div>
 
             {/* Batch cards */}

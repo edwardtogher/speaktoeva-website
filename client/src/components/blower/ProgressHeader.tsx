@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, History, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
@@ -11,6 +11,8 @@ interface ProgressHeaderProps {
   dailyStreak: number;
   personalBest: { calls: number; date: string } | null;
   onBack?: () => void;
+  onHistory?: () => void;
+  onLogout?: () => void;
 }
 
 function formatPBDate(dateStr: string): string {
@@ -32,38 +34,75 @@ export default function ProgressHeader({
   dailyStreak,
   personalBest,
   onBack,
+  onHistory,
+  onLogout,
 }: ProgressHeaderProps) {
   // --- Batch list mode: daily summary ---
   if (mode === "batches") {
     return (
-      <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
-        {/* Big today counter */}
-        <div className="flex items-baseline gap-1.5 pr-20">
-          <span className="text-3xl font-black tabular-nums text-white">
+      <div className="bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50 pt-[max(env(safe-area-inset-top),12px)] pb-4">
+        {/* Top row: history + logout */}
+        {(onHistory || onLogout) && (
+          <div className="flex items-center justify-end gap-1 px-3 pb-1">
+            {onHistory && (
+              <button
+                onClick={onHistory}
+                className="p-2 rounded-lg text-zinc-600 hover:text-zinc-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Call history"
+              >
+                <History className="w-4 h-4" />
+              </button>
+            )}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="p-2 rounded-lg text-zinc-600 hover:text-zinc-400 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Big centered call count */}
+        <div className="flex flex-col items-center pb-3">
+          <span className="text-6xl font-black tabular-nums text-white leading-none">
             {todayCalls}
           </span>
-          <span className="text-sm text-zinc-500">
+          <span className="text-sm text-zinc-500 mt-1">
             call{todayCalls !== 1 ? "s" : ""} today
           </span>
         </div>
 
-        {/* Stats row: streak + PB */}
-        <div className="flex items-center gap-4 mt-1 pr-20">
-          <span
+        {/* Stats pills row */}
+        <div className="flex items-center justify-center gap-3 px-4">
+          <div
             className={cn(
-              "text-sm font-semibold tabular-nums flex items-center gap-1",
+              "flex items-center gap-1.5 bg-zinc-900 rounded-full px-3 py-1.5",
               dailyStreak >= 5 && "animate-pulse"
             )}
           >
-            <span>🔥</span>
-            <span className={dailyStreak > 0 ? "text-orange-400" : "text-zinc-600"}>
+            <span className="text-sm">🔥</span>
+            <span className={cn(
+              "text-sm font-semibold tabular-nums",
+              dailyStreak > 0 ? "text-orange-400" : "text-zinc-600"
+            )}>
               {dailyStreak > 0 ? `Day ${dailyStreak}` : "No streak"}
             </span>
-          </span>
+          </div>
 
-          <span className="text-xs text-zinc-600 tabular-nums flex-shrink-0">
-            PB: {personalBest ? `${personalBest.calls} (${formatPBDate(personalBest.date)})` : "—"}
-          </span>
+          <div className="flex items-center gap-1.5 bg-zinc-900 rounded-full px-3 py-1.5">
+            <span className="text-sm">🏆</span>
+            <span className="text-sm font-semibold tabular-nums text-zinc-400">
+              {personalBest ? `${personalBest.calls}` : "—"}
+            </span>
+            {personalBest && (
+              <span className="text-xs text-zinc-600">
+                {formatPBDate(personalBest.date)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     );

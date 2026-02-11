@@ -4,7 +4,7 @@ import { Phone, MessageSquare, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
-import DispositionBar from "./DispositionBar";
+
 
 interface LeadCardProps {
   lead: Lead;
@@ -193,14 +193,6 @@ export default function LeadCard({
                   <p className="text-sm text-zinc-400 whitespace-pre-wrap">{note}</p>
                 </div>
               )}
-
-              {/* Disposition -- always visible when expanded */}
-              <DispositionBar
-                active={disposition}
-                onSelect={(d) => {
-                  onDisposition(d === disposition ? null : d);
-                }}
-              />
 
               {/* Existing disposition label if set */}
               {disposition && !justCalled && (
