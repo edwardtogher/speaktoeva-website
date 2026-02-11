@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_BASE } from "@/config/api";
+import { API_BASE, API_KEY } from "@/config/api";
 import type {
   Disposition,
   PipelineStage,
@@ -14,6 +14,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(API_KEY ? { "x-api-key": API_KEY } : {}),
       ...init?.headers,
     },
   });

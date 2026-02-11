@@ -18,6 +18,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// API key auth — reject requests without valid x-api-key header
+const API_KEY = process.env.BLOWER_API_KEY;
+if (API_KEY) {
+  app.use("/api", (req, res, next) => {
+    if (req.headers["x-api-key"] !== API_KEY) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    next();
+  });
+}
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
