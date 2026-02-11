@@ -191,20 +191,20 @@ export default function CallingMode({
                 Callback Opening
               </span>
               <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
-                GOLD
+                THEY RANG BACK
               </span>
             </div>
             <div className="px-4 pb-4">
               <p className="text-[15px] leading-relaxed text-zinc-800">
-                "Hey, I tried giving you a call{" "}
-                <span className="text-amber-600 font-semibold">{getCallbackPhrase(attempts)}</span>{" "}
-                — you didn't pick up, which is actually the{" "}
-                <span className="text-amber-600 font-semibold">exact reason I'm calling</span>. I
-                help businesses stop missing calls when they're busy with customers..."
+                "Oh hey,{" "}
+                <span className="text-amber-600 font-semibold">cheers for ringing back</span>.
+                Sorry, I'm not actually a patient — bit of a cold call. I'm Ed, I'm based just
+                down the road in Farnham.{" "}
+                <span className="text-amber-600 font-semibold">Have you got 30 seconds?</span>"
               </p>
               <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
                 <p className="text-xs text-zinc-500 italic">
-                  Then go straight to Pitch. No need for gatekeeper — they've heard the phone ring before.
+                  If yes → go straight to Pitch below. Same script from here.
                 </p>
               </div>
             </div>
@@ -308,6 +308,16 @@ export default function CallingMode({
             </span>
           </div>
           <div className="px-4 pb-4 space-y-2">
+            {/* Objection: I just call them back */}
+            <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
+              <p className="text-sm text-red-500 font-medium mb-1">"I just call them back"</p>
+              <p className="text-zinc-700 text-[13px] leading-relaxed">
+                "Yeah, but when your{" "}
+                <span className="text-zinc-900 font-semibold">patients</span> ring and nobody picks
+                up — do they wait? Or do they just Google the next physio and book there?"
+              </p>
+            </div>
+
             {/* Objection: Not interested */}
             <div className="rounded-lg bg-gray-50 border border-gray-100 px-3 py-2.5">
               <p className="text-sm text-red-500 font-medium mb-1">"Not interested"</p>
