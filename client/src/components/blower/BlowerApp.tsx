@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, Phone } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { BLOWER_USERS } from "@/config/blower-users";
 import { getBatches, LEADS } from "@/config/blower-leads";
@@ -11,13 +11,14 @@ import CallingMode from "./CallingMode";
 import MilestoneOverlay from "./MilestoneOverlay";
 import BatchCard from "./BatchCard";
 import HistoryView from "./HistoryView";
+import PipelineView from "./PipelineView";
 
 interface BlowerAppProps {
   username: string;
   onLogout: () => void;
 }
 
-type AppView = "batches" | "dialler" | "history";
+type AppView = "batches" | "dialler" | "history" | "pipeline";
 
 export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("new");
@@ -54,6 +55,11 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     setActiveBatchId(null);
     setActiveFilter("follow_ups");
     setView("dialler");
+  };
+
+  // Enter pipeline view
+  const handleInterestedTap = () => {
+    setView("pipeline");
   };
 
   // Go back to batch list
@@ -176,6 +182,20 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     );
   }
 
+  // --- Pipeline View ---
+  if (view === "pipeline") {
+    const interestedLeads = store.getFilteredLeads("wins");
+    return (
+      <PipelineView
+        leads={interestedLeads}
+        stages={store.stages}
+        notes={store.notes}
+        onSetStage={store.setStage}
+        onBack={() => setView("batches")}
+      />
+    );
+  }
+
   // --- Batch List / Dialler with view transitions ---
   return (
     <div className="relative min-h-[100dvh] bg-[#F2F2F7]" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -203,8 +223,52 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
             {/* Home screen cards */}
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-              {/* Gold card — same shape as batch cards */}
-              <h2 className="text-2xl font-black text-amber-600 pt-2 pb-1">Gold</h2>
+              {/* Pipeline card — interested leads (hottest) */}
+              <h2 className="text-2xl font-black text-green-600 pt-2 pb-1">Interested</h2>
+              {(() => {
+                const wins = store.getFilteredLeads("wins");
+                const stageCounts = { send_demo: 0, demo_sent: 0, booked: 0, won: 0 };
+                for (const lead of wins) {
+                  const stage = store.stages[lead.id] || "send_demo";
+                  stageCounts[stage]++;
+                }
+                const parts: string[] = [];
+                if (stageCounts.send_demo > 0) parts.push(`${stageCounts.send_demo} send demo`);
+                if (stageCounts.demo_sent > 0) parts.push(`${stageCounts.demo_sent} chasing`);
+                if (stageCounts.booked > 0) parts.push(`${stageCounts.booked} booked`);
+                if (stageCounts.won > 0) parts.push(`${stageCounts.won} won`);
+
+                return (
+                  <motion.button
+                    onClick={handleInterestedTap}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full min-h-[72px] rounded-2xl bg-white border border-gray-100/50 px-5 py-4 text-left shadow-[0_2px_8px_rgba(0,0,0,0.08)] active:shadow-sm active:scale-[0.99] transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-lg flex-shrink-0">{"\ud83c\udfaf"}</span>
+                        <span className="font-bold text-[15px] text-zinc-900">Pipeline</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                        <span className="text-sm tabular-nums text-zinc-500">
+                          {wins.length} lead{wins.length !== 1 ? "s" : ""}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-zinc-400" />
+                      </div>
+                    </div>
+                    <div className="text-xs">
+                      {wins.length > 0 ? (
+                        <span className="text-zinc-500">{parts.join(" \u00b7 ")}</span>
+                      ) : (
+                        <span className="text-zinc-400">No wins yet — keep calling!</span>
+                      )}
+                    </div>
+                  </motion.button>
+                );
+              })()}
+
+              {/* Gold card — follow-ups (warm) */}
+              <h2 className="text-2xl font-black text-amber-600 pt-4 pb-1">Gold</h2>
               <motion.button
                 onClick={handleGoldTap}
                 whileTap={{ scale: 0.98 }}
@@ -212,7 +276,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               >
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-lg flex-shrink-0">🥇</span>
+                    <span className="text-lg flex-shrink-0">{"\ud83e\udd47"}</span>
                     <span className="font-bold text-[15px] text-zinc-900">Gold Leads</span>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
@@ -232,12 +296,12 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                       They didn't pick up — they need you
                     </span>
                   ) : (
-                    <span className="text-green-600 font-semibold">All clear ✓</span>
+                    <span className="text-green-600 font-semibold">All clear {"\u2713"}</span>
                   )}
                 </div>
               </motion.button>
 
-              {/* Batch cards */}
+              {/* Batch cards — cold (first contact) */}
               <h2 className="text-2xl font-black text-indigo-600 pt-4 pb-1">Batches</h2>
               {batches.map((batch) => (
                 <BatchCard
@@ -247,47 +311,6 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                   onTap={() => handleBatchTap(batch.id)}
                 />
               ))}
-
-              {/* Interested card — no progress bar, each lead is a tappable row */}
-              <h2 className="text-2xl font-black text-green-600 pt-4 pb-1">Interested</h2>
-              {(() => {
-                const wins = store.getFilteredLeads("wins");
-                return (
-                  <div className="w-full min-h-[72px] rounded-2xl bg-white border border-gray-100/50 px-5 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="text-lg flex-shrink-0">🎯</span>
-                        <span className="font-bold text-[15px] text-zinc-900">Wins</span>
-                      </div>
-                      <span className="text-sm tabular-nums text-zinc-500 flex-shrink-0">
-                        {wins.length} lead{wins.length !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    {wins.length > 0 ? (
-                      <div className="space-y-1 mt-3">
-                        {wins.map((lead) => (
-                          <a
-                            key={lead.id}
-                            href={`tel:${lead.phone}`}
-                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 -mx-1 min-h-[48px] active:bg-green-50 transition-colors"
-                          >
-                            <Phone className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <span className="text-sm font-semibold text-zinc-800 truncate block">{lead.name}</span>
-                              <span className="text-xs text-zinc-400">{lead.town}</span>
-                            </div>
-                            {store.notes[lead.id] && (
-                              <span className="text-xs text-zinc-400 truncate max-w-[120px] flex-shrink-0">{store.notes[lead.id]}</span>
-                            )}
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-xs text-zinc-400 mt-1">No wins yet — keep calling!</p>
-                    )}
-                  </div>
-                );
-              })()}
             </div>
           </motion.div>
         ) : (

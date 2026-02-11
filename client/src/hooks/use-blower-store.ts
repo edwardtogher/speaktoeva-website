@@ -8,6 +8,8 @@ export type Disposition =
   | "interested"
   | "not_interested";
 
+export type PipelineStage = "send_demo" | "demo_sent" | "booked" | "won";
+
 export interface CallLogEntry {
   leadId: string;
   disposition: Disposition;
@@ -34,6 +36,7 @@ interface BlowerState {
   texted: Record<string, boolean>;        // leadId -> whether they've been texted
   dailyStats: Record<string, DayStats>;   // date string -> stats
   tags: Record<string, string[]>;         // leadId -> array of tag strings
+  stages: Record<string, PipelineStage>;  // leadId -> pipeline stage
 }
 
 export type FilterKey =
@@ -122,6 +125,7 @@ function loadState(username: string): BlowerState {
       if (!parsed.texted) parsed.texted = {};
       if (!parsed.dailyStats) parsed.dailyStats = {};
       if (!parsed.tags) parsed.tags = {};
+      if (!parsed.stages) parsed.stages = {};
       return parsed;
     }
   } catch {
@@ -136,6 +140,7 @@ function loadState(username: string): BlowerState {
     texted: {},
     dailyStats: {},
     tags: {},
+    stages: {},
   };
 }
 
@@ -238,6 +243,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
         let newCallLog = [...prev.callLog];
         const newAttempts = { ...prev.attempts };
         const newDailyStats = { ...prev.dailyStats };
+        const newStages = { ...prev.stages };
         const now = Date.now();
         const today = getTodayDateString();
 
@@ -256,6 +262,11 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
             timestamp: now,
             round: prev.currentRound,
           });
+
+          // Auto-set pipeline stage for interested leads
+          if (disposition === "interested" && !newStages[leadId]) {
+            newStages[leadId] = "send_demo";
+          }
 
           // Track attempts for no_answer
           if (disposition === "no_answer") {
@@ -287,6 +298,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
           callLog: newCallLog,
           attempts: newAttempts,
           dailyStats: newDailyStats,
+          stages: newStages,
         };
       });
     },
@@ -318,6 +330,13 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     setState((prev) => ({
       ...prev,
       tags: { ...prev.tags, [leadId]: tags },
+    }));
+  }, []);
+
+  const setStage = useCallback((leadId: string, stage: PipelineStage) => {
+    setState((prev) => ({
+      ...prev,
+      stages: { ...prev.stages, [leadId]: stage },
     }));
   }, []);
 
@@ -438,6 +457,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     attempts: state.attempts,
     texted: state.texted,
     tags: state.tags,
+    stages: state.stages,
     dailyStats: state.dailyStats,
     stats,
     filterCounts,
@@ -448,6 +468,7 @@ export function useBlowerStore(username: string, assignedLeadIds: string[] | "al
     setNote,
     setTexted,
     setTags,
+    setStage,
     startRound2,
     getFilteredLeads,
     getBatchStats,
