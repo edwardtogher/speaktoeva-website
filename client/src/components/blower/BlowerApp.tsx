@@ -60,15 +60,15 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   // Filter batches by user's assignedBatches (if set)
   const effectiveBatches = useMemo(() => {
-    if (!user?.assignedBatches || user.assignedBatches.length === 0) {
-      return batches; // show all
+    if (!user?.assignedBatches) {
+      return batches; // no restriction — show all
     }
     return batches.filter(b => user.assignedBatches!.includes(b.id));
   }, [batches, user]);
 
   // Build a set of lead IDs belonging to the user's assigned batches (for Gold/Pipeline filtering)
   const userLeadIds = useMemo(() => {
-    if (!user?.assignedBatches || user.assignedBatches.length === 0) {
+    if (!user?.assignedBatches) {
       return null; // no filtering needed
     }
     const batchSet = new Set(user.assignedBatches);
