@@ -20,7 +20,7 @@ export const BLOWER_USERS: BlowerUser[] = [
     password: "maximilian",
     displayName: "Max",
     assignedLeadIds: "all",  // will be derived from batches
-    assignedBatches: [],     // add batch IDs here when importing leads for Max
+    assignedBatches: ["bristol-physios"],
     dailyTarget: 1,
   },
 ];
