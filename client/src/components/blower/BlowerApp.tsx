@@ -19,8 +19,25 @@ interface BlowerAppProps {
 
 type AppView = "batches" | "dialler" | "history";
 
+// Slide direction: 1 = sliding left (going to follow-ups), -1 = sliding right (going to new)
+const tabSlideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? "-100%" : "100%",
+    opacity: 0,
+  }),
+};
+
 export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("new");
+  const [tabDirection, setTabDirection] = useState(1);
   const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
   const [view, setView] = useState<AppView>("batches");
   const [interestedLead, setInterestedLead] = useState<{ name: string } | null>(null);
@@ -163,6 +180,14 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     isDiallerSwipingRef.current = false;
   }, [diallerSwipeX, handleBackToBatches]);
 
+  // Directional filter change (used by both swipe and button taps)
+  const handleFilterChange = useCallback((filter: FilterKey) => {
+    if (filter === activeFilter) return;
+    // Direction: going to follow_ups = 1 (slide left), going to new = -1 (slide right)
+    setTabDirection(filter === "follow_ups" ? 1 : -1);
+    setActiveFilter(filter);
+  }, [activeFilter]);
+
   // --- Swipe between New / Follow-ups tabs ---
   const tabTouchStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -181,13 +206,13 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     if (Math.abs(dx) > 60 && Math.abs(dx) > dy) {
       if (dx < 0 && activeFilter === "new") {
         // Swipe left -> Follow-ups
-        setActiveFilter("follow_ups");
+        handleFilterChange("follow_ups");
       } else if (dx > 0 && activeFilter === "follow_ups") {
         // Swipe right -> New
-        setActiveFilter("new");
+        handleFilterChange("new");
       }
     }
-  }, [activeFilter]);
+  }, [activeFilter, handleFilterChange]);
 
   // --- History View ---
   if (view === "history") {
@@ -202,7 +227,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   // --- Batch List / Dialler with view transitions ---
   return (
-    <div className="relative min-h-[100dvh] bg-zinc-950" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative min-h-[100dvh] bg-gray-50" style={{ fontFamily: "'Inter', sans-serif" }}>
       <AnimatePresence mode="wait">
         {view === "batches" ? (
           <motion.div
@@ -211,7 +236,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+            className="min-h-[100dvh] bg-gray-50 text-zinc-900 flex flex-col"
           >
             {/* Header — daily stats + controls */}
             <div className="sticky top-0 z-40">
@@ -244,7 +269,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col"
+            className="min-h-[100dvh] bg-gray-50 text-zinc-900 flex flex-col"
             style={{
               transform: diallerSwipeX > 0 ? `translateX(${diallerSwipeX}px)` : undefined,
               transition: isDiallerSwipingRef.current ? "none" : "transform 0.2s ease-out",
@@ -268,7 +293,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               />
               <FilterBar
                 activeFilter={activeFilter}
-                onFilterChange={setActiveFilter}
+                onFilterChange={handleFilterChange}
                 counts={batchFilterCounts}
                 batchId={activeBatchId ?? undefined}
                 exhaustedCount={batchStats?.exhausted ?? 0}
@@ -277,17 +302,30 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
             {/* Scrollable lead list with tab swipe */}
             <div
-              className="flex-1 overflow-y-auto pb-24"
+              className="flex-1 overflow-hidden relative"
               onTouchStart={handleTabSwipeStart}
               onTouchEnd={handleTabSwipeEnd}
             >
-              <LeadList
-                filter={activeFilter}
-                store={store}
-                batchId={activeBatchId ?? undefined}
-                onInterested={(leadName) => setInterestedLead({ name: leadName })}
-                onStartCall={handleStartCall}
-              />
+              <AnimatePresence initial={false} custom={tabDirection} mode="popLayout">
+                <motion.div
+                  key={activeFilter}
+                  custom={tabDirection}
+                  variants={tabSlideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ type: "spring", damping: 25, stiffness: 250, mass: 0.8 }}
+                  className="h-full overflow-y-auto pb-24"
+                >
+                  <LeadList
+                    filter={activeFilter}
+                    store={store}
+                    batchId={activeBatchId ?? undefined}
+                    onInterested={(leadName) => setInterestedLead({ name: leadName })}
+                    onStartCall={handleStartCall}
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {/* Calling Mode overlay */}

@@ -26,7 +26,7 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 flex items-center justify-center px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-[100dvh] bg-gray-50 flex items-center justify-center px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
       <motion.form
         onSubmit={handleSubmit}
         animate={shake ? { x: [0, -12, 12, -12, 12, 0] } : {}}
@@ -34,10 +34,10 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
         className="w-full max-w-sm space-y-6"
       >
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-600/20 mb-2">
-            <Phone className="w-7 h-7 text-green-500" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-100 mb-2">
+            <Phone className="w-7 h-7 text-indigo-600" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Blower</h1>
+          <h1 className="text-2xl font-bold text-zinc-900">Blower</h1>
           <p className="text-zinc-500 text-sm">Cold calling CRM</p>
         </div>
 
@@ -48,7 +48,7 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
-            className="w-full h-14 px-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-[16px] placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+            className="w-full h-14 px-4 rounded-xl bg-white border border-gray-200 text-zinc-900 text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
           />
           <input
             type="password"
@@ -56,13 +56,13 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            className="w-full h-14 px-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-[16px] placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+            className="w-full h-14 px-4 rounded-xl bg-white border border-gray-200 text-zinc-900 text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full h-14 rounded-xl bg-green-600 hover:bg-green-500 active:bg-green-700 text-white font-semibold text-[16px] transition-colors"
+          className="w-full h-14 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold text-[16px] transition-colors"
         >
           Start Calling
         </button>

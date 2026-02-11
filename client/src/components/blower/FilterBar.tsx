@@ -21,7 +21,7 @@ export default function FilterBar({
   exhaustedCount = 0,
 }: FilterBarProps) {
   return (
-    <div className="bg-zinc-950/80 backdrop-blur-sm border-b border-zinc-800/30 px-3 py-2">
+    <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-3 py-2">
       <div className="flex gap-2">
         {FILTERS.map(({ key, label }) => (
           <button
@@ -30,8 +30,8 @@ export default function FilterBar({
             className={cn(
               "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px]",
               activeFilter === key
-                ? "bg-zinc-100 text-zinc-900"
-                : "bg-zinc-800/50 text-zinc-400 active:bg-zinc-800"
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-100 text-zinc-500 active:bg-gray-200"
             )}
           >
             {label}
@@ -39,8 +39,8 @@ export default function FilterBar({
               className={cn(
                 "text-xs tabular-nums px-1.5 py-0.5 rounded-full min-w-[20px] text-center",
                 activeFilter === key
-                  ? "bg-zinc-900/15 text-zinc-700"
-                  : "bg-zinc-700/50 text-zinc-500"
+                  ? "bg-white/20 text-white"
+                  : "bg-gray-200 text-zinc-400"
               )}
             >
               {counts[key]}
@@ -51,7 +51,7 @@ export default function FilterBar({
 
       {/* Exhausted note */}
       {exhaustedCount > 0 && (
-        <p className="text-[11px] text-zinc-600 text-center mt-1.5 tabular-nums">
+        <p className="text-[11px] text-zinc-400 text-center mt-1.5 tabular-nums">
           {exhaustedCount} exhausted (5+ attempts)
         </p>
       )}

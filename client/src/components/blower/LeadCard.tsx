@@ -78,10 +78,10 @@ export default function LeadCard({
       className={cn(
         "rounded-xl border transition-all",
         expanded
-          ? "bg-zinc-900 border-zinc-700"
+          ? "bg-white border-gray-300"
           : disposition
-            ? "bg-zinc-900/30 border-zinc-800/30"
-            : "bg-zinc-900/60 border-zinc-800/50"
+            ? "bg-white/60 border-gray-200/60"
+            : "bg-white border-gray-200"
       )}
     >
       {/* Collapsed: name + town + type + badges -- tap to expand */}
@@ -89,7 +89,7 @@ export default function LeadCard({
         onClick={onToggle}
         className={cn(
           "w-full flex items-center gap-3 px-4 text-left",
-          expanded ? "py-3" : "py-3.5 min-h-[52px] active:bg-zinc-800/60"
+          expanded ? "py-3" : "py-3.5 min-h-[52px] active:bg-gray-50"
         )}
       >
         {/* Disposition indicator */}
@@ -104,16 +104,16 @@ export default function LeadCard({
           <div className="flex items-center gap-2">
             <span className={cn(
               "font-semibold truncate text-[15px]",
-              disposition ? "text-zinc-500" : "text-white"
+              disposition ? "text-zinc-400" : "text-zinc-900"
             )}>
               {lead.name}
             </span>
-            <span className="text-[11px] text-zinc-600 flex-shrink-0">
+            <span className="text-[11px] text-zinc-400 flex-shrink-0">
               {lead.town}
             </span>
           </div>
           {!expanded && note && (
-            <p className="text-xs text-zinc-500 truncate mt-0.5">
+            <p className="text-xs text-zinc-400 truncate mt-0.5">
               {note.length > 40 ? note.slice(0, 40) + "..." : note}
             </p>
           )}
@@ -123,19 +123,19 @@ export default function LeadCard({
         <div className="flex items-center gap-1.5 flex-shrink-0">
           {/* Attempt badge */}
           {attempts > 0 && (
-            <span className="text-[10px] text-zinc-600 font-medium tabular-nums bg-zinc-800/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-zinc-400 font-medium tabular-nums bg-gray-100 px-1.5 py-0.5 rounded">
               x{attempts}
             </span>
           )}
           {/* Texted badge */}
           {texted && (
-            <span className="text-[10px] text-green-600 font-medium flex items-center gap-0.5 bg-green-950/30 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-green-600 font-medium flex items-center gap-0.5 bg-green-50 px-1.5 py-0.5 rounded">
               <Check className="w-2.5 h-2.5" />
               Texted
             </span>
           )}
           {/* Type label */}
-          <span className="text-[10px] text-zinc-600 font-medium uppercase">
+          <span className="text-[10px] text-zinc-400 font-medium uppercase">
             {TYPE_LABEL[lead.type]}
           </span>
         </div>
@@ -169,7 +169,7 @@ export default function LeadCard({
                   <a
                     href={getSmsUrl(lead.phone, DEFAULT_SMS)}
                     onClick={() => onSetTexted()}
-                    className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 font-medium text-sm transition-colors active:bg-zinc-700"
+                    className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-gray-100 border border-gray-200 text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
                   >
                     <MessageSquare className="w-4 h-4" />
                     Text
@@ -179,9 +179,9 @@ export default function LeadCard({
 
               {/* Text reminder for 3+ attempts without texting */}
               {showTextReminder && (
-                <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-amber-950/30 border border-amber-800/30">
+                <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-amber-50 border border-amber-200">
                   <span className="text-sm">📱</span>
-                  <span className="text-xs text-amber-400/80">
+                  <span className="text-xs text-amber-600">
                     Called {attempts} times with no answer — try texting?
                   </span>
                 </div>
@@ -189,14 +189,14 @@ export default function LeadCard({
 
               {/* Note display */}
               {note && (
-                <div className="rounded-lg bg-zinc-800/50 px-3 py-2">
-                  <p className="text-sm text-zinc-400 whitespace-pre-wrap">{note}</p>
+                <div className="rounded-lg bg-gray-50 px-3 py-2">
+                  <p className="text-sm text-zinc-500 whitespace-pre-wrap">{note}</p>
                 </div>
               )}
 
               {/* Existing disposition label if set */}
               {disposition && !justCalled && (
-                <p className="text-[11px] text-zinc-600 text-center">
+                <p className="text-[11px] text-zinc-400 text-center">
                   Tap disposition again to clear
                 </p>
               )}

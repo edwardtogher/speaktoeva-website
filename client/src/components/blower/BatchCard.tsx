@@ -39,8 +39,8 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
       className={cn(
         "w-full min-h-[72px] rounded-xl border px-4 py-3.5 text-left transition-colors",
         isComplete
-          ? "bg-zinc-900/40 border-green-800/30"
-          : "bg-zinc-900 border-zinc-800 active:bg-zinc-800/80"
+          ? "bg-white border-indigo-200/50"
+          : "bg-white border-gray-200 active:bg-gray-50"
       )}
     >
       {/* Top row: emoji + label + progress fraction + chevron */}
@@ -50,17 +50,17 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
           <span
             className={cn(
               "font-bold text-[15px] truncate",
-              isComplete ? "text-zinc-500" : "text-white"
+              isComplete ? "text-zinc-400" : "text-zinc-900"
             )}
           >
             {batch.label}
           </span>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <span className="text-sm tabular-nums text-zinc-400">
+          <span className="text-sm tabular-nums text-zinc-500">
             {stats.called}/{stats.total}
           </span>
-          <ChevronRight className="w-4 h-4 text-zinc-600" />
+          <ChevronRight className="w-4 h-4 text-zinc-400" />
         </div>
       </div>
 
@@ -68,41 +68,41 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
       <Progress
         value={pct}
         className={cn(
-          "h-1.5 bg-zinc-800 mb-2.5",
+          "h-1.5 bg-gray-200 mb-2.5",
           isComplete
-            ? "[&>div]:bg-green-500"
-            : "[&>div]:bg-green-500"
+            ? "[&>div]:bg-indigo-500"
+            : "[&>div]:bg-indigo-500"
         )}
       />
 
       {/* Stats row */}
       <div className="flex items-center gap-3 text-xs">
         {isComplete ? (
-          <span className="text-green-400 font-semibold">Complete ✓</span>
+          <span className="text-indigo-600 font-semibold">Complete ✓</span>
         ) : (
           <>
             {stats.interested > 0 && (
-              <span className="text-orange-400 font-medium tabular-nums">
+              <span className="text-orange-500 font-medium tabular-nums">
                 {stats.interested} 🔥
               </span>
             )}
             {stats.followUps > 0 && (
-              <span className="text-amber-400/80 font-medium tabular-nums">
+              <span className="text-amber-500 font-medium tabular-nums">
                 {stats.followUps} follow-up{stats.followUps !== 1 ? "s" : ""}
               </span>
             )}
             {stats.exhausted > 0 && (
-              <span className="text-zinc-600 font-medium tabular-nums">
+              <span className="text-zinc-400 font-medium tabular-nums">
                 {stats.exhausted} exhausted
               </span>
             )}
             {stats.called > 0 && (
-              <span className="text-zinc-500 tabular-nums">
+              <span className="text-zinc-400 tabular-nums">
                 {stats.called} called
               </span>
             )}
             {stats.interested === 0 && stats.followUps === 0 && stats.called === 0 && (
-              <span className="text-zinc-600">Not started</span>
+              <span className="text-zinc-400">Not started</span>
             )}
           </>
         )}
