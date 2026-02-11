@@ -42,6 +42,23 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   const batches = useMemo(() => getBatches(), []);
 
+  // Filter batches by user's assignedBatches (if set)
+  const effectiveBatches = useMemo(() => {
+    if (!user?.assignedBatches || user.assignedBatches.length === 0) {
+      return batches; // show all
+    }
+    return batches.filter(b => user.assignedBatches!.includes(b.id));
+  }, [batches, user]);
+
+  // Build a set of lead IDs belonging to the user's assigned batches (for Gold/Pipeline filtering)
+  const userLeadIds = useMemo(() => {
+    if (!user?.assignedBatches || user.assignedBatches.length === 0) {
+      return null; // no filtering needed
+    }
+    const batchSet = new Set(user.assignedBatches);
+    return new Set(LEADS.filter(l => batchSet.has(l.batch)).map(l => l.id));
+  }, [user]);
+
   const todayStats = store.getTodayStats();
   const dailyStreak = store.getDailyStreak();
   const personalBest = store.getPersonalBest();
@@ -161,10 +178,19 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     isDiallerSwipingRef.current = false;
   }, [diallerSwipeX, handleBackToHome]);
 
-  // Gold leads for the Gold tab and count badge
-  const goldLeads = store.getFilteredLeads("follow_ups");
-  // Pipeline leads for the Pipeline tab and count badge
-  const pipelineLeads = store.getFilteredLeads("wins");
+  // Gold leads for the Gold tab and count badge (filtered by user's assigned batches)
+  const goldLeads = useMemo(() => {
+    const all = store.getFilteredLeads("follow_ups");
+    if (!userLeadIds) return all;
+    return all.filter(l => userLeadIds.has(l.id));
+  }, [store, userLeadIds]);
+
+  // Pipeline leads for the Pipeline tab and count badge (filtered by user's assigned batches)
+  const pipelineLeads = useMemo(() => {
+    const all = store.getFilteredLeads("wins");
+    if (!userLeadIds) return all;
+    return all.filter(l => userLeadIds.has(l.id));
+  }, [store, userLeadIds]);
 
   // --- History View ---
   if (view === "history") {
@@ -204,8 +230,8 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               <HomeTabBar
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                goldCount={store.filterCounts.follow_ups}
-                pipelineCount={store.filterCounts.wins}
+                goldCount={goldLeads.length}
+                pipelineCount={pipelineLeads.length}
               />
             </div>
 
@@ -221,7 +247,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                     transition={{ duration: 0.15 }}
                     className="px-4 py-3 space-y-3"
                   >
-                    {batches.map((batch) => (
+                    {effectiveBatches.map((batch) => (
                       <BatchCard
                         key={batch.id}
                         batch={batch}
