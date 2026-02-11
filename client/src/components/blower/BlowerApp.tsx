@@ -1,5 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronRight, Phone } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { BLOWER_USERS } from "@/config/blower-users";
 import { getBatches, LEADS } from "@/config/blower-leads";
 import { useBlowerStore, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
@@ -199,32 +201,44 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               />
             </div>
 
-            {/* Batch cards + interested leads */}
+            {/* Home screen cards */}
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-              {/* Gold card — callback leads */}
-              {store.filterCounts.follow_ups > 0 && (
-                <button
-                  onClick={handleGoldTap}
-                  className="w-full rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 px-5 py-4 text-left shadow-[0_2px_12px_rgba(245,158,11,0.3)] active:scale-[0.98] transition-all"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-black text-white">
-                        Gold
-                        <span className="ml-2 text-base font-bold text-white/80">
-                          {store.filterCounts.follow_ups}
-                        </span>
-                      </h3>
-                      <p className="text-xs text-white/80 mt-0.5">
-                        They didn't pick up — that's the exact problem you solve.
-                      </p>
-                    </div>
-                    <span className="text-2xl">&#x1F947;</span>
+              {/* Gold card — same shape as batch cards */}
+              <h2 className="text-2xl font-black text-amber-600 pt-2 pb-1">Gold</h2>
+              <motion.button
+                onClick={handleGoldTap}
+                whileTap={{ scale: 0.98 }}
+                className="w-full min-h-[72px] rounded-2xl bg-white border border-gray-100/50 px-5 py-4 text-left shadow-[0_2px_8px_rgba(0,0,0,0.08)] active:shadow-sm active:scale-[0.99] transition-all"
+              >
+                <div className="flex items-center justify-between mb-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="text-lg flex-shrink-0">🥇</span>
+                    <span className="font-bold text-[15px] text-zinc-900">Gold Leads</span>
                   </div>
-                </button>
-              )}
+                  <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                    <span className="text-sm tabular-nums text-zinc-500">
+                      {store.filterCounts.follow_ups} lead{store.filterCounts.follow_ups !== 1 ? "s" : ""}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-zinc-400" />
+                  </div>
+                </div>
+                <Progress
+                  value={store.filterCounts.follow_ups > 0 ? 100 : 0}
+                  className="h-1.5 bg-gray-100 mb-2.5 [&>div]:bg-amber-500"
+                />
+                <div className="flex items-center gap-3 text-xs">
+                  {store.filterCounts.follow_ups > 0 ? (
+                    <span className="text-amber-600 font-medium">
+                      They didn't pick up — they need you
+                    </span>
+                  ) : (
+                    <span className="text-zinc-400">Start calling to fill this</span>
+                  )}
+                </div>
+              </motion.button>
 
-              <h2 className="text-2xl font-black text-indigo-600 pt-2 pb-1">Batches</h2>
+              {/* Batch cards */}
+              <h2 className="text-2xl font-black text-indigo-600 pt-4 pb-1">Batches</h2>
               {batches.map((batch) => (
                 <BatchCard
                   key={batch.id}
@@ -234,48 +248,52 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                 />
               ))}
 
-              {/* Interested leads section */}
+              {/* Interested card — same shape as batch cards */}
+              <h2 className="text-2xl font-black text-green-600 pt-4 pb-1">Interested</h2>
               {(() => {
-                const interestedLeadIds = store.getFilteredLeads("wins");
-                if (interestedLeadIds.length === 0) return null;
+                const wins = store.getFilteredLeads("wins");
                 return (
-                  <>
-                    <h2 className="text-2xl font-black text-indigo-600 pt-4 pb-1">Interested</h2>
-                    {interestedLeadIds.map((lead) => (
-                      <div
-                        key={lead.id}
-                        className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-4 py-3.5"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="min-w-0 flex-1">
-                            <p className="font-bold text-[15px] text-zinc-900 truncate">
-                              {lead.name}
-                            </p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-sm text-zinc-500">{lead.town}</span>
-                              <span className="text-xs font-medium text-indigo-600 bg-indigo-50 rounded-full px-2 py-0.5">
-                                {lead.type}
-                              </span>
-                            </div>
-                            {store.notes[lead.id] && (
-                              <p className="text-sm text-zinc-400 mt-1 truncate">
-                                {store.notes[lead.id]}
-                              </p>
-                            )}
-                          </div>
-                          <a
-                            href={`tel:${lead.phone}`}
-                            className="ml-3 flex-shrink-0 p-2 text-indigo-500 hover:text-indigo-700 transition-colors"
-                            aria-label={`Call ${lead.name}`}
-                          >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                          </a>
-                        </div>
+                  <div className="w-full min-h-[72px] rounded-2xl bg-white border border-gray-100/50 px-5 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-lg flex-shrink-0">🎯</span>
+                        <span className="font-bold text-[15px] text-zinc-900">Wins</span>
                       </div>
-                    ))}
-                  </>
+                      <span className="text-sm tabular-nums text-zinc-500 flex-shrink-0">
+                        {wins.length} lead{wins.length !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+                    <Progress
+                      value={wins.length > 0 ? 100 : 0}
+                      className="h-1.5 bg-gray-100 mb-2.5 [&>div]:bg-green-500"
+                    />
+                    {wins.length > 0 ? (
+                      <div className="space-y-2">
+                        {wins.map((lead) => (
+                          <div key={lead.id} className="flex items-center justify-between">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-zinc-800 truncate">{lead.name}</span>
+                                <span className="text-xs text-zinc-400">{lead.town}</span>
+                              </div>
+                              {store.notes[lead.id] && (
+                                <p className="text-xs text-zinc-400 truncate mt-0.5">{store.notes[lead.id]}</p>
+                              )}
+                            </div>
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className="ml-3 flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center text-green-500 hover:text-green-700 transition-colors"
+                              aria-label={`Call ${lead.name}`}
+                            >
+                              <Phone className="w-4 h-4" />
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-zinc-400">No wins yet — keep calling!</p>
+                    )}
+                  </div>
                 );
               })()}
             </div>
