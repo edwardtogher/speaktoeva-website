@@ -232,7 +232,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                       They didn't pick up — they need you
                     </span>
                   ) : (
-                    <span className="text-zinc-400">Start calling to fill this</span>
+                    <span className="text-green-600 font-semibold">All clear ✓</span>
                   )}
                 </div>
               </motion.button>
@@ -248,13 +248,13 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                 />
               ))}
 
-              {/* Interested card — same shape as batch cards */}
+              {/* Interested card — no progress bar, each lead is a tappable row */}
               <h2 className="text-2xl font-black text-green-600 pt-4 pb-1">Interested</h2>
               {(() => {
                 const wins = store.getFilteredLeads("wins");
                 return (
                   <div className="w-full min-h-[72px] rounded-2xl bg-white border border-gray-100/50 px-5 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                    <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span className="text-lg flex-shrink-0">🎯</span>
                         <span className="font-bold text-[15px] text-zinc-900">Wins</span>
@@ -263,35 +263,27 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                         {wins.length} lead{wins.length !== 1 ? "s" : ""}
                       </span>
                     </div>
-                    <Progress
-                      value={wins.length > 0 ? 100 : 0}
-                      className="h-1.5 bg-gray-100 mb-2.5 [&>div]:bg-green-500"
-                    />
                     {wins.length > 0 ? (
-                      <div className="space-y-2">
+                      <div className="space-y-1 mt-3">
                         {wins.map((lead) => (
-                          <div key={lead.id} className="flex items-center justify-between">
+                          <a
+                            key={lead.id}
+                            href={`tel:${lead.phone}`}
+                            className="flex items-center gap-3 rounded-xl px-3 py-2.5 -mx-1 min-h-[48px] active:bg-green-50 transition-colors"
+                          >
+                            <Phone className="w-4 h-4 text-green-500 flex-shrink-0" />
                             <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold text-zinc-800 truncate">{lead.name}</span>
-                                <span className="text-xs text-zinc-400">{lead.town}</span>
-                              </div>
-                              {store.notes[lead.id] && (
-                                <p className="text-xs text-zinc-400 truncate mt-0.5">{store.notes[lead.id]}</p>
-                              )}
+                              <span className="text-sm font-semibold text-zinc-800 truncate block">{lead.name}</span>
+                              <span className="text-xs text-zinc-400">{lead.town}</span>
                             </div>
-                            <a
-                              href={`tel:${lead.phone}`}
-                              className="ml-3 flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center text-green-500 hover:text-green-700 transition-colors"
-                              aria-label={`Call ${lead.name}`}
-                            >
-                              <Phone className="w-4 h-4" />
-                            </a>
-                          </div>
+                            {store.notes[lead.id] && (
+                              <span className="text-xs text-zinc-400 truncate max-w-[120px] flex-shrink-0">{store.notes[lead.id]}</span>
+                            )}
+                          </a>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-zinc-400">No wins yet — keep calling!</p>
+                      <p className="text-xs text-zinc-400 mt-1">No wins yet — keep calling!</p>
                     )}
                   </div>
                 );
