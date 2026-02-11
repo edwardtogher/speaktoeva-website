@@ -111,6 +111,7 @@ export default function ProgressHeader({
   }
 
   // --- Dialler mode: batch progress ---
+  const isGold = batchLabel === "Gold";
   const pct = batchTotal > 0 ? (batchCalled / batchTotal) * 100 : 0;
 
   return (
@@ -127,17 +128,29 @@ export default function ProgressHeader({
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
-          <span className="font-bold text-zinc-900 truncate text-[15px]">
-            {batchLabel || "Batch"}
+          <span className={cn(
+            "font-bold truncate text-[15px]",
+            isGold ? "text-amber-600 font-black" : "text-zinc-900"
+          )}>
+            {isGold ? "Gold" : (batchLabel || "Batch")}
           </span>
+          {isGold && (
+            <span className="text-base">&#x1F947;</span>
+          )}
         </div>
 
-        {/* Batch progress + streak */}
+        {/* Batch progress / Gold count + streak */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="text-sm tabular-nums">
-            <span className="text-zinc-900 font-bold">{batchCalled}</span>
-            <span className="text-zinc-400">/{batchTotal}</span>
-          </span>
+          {isGold ? (
+            <span className="text-sm font-bold tabular-nums text-amber-600">
+              {batchTotal} lead{batchTotal !== 1 ? "s" : ""}
+            </span>
+          ) : (
+            <span className="text-sm tabular-nums">
+              <span className="text-zinc-900 font-bold">{batchCalled}</span>
+              <span className="text-zinc-400">/{batchTotal}</span>
+            </span>
+          )}
           {dailyStreak > 0 && (
             <span
               className={cn(
@@ -154,8 +167,11 @@ export default function ProgressHeader({
 
       {/* Progress bar */}
       <Progress
-        value={pct}
-        className="h-2 bg-gray-200 [&>div]:bg-indigo-500"
+        value={isGold ? 100 : pct}
+        className={cn(
+          "h-2 bg-gray-200",
+          isGold ? "[&>div]:bg-amber-500" : "[&>div]:bg-indigo-500"
+        )}
       />
     </div>
   );

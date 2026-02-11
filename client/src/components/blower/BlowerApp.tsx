@@ -1,11 +1,9 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut, History } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
 import { getBatches, LEADS } from "@/config/blower-leads";
 import { useBlowerStore, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
 import ProgressHeader from "./ProgressHeader";
-import FilterBar from "./FilterBar";
 import LeadList from "./LeadList";
 import CallingMode from "./CallingMode";
 import MilestoneOverlay from "./MilestoneOverlay";
@@ -19,25 +17,8 @@ interface BlowerAppProps {
 
 type AppView = "batches" | "dialler" | "history";
 
-// Slide direction: 1 = sliding left (going to follow-ups), -1 = sliding right (going to new)
-const tabSlideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction > 0 ? "-100%" : "100%",
-    opacity: 0,
-  }),
-};
-
 export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("new");
-  const [tabDirection, setTabDirection] = useState(1);
   const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
   const [view, setView] = useState<AppView>("batches");
   const [interestedLead, setInterestedLead] = useState<{ name: string } | null>(null);
@@ -66,11 +47,22 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     setView("dialler");
   };
 
+  // Enter Gold mode (all follow-up leads across batches)
+  const handleGoldTap = () => {
+    setActiveBatchId(null);
+    setActiveFilter("follow_ups");
+    setView("dialler");
+  };
+
   // Go back to batch list
   const handleBackToBatches = () => {
     setActiveBatchId(null);
+    setActiveFilter("new");
     setView("batches");
   };
+
+  // Gold mode: viewing all follow-up leads across all batches
+  const isGoldMode = view === "dialler" && activeBatchId === null && activeFilter === "follow_ups";
 
   // Start calling mode when user taps Call on a lead
   const handleStartCall = useCallback((leadId: string) => {
@@ -124,16 +116,6 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const activeBatch = batches.find((b) => b.id === activeBatchId);
   const batchStats = activeBatchId ? store.getBatchStats(activeBatchId) : null;
 
-  // Batch-scoped filter counts (not global 101)
-  const batchFilterCounts = useMemo(() => {
-    if (!activeBatchId) return store.filterCounts;
-    return {
-      new: store.getFilteredLeads("new", activeBatchId).length,
-      follow_ups: store.getFilteredLeads("follow_ups", activeBatchId).length,
-      wins: store.getFilteredLeads("wins", activeBatchId).length,
-    };
-  }, [activeBatchId, store]);
-
   // Find the lead for CallingMode
   const callingLead = callingLeadId
     ? LEADS.find((l) => l.id === callingLeadId) ?? null
@@ -180,40 +162,6 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     isDiallerSwipingRef.current = false;
   }, [diallerSwipeX, handleBackToBatches]);
 
-  // Directional filter change (used by both swipe and button taps)
-  const handleFilterChange = useCallback((filter: FilterKey) => {
-    if (filter === activeFilter) return;
-    // Direction: going to follow_ups = 1 (slide left), going to new = -1 (slide right)
-    setTabDirection(filter === "follow_ups" ? 1 : -1);
-    setActiveFilter(filter);
-  }, [activeFilter]);
-
-  // --- Swipe between New / Follow-ups tabs ---
-  const tabTouchStartRef = useRef<{ x: number; y: number } | null>(null);
-
-  const handleTabSwipeStart = useCallback((e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    tabTouchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  }, []);
-
-  const handleTabSwipeEnd = useCallback((e: React.TouchEvent) => {
-    if (!tabTouchStartRef.current) return;
-    const touch = e.changedTouches[0];
-    const dx = touch.clientX - tabTouchStartRef.current.x;
-    const dy = Math.abs(touch.clientY - tabTouchStartRef.current.y);
-    tabTouchStartRef.current = null;
-    // Require >60px horizontal, more horizontal than vertical
-    if (Math.abs(dx) > 60 && Math.abs(dx) > dy) {
-      if (dx < 0 && activeFilter === "new") {
-        // Swipe left -> Follow-ups
-        handleFilterChange("follow_ups");
-      } else if (dx > 0 && activeFilter === "follow_ups") {
-        // Swipe right -> New
-        handleFilterChange("new");
-      }
-    }
-  }, [activeFilter, handleFilterChange]);
-
   // --- History View ---
   if (view === "history") {
     return (
@@ -253,6 +201,29 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
             {/* Batch cards + interested leads */}
             <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+              {/* Gold card — callback leads */}
+              {store.filterCounts.follow_ups > 0 && (
+                <button
+                  onClick={handleGoldTap}
+                  className="w-full rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 px-5 py-4 text-left shadow-[0_2px_12px_rgba(245,158,11,0.3)] active:scale-[0.98] transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-black text-white">
+                        Gold
+                        <span className="ml-2 text-base font-bold text-white/80">
+                          {store.filterCounts.follow_ups}
+                        </span>
+                      </h3>
+                      <p className="text-xs text-white/80 mt-0.5">
+                        They didn't pick up — that's the exact problem you solve.
+                      </p>
+                    </div>
+                    <span className="text-2xl">&#x1F947;</span>
+                  </div>
+                </button>
+              )}
+
               <h2 className="text-2xl font-black text-indigo-600 pt-2 pb-1">Batches</h2>
               {batches.map((batch) => (
                 <BatchCard
@@ -330,49 +301,25 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             <div className="sticky top-0 z-40">
               <ProgressHeader
                 mode="dialler"
-                batchLabel={activeBatch?.label}
-                batchCalled={batchStats?.called ?? 0}
-                batchTotal={batchStats?.total ?? 0}
+                batchLabel={isGoldMode ? "Gold" : activeBatch?.label}
+                batchCalled={isGoldMode ? store.filterCounts.follow_ups : (batchStats?.called ?? 0)}
+                batchTotal={isGoldMode ? store.filterCounts.follow_ups : (batchStats?.total ?? 0)}
                 todayCalls={todayStats.calls}
                 dailyStreak={dailyStreak}
                 personalBest={personalBest}
                 onBack={handleBackToBatches}
               />
-              <FilterBar
-                activeFilter={activeFilter}
-                onFilterChange={handleFilterChange}
-                counts={batchFilterCounts}
-                batchId={activeBatchId ?? undefined}
-                exhaustedCount={batchStats?.exhausted ?? 0}
-              />
             </div>
 
-            {/* Scrollable lead list with tab swipe */}
-            <div
-              className="flex-1 overflow-hidden relative"
-              onTouchStart={handleTabSwipeStart}
-              onTouchEnd={handleTabSwipeEnd}
-            >
-              <AnimatePresence initial={false} custom={tabDirection} mode="popLayout">
-                <motion.div
-                  key={activeFilter}
-                  custom={tabDirection}
-                  variants={tabSlideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ type: "spring", damping: 25, stiffness: 250, mass: 0.8 }}
-                  className="h-full overflow-y-auto pb-24"
-                >
-                  <LeadList
-                    filter={activeFilter}
-                    store={store}
-                    batchId={activeBatchId ?? undefined}
-                    onInterested={(leadName) => setInterestedLead({ name: leadName })}
-                    onStartCall={handleStartCall}
-                  />
-                </motion.div>
-              </AnimatePresence>
+            {/* Scrollable lead list */}
+            <div className="flex-1 overflow-y-auto pb-24">
+              <LeadList
+                filter={isGoldMode ? "follow_ups" : "new"}
+                store={store}
+                batchId={activeBatchId ?? undefined}
+                onInterested={(leadName) => setInterestedLead({ name: leadName })}
+                onStartCall={handleStartCall}
+              />
             </div>
 
             {/* Calling Mode overlay */}
@@ -382,6 +329,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                   key={callingLeadId}
                   lead={callingLead}
                   batchId={activeBatchId ?? undefined}
+                  attempts={store.attempts[callingLeadId] || 0}
                   existingNote={store.notes[callingLeadId] || ""}
                   existingTags={store.tags[callingLeadId] || []}
                   onComplete={handleCallingComplete}

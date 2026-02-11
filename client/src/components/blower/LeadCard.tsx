@@ -39,8 +39,17 @@ const DISPOSITION_DOT: Record<Disposition, string> = {
   not_interested: "bg-red-400",
 };
 
-const DEFAULT_SMS =
-  "Hi, I just tried calling - I work with physio clinics on their phone answering. Would love 2 mins of your time. Edward, Speak to Eva";
+const SMS_TEMPLATES = [
+  "Hi, tried calling a couple of times \u2014 I help businesses like yours stop missing calls when you're busy. Worth a quick chat? Ed, Speak to Eva",
+  "Hi, it's Ed again. We help busy businesses never miss a call \u2014 even when you're flat out. 5 mins this week? Just text back a time.",
+  "Last message from me \u2014 should I stop reaching out about your phone answering? Totally understand if not a priority right now. Ed",
+];
+
+function getSmsTemplate(attempts: number): string {
+  if (attempts >= 6) return SMS_TEMPLATES[2];
+  if (attempts >= 4) return SMS_TEMPLATES[1];
+  return SMS_TEMPLATES[0];
+}
 
 function getSmsUrl(phone: string, body: string): string {
   const encoded = encodeURIComponent(body);
@@ -62,7 +71,7 @@ export default function LeadCard({
 }: LeadCardProps) {
   const [justCalled, setJustCalled] = useState(false);
 
-  const showTextButton = disposition === "no_answer";
+  const showTextButton = disposition === "no_answer" && attempts >= 2;
   const showTextReminder = attempts >= 3 && !texted && disposition === "no_answer";
 
   const handleCall = () => {
@@ -167,7 +176,7 @@ export default function LeadCard({
                 </a>
                 {showTextButton && (
                   <a
-                    href={getSmsUrl(lead.phone, DEFAULT_SMS)}
+                    href={getSmsUrl(lead.phone, getSmsTemplate(attempts))}
                     onClick={() => onSetTexted()}
                     className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-[#F2F2F7] border-none text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
                   >

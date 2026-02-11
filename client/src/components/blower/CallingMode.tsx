@@ -10,6 +10,7 @@ import type { Disposition } from "@/hooks/use-blower-store";
 interface CallingModeProps {
   lead: Lead;
   batchId?: string;
+  attempts: number;
   existingNote: string;
   existingTags: string[];
   onComplete: (disposition: Disposition, note: string, tags: string[]) => void;
@@ -76,11 +77,16 @@ function getOpening(batchId?: string): { location: string; caseStudy: string } {
   }
 }
 
+function getCallbackPhrase(attempts: number): string {
+  return attempts <= 2 ? "the other day" : "a couple of times";
+}
+
 // --- Component ---
 
 export default function CallingMode({
   lead,
   batchId,
+  attempts,
   existingNote,
   existingTags,
   onComplete,
@@ -90,6 +96,7 @@ export default function CallingMode({
   const noteRef = useRef(note);
 
   const { location, caseStudy } = getOpening(batchId);
+  const isCallback = attempts > 0;
 
   const showSignal = lead.signal !== "local";
 
@@ -153,6 +160,11 @@ export default function CallingMode({
               {SIGNAL_LABEL[lead.signal] || lead.signal}
             </span>
           )}
+          {isCallback && (
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full border bg-amber-100 text-amber-700 border-amber-200">
+              Gold x{attempts}
+            </span>
+          )}
         </div>
       </div>
 
@@ -170,56 +182,86 @@ export default function CallingMode({
 
       {/* ===== SCROLLABLE SCRIPT (PLAIN TEXT CARDS) ===== */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[140px] space-y-3">
-        {/* 1. Opening */}
-        <div className="rounded-2xl bg-blue-50 border border-blue-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-          <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-blue-700 tabular-nums">1</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
-              Opening
-            </span>
-          </div>
-          <div className="px-4 pb-4">
-            <p className="text-[15px] leading-relaxed text-zinc-800">
-              "Hey, how are you? So my name's Edward — I'll be honest, this is a cold call. Can I
-              get <span className="text-blue-600 font-semibold">30 seconds</span>?"
-            </p>
-            <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-              <p className="text-xs text-zinc-500 italic">
-                If yes - go to Pitch. If "what's this about?" - go to Gatekeeper.
+        {/* 1. Opening — different script for callback (Gold) leads */}
+        {isCallback ? (
+          <div className="rounded-2xl bg-amber-50 border border-amber-300/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <div className="px-4 py-3 flex items-center gap-2">
+              <span className="text-[13px] font-bold text-amber-700 tabular-nums">1</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
+                Callback Opening
+              </span>
+              <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
+                GOLD
+              </span>
+            </div>
+            <div className="px-4 pb-4">
+              <p className="text-[15px] leading-relaxed text-zinc-800">
+                "Hey, I tried giving you a call{" "}
+                <span className="text-amber-600 font-semibold">{getCallbackPhrase(attempts)}</span>{" "}
+                — you didn't pick up, which is actually the{" "}
+                <span className="text-amber-600 font-semibold">exact reason I'm calling</span>. I
+                help businesses stop missing calls when they're busy with customers..."
               </p>
+              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">
+                  Then go straight to Pitch. No need for gatekeeper — they've heard the phone ring before.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="rounded-2xl bg-blue-50 border border-blue-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <div className="px-4 py-3 flex items-center gap-2">
+              <span className="text-[13px] font-bold text-blue-700 tabular-nums">1</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
+                Opening
+              </span>
+            </div>
+            <div className="px-4 pb-4">
+              <p className="text-[15px] leading-relaxed text-zinc-800">
+                "Hey, how are you? So my name's Edward — I'll be honest, this is a cold call. Can I
+                get <span className="text-blue-600 font-semibold">30 seconds</span>?"
+              </p>
+              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">
+                  If yes - go to Pitch. If "what's this about?" - go to Gatekeeper.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
-        {/* 2. Gatekeeper */}
-        <div className="rounded-2xl bg-amber-50 border border-amber-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-          <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-amber-700 tabular-nums">2</span>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-              Gatekeeper
-            </span>
-            <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
-              IF NEEDED
-            </span>
-          </div>
-          <div className="px-4 pb-4">
-            <p className="text-[15px] leading-relaxed text-zinc-800">
-              "I'm just a local business, was hoping to have a quick word with the owner about
-              their phones.{" "}
-              <span className="text-amber-600 font-semibold">Are you the owner?</span>"
-            </p>
-            <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-              <p className="text-xs text-zinc-500 italic">
-                If not the owner: "No worries — who's best to speak to?" Get a name, move on.
+        {/* 2. Gatekeeper — skip for callback leads */}
+        {!isCallback && (
+          <div className="rounded-2xl bg-amber-50 border border-amber-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <div className="px-4 py-3 flex items-center gap-2">
+              <span className="text-[13px] font-bold text-amber-700 tabular-nums">2</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
+                Gatekeeper
+              </span>
+              <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
+                IF NEEDED
+              </span>
+            </div>
+            <div className="px-4 pb-4">
+              <p className="text-[15px] leading-relaxed text-zinc-800">
+                "I'm just a local business, was hoping to have a quick word with the owner about
+                their phones.{" "}
+                <span className="text-amber-600 font-semibold">Are you the owner?</span>"
               </p>
+              <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
+                <p className="text-xs text-zinc-500 italic">
+                  If not the owner: "No worries — who's best to speak to?" Get a name, move on.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* 3. Pitch */}
         <div className="rounded-2xl bg-purple-50 border border-purple-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-purple-700 tabular-nums">3</span>
+            <span className="text-[13px] font-bold text-purple-700 tabular-nums">{isCallback ? 2 : 3}</span>
             <span className="text-xs font-bold uppercase tracking-wider text-purple-700">
               Pitch
             </span>
@@ -238,7 +280,7 @@ export default function CallingMode({
         {/* 4. Demo Close */}
         <div className="rounded-2xl bg-green-50 border border-green-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-green-700 tabular-nums">4</span>
+            <span className="text-[13px] font-bold text-green-700 tabular-nums">{isCallback ? 3 : 4}</span>
             <span className="text-xs font-bold uppercase tracking-wider text-green-700">
               Demo Close
             </span>
@@ -260,7 +302,7 @@ export default function CallingMode({
         {/* 5. Objections */}
         <div className="rounded-2xl bg-white border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-red-600 tabular-nums">5</span>
+            <span className="text-[13px] font-bold text-red-600 tabular-nums">{isCallback ? 4 : 5}</span>
             <span className="text-xs font-bold uppercase tracking-wider text-red-600">
               Objections
             </span>
@@ -335,7 +377,7 @@ export default function CallingMode({
         {/* 6. Stats to Drop */}
         <div className="rounded-2xl bg-gray-50 border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
           <div className="px-4 py-3 flex items-center gap-2">
-            <span className="text-[13px] font-bold text-zinc-500 tabular-nums">6</span>
+            <span className="text-[13px] font-bold text-zinc-500 tabular-nums">{isCallback ? 5 : 6}</span>
             <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
               Stats to Drop
             </span>

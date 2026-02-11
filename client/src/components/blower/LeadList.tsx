@@ -81,7 +81,7 @@ export default function LeadList({ filter, store, batchId, onInterested, onStart
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
         <p className="text-zinc-400 text-lg">
           {filter === "new" && "All leads in this batch called!"}
-          {filter === "follow_ups" && "No follow-ups yet. Keep calling!"}
+          {filter === "follow_ups" && "No Gold leads yet. Keep calling!"}
         </p>
       </div>
     );

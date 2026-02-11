@@ -88,7 +88,7 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
             )}
             {stats.followUps > 0 && (
               <span className="text-amber-500 font-medium tabular-nums">
-                {stats.followUps} follow-up{stats.followUps !== 1 ? "s" : ""}
+                {stats.followUps} gold
               </span>
             )}
             {stats.exhausted > 0 && (
