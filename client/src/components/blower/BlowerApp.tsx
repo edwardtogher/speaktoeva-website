@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
 import { getBatches, LEADS, type Lead } from "@/config/blower-leads";
 import { useBlowerStore, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
@@ -9,15 +8,15 @@ import LeadList from "./LeadList";
 import CallingMode from "./CallingMode";
 import CallTransition from "./CallTransition";
 import MilestoneOverlay from "./MilestoneOverlay";
-import BatchCard from "./BatchCard";
 import HistoryView from "./HistoryView";
 import PipelineView from "./PipelineView";
 import ScriptsSection from "./ScriptsSection";
 import HomeTabBar, { type TabKey } from "./HomeTabBar";
-import GoldTabContent from "./GoldTabContent";
+import CallsTabContent from "./CallsTabContent";
 import LeaderboardView from "./LeaderboardView";
 import SearchOverlay from "./SearchOverlay";
 import CallNextButton from "./CallNextButton";
+import CallPreview from "./CallPreview";
 import PBBanner from "./PBBanner";
 
 interface BlowerAppProps {
@@ -40,12 +39,12 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("new");
   const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
   const [view, setView] = useState<AppView>("home");
-  const [activeTab, setActiveTab] = useState<TabKey>("batches");
+  const [activeTab, setActiveTab] = useState<TabKey>("calls");
   const [interestedLead, setInterestedLead] = useState<{ name: string } | null>(null);
   const [callingLeadId, setCallingLeadId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [transition, setTransition] = useState<TransitionState | null>(null);
-  const [unstartedExpanded, setUnstartedExpanded] = useState(false);
+  const [previewLead, setPreviewLead] = useState<{ lead: Lead; batchId: string; isGold: boolean } | null>(null);
 
   const user = useMemo(
     () => BLOWER_USERS.find((u) => u.username === username),
@@ -80,6 +79,20 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   const dailyStreak = store.getDailyStreak();
   const personalBest = store.getPersonalBest();
 
+  // Gold leads for the Calls tab and count badge (filtered by user's assigned batches)
+  const goldLeads = useMemo(() => {
+    const all = store.getFilteredLeads("follow_ups");
+    if (!userLeadIds) return all;
+    return all.filter(l => userLeadIds.has(l.id));
+  }, [store, userLeadIds]);
+
+  // Pipeline leads for the Pipeline tab and count badge (filtered by user's assigned batches)
+  const pipelineLeads = useMemo(() => {
+    const all = store.getFilteredLeads("wins");
+    if (!userLeadIds) return all;
+    return all.filter(l => userLeadIds.has(l.id));
+  }, [store, userLeadIds]);
+
   // Split batches into started and unstarted
   const { startedBatches, unstartedBatches } = useMemo(() => {
     const started: typeof effectiveBatches = [];
@@ -95,18 +108,23 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     return { startedBatches: started, unstartedBatches: unstarted };
   }, [effectiveBatches, store]);
 
-  // Find next uncalled lead across all batches (for Call Next button)
-  const nextUncalledLead = useMemo(() => {
+  // Find next lead to call -- Gold leads first (warmer), then batch leads
+  const getNextCallLead = useMemo(() => {
+    // Gold leads first (callbacks take priority)
+    if (goldLeads.length > 0) {
+      return { lead: goldLeads[0], batchId: goldLeads[0].batch, isGold: true };
+    }
+    // Then batch leads
     for (const batch of effectiveBatches) {
       const batchLeads = LEADS.filter((l) => l.batch === batch.id);
       for (const lead of batchLeads) {
         if (!store.dispositions[lead.id]) {
-          return { lead, batchId: batch.id };
+          return { lead, batchId: batch.id, isGold: false };
         }
       }
     }
     return null;
-  }, [effectiveBatches, store.dispositions]);
+  }, [goldLeads, effectiveBatches, store.dispositions]);
 
   // Enter a batch
   const handleBatchTap = (batchId: string) => {
@@ -125,16 +143,33 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   // Gold mode: viewing all follow-up leads across all batches
   const isGoldMode = view === "dialler" && activeBatchId === null && activeFilter === "follow_ups";
 
-  // Handle the Call Next button tap
+  // Handle the Call Next button tap -- show preview instead of calling directly
   const handleCallNext = useCallback(() => {
-    if (!nextUncalledLead) return;
-    const { lead, batchId } = nextUncalledLead;
+    if (!getNextCallLead) return;
+    const { lead, batchId, isGold } = getNextCallLead;
+    setPreviewLead({ lead, batchId, isGold });
+  }, [getNextCallLead]);
+
+  // Handle preview CALL button -- close preview, enter dialler, open CallingMode
+  const handlePreviewCall = useCallback(() => {
+    if (!previewLead) return;
+    const { lead, batchId } = previewLead;
+    setPreviewLead(null);
     setActiveBatchId(batchId);
     setActiveFilter("new");
     setView("dialler");
-    // Immediately open CallingMode for this lead
     setCallingLeadId(lead.id);
-  }, [nextUncalledLead]);
+  }, [previewLead]);
+
+  // Handle preview Skip -- dismiss preview (v1: just close)
+  const handlePreviewSkip = useCallback(() => {
+    setPreviewLead(null);
+  }, []);
+
+  // Handle preview Cancel/Dismiss
+  const handlePreviewDismiss = useCallback(() => {
+    setPreviewLead(null);
+  }, []);
 
   // Handle selecting a lead from the search overlay
   const handleSearchSelect = useCallback((leadId: string) => {
@@ -147,9 +182,9 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     const isGoldLead = disp === "no_answer" && att < 5;
 
     if (isGoldLead) {
-      // Navigate to Gold tab on home screen
+      // Navigate to Calls tab on home screen (Gold leads are shown at the top)
       setView("home");
-      setActiveTab("gold");
+      setActiveTab("calls");
     } else if (disp === "interested") {
       // Navigate to Pipeline tab
       setView("home");
@@ -184,8 +219,8 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
   // Find the next uncalled lead in the current context (batch or Gold)
   const findNextLead = useCallback(
     (currentLeadId: string): Lead | null => {
-      // Gold mode: calling from Gold tab (home view, no activeBatchId)
-      if (view === "home" && activeTab === "gold") {
+      // Gold mode: calling from Calls tab (home view, no activeBatchId)
+      if (view === "home" && activeTab === "calls") {
         const golds = store.getFilteredLeads("follow_ups");
         const filtered = userLeadIds ? golds.filter(l => userLeadIds.has(l.id)) : golds;
         return filtered.find((l) => l.id !== currentLeadId) ?? null;
@@ -329,20 +364,6 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     isDiallerSwipingRef.current = false;
   }, [diallerSwipeX, handleBackToHome]);
 
-  // Gold leads for the Gold tab and count badge (filtered by user's assigned batches)
-  const goldLeads = useMemo(() => {
-    const all = store.getFilteredLeads("follow_ups");
-    if (!userLeadIds) return all;
-    return all.filter(l => userLeadIds.has(l.id));
-  }, [store, userLeadIds]);
-
-  // Pipeline leads for the Pipeline tab and count badge (filtered by user's assigned batches)
-  const pipelineLeads = useMemo(() => {
-    const all = store.getFilteredLeads("wins");
-    if (!userLeadIds) return all;
-    return all.filter(l => userLeadIds.has(l.id));
-  }, [store, userLeadIds]);
-
   // --- History View ---
   if (view === "history") {
     return (
@@ -396,85 +417,26 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             {/* Tab content */}
             <div className="flex-1 overflow-y-auto">
               <AnimatePresence mode="wait">
-                {activeTab === "batches" && (
+                {activeTab === "calls" && (
                   <motion.div
-                    key="tab-batches"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="px-4 py-3 space-y-3 pb-24"
-                  >
-                    {/* Started batches -- full cards */}
-                    {startedBatches.map((batch) => (
-                      <BatchCard
-                        key={batch.id}
-                        batch={batch}
-                        stats={store.getBatchStats(batch.id)}
-                        onTap={() => handleBatchTap(batch.id)}
-                      />
-                    ))}
-
-                    {/* Unstarted batches -- collapsible section */}
-                    {unstartedBatches.length > 0 && (
-                      <div>
-                        <button
-                          onClick={() => setUnstartedExpanded((v) => !v)}
-                          className="w-full flex items-center justify-between px-2 py-2.5 text-sm text-zinc-500"
-                        >
-                          <span className="font-semibold">
-                            {unstartedBatches.length} more batch{unstartedBatches.length !== 1 ? "es" : ""}
-                          </span>
-                          <motion.div
-                            animate={{ rotate: unstartedExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <ChevronDown className="w-4 h-4" />
-                          </motion.div>
-                        </button>
-
-                        <AnimatePresence>
-                          {unstartedExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.25, ease: "easeOut" }}
-                              className="overflow-hidden space-y-2"
-                            >
-                              {unstartedBatches.map((batch) => (
-                                <BatchCard
-                                  key={batch.id}
-                                  batch={batch}
-                                  stats={store.getBatchStats(batch.id)}
-                                  onTap={() => handleBatchTap(batch.id)}
-                                  compact
-                                />
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-
-                {activeTab === "gold" && (
-                  <motion.div
-                    key="tab-gold"
+                    key="tab-calls"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <GoldTabContent
-                      leads={goldLeads}
+                    <CallsTabContent
+                      goldLeads={goldLeads}
+                      startedBatches={startedBatches}
+                      unstartedBatches={unstartedBatches}
                       dispositions={store.dispositions}
                       attempts={store.attempts}
                       texted={store.texted}
                       notes={store.notes}
+                      getBatchStats={store.getBatchStats}
                       setDisposition={store.setDisposition}
                       setTexted={store.setTexted}
+                      onBatchTap={handleBatchTap}
                       onStartCall={handleStartCall}
                     />
                   </motion.div>
@@ -526,15 +488,32 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               </AnimatePresence>
             </div>
 
-            {/* Call Next floating button -- only on Batches tab */}
-            {activeTab === "batches" && (
+            {/* Call Next floating button -- only on Calls tab */}
+            {activeTab === "calls" && (
               <CallNextButton
-                nextLeadName={nextUncalledLead?.lead.name ?? null}
+                nextLeadName={getNextCallLead?.lead.name ?? null}
+                isGoldLead={getNextCallLead?.isGold}
                 onTap={handleCallNext}
               />
             )}
 
-            {/* CallingMode overlay -- works from Gold tab */}
+            {/* Call Preview overlay */}
+            <AnimatePresence>
+              {previewLead && !callingLeadId && (
+                <CallPreview
+                  key="call-preview"
+                  lead={previewLead.lead}
+                  isGold={previewLead.isGold}
+                  attempts={store.attempts[previewLead.lead.id] || 0}
+                  batchLabel={batches.find((b) => b.id === previewLead.batchId)?.label ?? ""}
+                  onCall={handlePreviewCall}
+                  onSkip={handlePreviewSkip}
+                  onDismiss={handlePreviewDismiss}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* CallingMode overlay -- works from Calls tab */}
             <AnimatePresence>
               {callingLead && callingLeadId && (
                 <CallingMode

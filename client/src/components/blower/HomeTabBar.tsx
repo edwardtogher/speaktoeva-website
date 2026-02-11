@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Trophy } from "lucide-react";
 
-export type TabKey = "batches" | "gold" | "pipeline" | "scripts" | "leaderboard";
+export type TabKey = "calls" | "pipeline" | "scripts" | "leaderboard";
 
 interface HomeTabBarProps {
   activeTab: TabKey;
@@ -28,8 +28,7 @@ export default function HomeTabBar({
   const activeRef = useRef<HTMLButtonElement>(null);
 
   const tabs: TabDef[] = [
-    { key: "batches", label: "Batches" },
-    { key: "gold", label: "Gold", count: goldCount },
+    { key: "calls", label: "Calls", count: goldCount > 0 ? goldCount : undefined },
     { key: "pipeline", label: "Pipeline", count: pipelineCount },
     { key: "scripts", label: "Scripts" },
     { key: "leaderboard", label: "Board", icon: <Trophy className="w-3.5 h-3.5" /> },
