@@ -1,9 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight, Phone } from "lucide-react";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition, BatchStats } from "@/hooks/use-blower-store";
-import LeadCard from "./LeadCard";
 import BatchCard from "./BatchCard";
 
 interface Batch {
@@ -16,75 +15,44 @@ interface CallsTabContentProps {
   goldLeads: Lead[];
   startedBatches: Batch[];
   unstartedBatches: Batch[];
-  dispositions: Record<string, Disposition>;
-  attempts: Record<string, number>;
-  texted: Record<string, boolean>;
-  notes: Record<string, string>;
   getBatchStats: (batchId: string) => BatchStats;
-  setDisposition: (leadId: string, disposition: Disposition | null) => void;
-  setTexted: (leadId: string) => void;
   onBatchTap: (batchId: string) => void;
-  onStartCall: (leadId: string) => void;
+  onGoldTap: () => void;
 }
 
 export default function CallsTabContent({
   goldLeads,
   startedBatches,
   unstartedBatches,
-  dispositions,
-  attempts,
-  texted,
-  notes,
   getBatchStats,
-  setDisposition,
-  setTexted,
   onBatchTap,
-  onStartCall,
+  onGoldTap,
 }: CallsTabContentProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [unstartedExpanded, setUnstartedExpanded] = useState(false);
-
-  const handleToggle = useCallback((leadId: string) => {
-    setExpandedId((prev) => (prev === leadId ? null : leadId));
-  }, []);
-
-  const handleSetTexted = useCallback(
-    (leadId: string) => {
-      setTexted(leadId);
-    },
-    [setTexted]
-  );
 
   return (
     <div className="px-4 py-3 space-y-3 pb-24">
-      {/* Gold section -- callbacks waiting */}
+      {/* Gold card -- taps into Gold dialler */}
       {goldLeads.length > 0 && (
-        <div className="space-y-3">
-          {/* Amber banner */}
-          <div className="rounded-2xl bg-amber-50 border border-amber-200/50 px-4 py-3">
-            <p className="text-sm font-semibold text-amber-700">
-              {goldLeads.length} callback{goldLeads.length !== 1 ? "s" : ""} waiting — call these first
-            </p>
+        <button
+          onClick={onGoldTap}
+          className="w-full bg-gradient-to-r from-amber-50 to-amber-100/80 border border-amber-200/60 rounded-2xl px-4 py-3.5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-full bg-amber-200/60 flex items-center justify-center flex-shrink-0">
+              <Phone className="w-4.5 h-4.5 text-amber-700" />
+            </div>
+            <div className="text-left min-w-0">
+              <p className="text-[15px] font-bold text-amber-800">
+                Gold
+              </p>
+              <p className="text-xs text-amber-600/80">
+                {goldLeads.length} callback{goldLeads.length !== 1 ? "s" : ""} waiting
+              </p>
+            </div>
           </div>
-
-          {/* Gold lead cards */}
-          {goldLeads.map((lead) => (
-            <LeadCard
-              key={lead.id}
-              lead={lead}
-              disposition={dispositions[lead.id] || null}
-              expanded={expandedId === lead.id}
-              attempts={attempts[lead.id] || 0}
-              texted={texted[lead.id] || false}
-              note={notes[lead.id] || undefined}
-              isGold
-              onToggle={() => handleToggle(lead.id)}
-              onDisposition={(d) => setDisposition(lead.id, d)}
-              onSetTexted={() => handleSetTexted(lead.id)}
-              onStartCall={() => onStartCall(lead.id)}
-            />
-          ))}
-        </div>
+          <ChevronRight className="w-5 h-5 text-amber-400 flex-shrink-0" />
+        </button>
       )}
 
       {/* Started batches -- full cards */}

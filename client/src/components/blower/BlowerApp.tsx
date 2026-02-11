@@ -429,15 +429,13 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                       goldLeads={goldLeads}
                       startedBatches={startedBatches}
                       unstartedBatches={unstartedBatches}
-                      dispositions={store.dispositions}
-                      attempts={store.attempts}
-                      texted={store.texted}
-                      notes={store.notes}
                       getBatchStats={store.getBatchStats}
-                      setDisposition={store.setDisposition}
-                      setTexted={store.setTexted}
                       onBatchTap={handleBatchTap}
-                      onStartCall={handleStartCall}
+                      onGoldTap={() => {
+                        setActiveBatchId(null);
+                        setActiveFilter("follow_ups");
+                        setView("dialler");
+                      }}
                     />
                   </motion.div>
                 )}
