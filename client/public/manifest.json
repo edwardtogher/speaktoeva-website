@@ -1,8 +1,8 @@
 {
-  "name": "Blower",
+  "name": "Eva Blower",
   "short_name": "Blower",
   "start_url": "/call",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#09090b"
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7"
 }
