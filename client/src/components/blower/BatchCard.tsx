@@ -37,10 +37,10 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
       onClick={onTap}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        "w-full min-h-[72px] rounded-xl border px-4 py-3.5 text-left transition-colors",
+        "w-full min-h-[72px] rounded-2xl px-5 py-4 text-left transition-all shadow-[0_2px_8px_rgba(0,0,0,0.08)] active:shadow-sm active:scale-[0.99]",
         isComplete
-          ? "bg-white border-indigo-200/50"
-          : "bg-white border-gray-200 active:bg-gray-50"
+          ? "bg-indigo-50 border border-gray-100/50"
+          : "bg-white border border-gray-100/50"
       )}
     >
       {/* Top row: emoji + label + progress fraction + chevron */}
@@ -68,7 +68,7 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
       <Progress
         value={pct}
         className={cn(
-          "h-1.5 bg-gray-200 mb-2.5",
+          "h-1.5 bg-gray-100 mb-2.5",
           isComplete
             ? "[&>div]:bg-indigo-500"
             : "[&>div]:bg-indigo-500"

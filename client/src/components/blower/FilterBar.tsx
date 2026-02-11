@@ -21,17 +21,17 @@ export default function FilterBar({
   exhaustedCount = 0,
 }: FilterBarProps) {
   return (
-    <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-3 py-2">
+    <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] px-3 py-2">
       <div className="flex gap-2">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => onFilterChange(key)}
             className={cn(
-              "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px]",
+              "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full text-sm font-semibold transition-colors min-h-[44px]",
               activeFilter === key
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-100 text-zinc-500 active:bg-gray-200"
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "bg-[#F2F2F7] text-zinc-500 active:bg-gray-200"
             )}
           >
             {label}
@@ -39,8 +39,8 @@ export default function FilterBar({
               className={cn(
                 "text-xs tabular-nums px-1.5 py-0.5 rounded-full min-w-[20px] text-center",
                 activeFilter === key
-                  ? "bg-white/20 text-white"
-                  : "bg-gray-200 text-zinc-400"
+                  ? "bg-white/20 text-white/90"
+                  : "bg-zinc-200 text-zinc-400"
               )}
             >
               {counts[key]}

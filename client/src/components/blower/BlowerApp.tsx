@@ -227,7 +227,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   // --- Batch List / Dialler with view transitions ---
   return (
-    <div className="relative min-h-[100dvh] bg-gray-50" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="relative min-h-[100dvh] bg-[#F2F2F7]" style={{ fontFamily: "'Inter', sans-serif" }}>
       <AnimatePresence mode="wait">
         {view === "batches" ? (
           <motion.div
@@ -236,7 +236,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="min-h-[100dvh] bg-gray-50 text-zinc-900 flex flex-col"
+            className="min-h-[100dvh] bg-[#F2F2F7] text-zinc-900 flex flex-col"
           >
             {/* Header — daily stats + controls */}
             <div className="sticky top-0 z-40">
@@ -251,7 +251,8 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             </div>
 
             {/* Batch cards */}
-            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+              <h2 className="text-2xl font-black text-indigo-600 pt-2 pb-1">Batches</h2>
               {batches.map((batch) => (
                 <BatchCard
                   key={batch.id}
@@ -269,7 +270,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="min-h-[100dvh] bg-gray-50 text-zinc-900 flex flex-col"
+            className="min-h-[100dvh] bg-[#F2F2F7] text-zinc-900 flex flex-col"
             style={{
               transform: diallerSwipeX > 0 ? `translateX(${diallerSwipeX}px)` : undefined,
               transition: isDiallerSwipingRef.current ? "none" : "transform 0.2s ease-out",

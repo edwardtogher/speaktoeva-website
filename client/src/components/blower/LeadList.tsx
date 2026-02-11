@@ -88,7 +88,7 @@ export default function LeadList({ filter, store, batchId, onInterested, onStart
   }
 
   return (
-    <div ref={listRef} className="px-3 py-2 space-y-1.5">
+    <div ref={listRef} className="px-4 py-2 space-y-3">
       {leads.map((lead) => (
         <LeadCard
           key={lead.id}

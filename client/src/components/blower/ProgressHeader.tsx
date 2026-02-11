@@ -40,7 +40,7 @@ export default function ProgressHeader({
   // --- Batch list mode: daily summary ---
   if (mode === "batches") {
     return (
-      <div className="bg-white/90 backdrop-blur-md border-b border-gray-200 pt-[max(env(safe-area-inset-top),12px)] pb-4">
+      <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] pt-[max(env(safe-area-inset-top),12px)] pb-4">
         {/* Top row: history + logout */}
         {(onHistory || onLogout) && (
           <div className="flex items-center justify-end gap-1 px-3 pb-1">
@@ -79,7 +79,7 @@ export default function ProgressHeader({
         <div className="flex items-center justify-center gap-3 px-4">
           <div
             className={cn(
-              "flex items-center gap-1.5 bg-gray-100 rounded-full px-3 py-1.5",
+              "flex items-center gap-1.5 bg-[#F2F2F7] rounded-full px-3 py-1.5",
               dailyStreak >= 5 && "animate-pulse"
             )}
           >
@@ -92,7 +92,7 @@ export default function ProgressHeader({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-gray-100 rounded-full px-3 py-1.5">
+          <div className="flex items-center gap-1.5 bg-[#F2F2F7] rounded-full px-3 py-1.5">
             <span className="text-sm">🏆</span>
             <span className="text-sm font-semibold tabular-nums text-zinc-600">
               {personalBest ? `${personalBest.calls}` : "\u2014"}
@@ -112,7 +112,7 @@ export default function ProgressHeader({
   const pct = batchTotal > 0 ? (batchCalled / batchTotal) * 100 : 0;
 
   return (
-    <div className="bg-white/90 backdrop-blur-md border-b border-gray-200 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
+    <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
       <div className="flex items-center justify-between mb-2">
         {/* Back + batch name */}
         <div className="flex items-center gap-2 min-w-0">

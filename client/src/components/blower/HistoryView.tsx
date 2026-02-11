@@ -92,7 +92,7 @@ export default function HistoryView({
 
   return (
     <div
-      className="min-h-[100dvh] bg-gray-50 text-zinc-900 flex flex-col"
+      className="min-h-[100dvh] bg-[#F2F2F7] text-zinc-900 flex flex-col"
       style={{
         fontFamily: "'Inter', sans-serif",
         transform: swipeX > 0 ? `translateX(${swipeX}px)` : undefined,
@@ -104,7 +104,7 @@ export default function HistoryView({
       onTouchEnd={handleTouchEnd}
     >
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200">
+      <div className="sticky top-0 z-40 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
         <div className="flex items-center gap-3 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3">
           <button
             onClick={onBack}
@@ -129,7 +129,7 @@ export default function HistoryView({
       </div>
 
       {/* Day list */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {days.length === 0 ? (
           <div className="flex items-center justify-center py-20">
             <p className="text-zinc-400 text-lg">No calls yet</p>
@@ -141,7 +141,7 @@ export default function HistoryView({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="rounded-xl border border-gray-200 bg-white px-4 py-3.5"
+              className="rounded-2xl border border-gray-100/50 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-4 py-3.5"
             >
               {/* Date */}
               <p

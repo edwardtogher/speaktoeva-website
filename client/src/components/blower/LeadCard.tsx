@@ -76,12 +76,12 @@ export default function LeadCard({
     <div
       id={`lead-${lead.id}`}
       className={cn(
-        "rounded-xl border transition-all",
+        "rounded-2xl transition-all border border-gray-100/50",
         expanded
-          ? "bg-white border-gray-300"
+          ? "bg-white shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
           : disposition
-            ? "bg-white/60 border-gray-200/60"
-            : "bg-white border-gray-200"
+            ? "bg-white/60 shadow-[0_1px_4px_rgba(0,0,0,0.05)]"
+            : "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
       )}
     >
       {/* Collapsed: name + town + type + badges -- tap to expand */}
@@ -123,7 +123,7 @@ export default function LeadCard({
         <div className="flex items-center gap-1.5 flex-shrink-0">
           {/* Attempt badge */}
           {attempts > 0 && (
-            <span className="text-[10px] text-zinc-400 font-medium tabular-nums bg-gray-100 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-zinc-500 font-medium tabular-nums bg-[#F2F2F7] px-1.5 py-0.5 rounded">
               x{attempts}
             </span>
           )}
@@ -160,7 +160,7 @@ export default function LeadCard({
                 <a
                   href={`tel:${lead.phone}`}
                   onClick={handleCall}
-                  className="flex-1 flex items-center justify-center gap-2.5 min-h-[56px] rounded-xl bg-green-600 hover:bg-green-500 active:bg-green-700 active:scale-[0.98] text-white font-bold text-lg transition-all"
+                  className="flex-1 flex items-center justify-center gap-2.5 min-h-[56px] rounded-xl bg-green-600 hover:bg-green-500 active:bg-green-700 active:scale-[0.98] text-white font-bold text-lg shadow-md transition-all"
                 >
                   <Phone className="w-5 h-5" />
                   CALL
@@ -169,7 +169,7 @@ export default function LeadCard({
                   <a
                     href={getSmsUrl(lead.phone, DEFAULT_SMS)}
                     onClick={() => onSetTexted()}
-                    className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-gray-100 border border-gray-200 text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
+                    className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-[#F2F2F7] border-none text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
                   >
                     <MessageSquare className="w-4 h-4" />
                     Text
@@ -189,7 +189,7 @@ export default function LeadCard({
 
               {/* Note display */}
               {note && (
-                <div className="rounded-lg bg-gray-50 px-3 py-2">
+                <div className="rounded-lg bg-[#F2F2F7] px-3 py-2">
                   <p className="text-sm text-zinc-500 whitespace-pre-wrap">{note}</p>
                 </div>
               )}
