@@ -1,6 +1,10 @@
-import { ArrowLeft, Clock, LogOut } from "lucide-react";
+import { ArrowLeft, Clock, LogOut, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import ProgressRing from "./ProgressRing";
+import TeammateComparison from "./TeammateComparison";
+
+const DEFAULT_DAILY_TARGET = 20;
 
 interface ProgressHeaderProps {
   mode: "batches" | "dialler";
@@ -8,11 +12,14 @@ interface ProgressHeaderProps {
   batchCalled?: number;
   batchTotal?: number;
   todayCalls: number;
+  dailyTarget?: number;
   dailyStreak: number;
   personalBest: { calls: number; date: string } | null;
+  username?: string;
   onBack?: () => void;
   onHistory?: () => void;
   onLogout?: () => void;
+  onSearch?: () => void;
 }
 
 function formatPBDate(dateStr: string): string {
@@ -31,20 +38,23 @@ export default function ProgressHeader({
   batchCalled = 0,
   batchTotal = 0,
   todayCalls,
+  dailyTarget = DEFAULT_DAILY_TARGET,
   dailyStreak,
   personalBest,
+  username,
   onBack,
   onHistory,
   onLogout,
+  onSearch,
 }: ProgressHeaderProps) {
   // --- Batch list mode: daily summary ---
   if (mode === "batches") {
     return (
       <div className="bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] pt-[max(env(safe-area-inset-top),16px)] pb-2.5">
         {/* Top row: history (left) + logout (right) */}
-        {(onHistory || onLogout) && (
+        {(onHistory || onLogout || onSearch) && (
           <div className="flex items-center justify-between px-3 pb-2">
-            <div>
+            <div className="flex items-center gap-2">
               {onHistory && (
                 <button
                   onClick={onHistory}
@@ -52,6 +62,15 @@ export default function ProgressHeader({
                   aria-label="Call history"
                 >
                   <Clock className="w-5 h-5" />
+                </button>
+              )}
+              {onSearch && (
+                <button
+                  onClick={onSearch}
+                  className="bg-[#F2F2F7] rounded-full p-2.5 flex items-center justify-center text-zinc-500 hover:text-zinc-700 transition-colors min-w-[44px] min-h-[44px]"
+                  aria-label="Search leads"
+                >
+                  <Search className="w-5 h-5" />
                 </button>
               )}
             </div>
@@ -69,16 +88,25 @@ export default function ProgressHeader({
           </div>
         )}
 
-        {/* Compact stats row: call count left, streak + PB right */}
+        {/* Stats row: ring + label left, streak + PB right */}
         <div className="flex items-center justify-between px-4">
-          {/* Call count */}
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black tabular-nums text-zinc-900 leading-none">
-              {todayCalls}
-            </span>
-            <span className="text-sm text-zinc-500">
-              call{todayCalls !== 1 ? "s" : ""} today
-            </span>
+          {/* Progress ring + label */}
+          <div className="flex items-center gap-3">
+            <ProgressRing
+              current={todayCalls}
+              target={dailyTarget}
+              personalBest={personalBest?.calls ?? null}
+            />
+            <div className="flex flex-col">
+              <span className="text-sm text-zinc-500 leading-tight">
+                of {dailyTarget} today
+              </span>
+              {username && (
+                <div className="mt-0.5">
+                  <TeammateComparison username={username} todayCalls={todayCalls} />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Stats pills */}
@@ -89,7 +117,7 @@ export default function ProgressHeader({
                 dailyStreak >= 5 && "animate-pulse"
               )}
             >
-              <span className="text-xs">🔥</span>
+              <span className="text-xs">&#x1F525;</span>
               <span className={cn(
                 "text-xs font-semibold tabular-nums",
                 dailyStreak > 0 ? "text-orange-400" : "text-zinc-400"
@@ -99,7 +127,7 @@ export default function ProgressHeader({
             </div>
 
             <div className="flex items-center gap-1 bg-[#F2F2F7] rounded-full px-2.5 py-1">
-              <span className="text-xs">🏆</span>
+              <span className="text-xs">&#x1F3C6;</span>
               <span className="text-xs font-semibold tabular-nums text-zinc-600">
                 {personalBest ? `${personalBest.calls}` : "\u2014"}
               </span>
@@ -158,7 +186,7 @@ export default function ProgressHeader({
                 dailyStreak >= 5 && "animate-pulse"
               )}
             >
-              <span>🔥</span>
+              <span>&#x1F525;</span>
               <span className="text-orange-400">{dailyStreak}</span>
             </span>
           )}

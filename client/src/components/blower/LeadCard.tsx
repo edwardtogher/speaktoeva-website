@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, MessageSquare, Check } from "lucide-react";
+import { Phone, MessageSquare, Check, PhoneIncoming, ThumbsUp, X, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
@@ -13,6 +13,7 @@ interface LeadCardProps {
   attempts: number;
   texted: boolean;
   note?: string;
+  isGold?: boolean;
   onToggle: () => void;
   onDisposition: (d: Disposition | null) => void;
   onSetTexted: () => void;
@@ -64,12 +65,14 @@ export default function LeadCard({
   attempts,
   texted,
   note,
+  isGold = false,
   onToggle,
   onDisposition,
   onSetTexted,
   onStartCall,
 }: LeadCardProps) {
   const [justCalled, setJustCalled] = useState(false);
+  const [callbackOpen, setCallbackOpen] = useState(false);
 
   const showTextButton = disposition === "no_answer" && attempts >= 2;
   const showTextReminder = attempts >= 3 && !texted && disposition === "no_answer";
@@ -208,6 +211,101 @@ export default function LeadCard({
                 <p className="text-[11px] text-zinc-400 text-center">
                   Tap disposition again to clear
                 </p>
+              )}
+
+              {/* Gold lead: quick disposition buttons */}
+              {isGold && (
+                <div className="space-y-2">
+                  {/* Inline disposition buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDisposition("interested");
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl bg-green-600 text-white font-semibold text-sm transition-all active:scale-[0.97] active:bg-green-700"
+                    >
+                      <ThumbsUp className="w-4 h-4" />
+                      Interested
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDisposition("not_interested");
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl bg-[#F2F2F7] text-zinc-600 font-semibold text-sm transition-all active:scale-[0.97] active:bg-gray-200"
+                    >
+                      <X className="w-4 h-4" />
+                      Not Int.
+                    </button>
+                  </div>
+
+                  {/* "Called me back" toggle button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCallbackOpen(!callbackOpen);
+                    }}
+                    className={cn(
+                      "w-full flex items-center justify-center gap-2 min-h-[44px] rounded-xl font-semibold text-sm transition-all active:scale-[0.97]",
+                      callbackOpen
+                        ? "bg-amber-100 text-amber-700 border border-amber-300"
+                        : "bg-amber-50 text-amber-600 border border-amber-200"
+                    )}
+                  >
+                    <PhoneIncoming className="w-4 h-4" />
+                    Called me back
+                  </button>
+
+                  {/* Callback disposition picker (expanded inline) */}
+                  <AnimatePresence>
+                    {callbackOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCallbackOpen(false);
+                              onDisposition("interested");
+                            }}
+                            className="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] rounded-xl bg-green-600 text-white font-semibold text-xs transition-all active:scale-[0.97] active:bg-green-700"
+                          >
+                            <ThumbsUp className="w-4 h-4" />
+                            Interested
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCallbackOpen(false);
+                              onDisposition("not_interested");
+                            }}
+                            className="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] rounded-xl bg-zinc-100 text-zinc-600 font-semibold text-xs transition-all active:scale-[0.97] active:bg-zinc-200"
+                          >
+                            <X className="w-4 h-4" />
+                            Not Int.
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCallbackOpen(false);
+                              onDisposition("no_answer");
+                            }}
+                            className="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] rounded-xl bg-amber-50 text-amber-700 border border-amber-200 font-semibold text-xs transition-all active:scale-[0.97] active:bg-amber-100"
+                          >
+                            <Clock className="w-4 h-4" />
+                            Reschedule
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
             </div>
           </motion.div>

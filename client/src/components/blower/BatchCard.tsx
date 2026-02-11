@@ -17,6 +17,7 @@ interface BatchCardProps {
   batch: { id: string; label: string; count: number };
   stats: BatchStats;
   onTap: () => void;
+  compact?: boolean;
 }
 
 const BATCH_EMOJI: Record<string, string> = {
@@ -27,10 +28,36 @@ const BATCH_EMOJI: Record<string, string> = {
   "running-ads": "\u{1F4E3}",
 };
 
-export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
+export default function BatchCard({ batch, stats, onTap, compact }: BatchCardProps) {
   const pct = stats.total > 0 ? (stats.called / stats.total) * 100 : 0;
   const isComplete = stats.called >= stats.total && stats.total > 0;
   const emoji = BATCH_EMOJI[batch.id] || "\u{1F4CB}";
+
+  // Compact variant: smaller card for unstarted batches
+  if (compact) {
+    return (
+      <motion.button
+        onClick={onTap}
+        whileTap={{ scale: 0.98 }}
+        className="w-full rounded-xl px-4 py-3 text-left bg-white/70 border border-gray-100/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] active:shadow-sm active:scale-[0.99]"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-sm flex-shrink-0">{emoji}</span>
+            <span className="font-semibold text-[13px] text-zinc-600 truncate">
+              {batch.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+            <span className="text-xs tabular-nums text-zinc-400">
+              {stats.total} leads
+            </span>
+            <ChevronRight className="w-3.5 h-3.5 text-zinc-300" />
+          </div>
+        </div>
+      </motion.button>
+    );
+  }
 
   return (
     <motion.button
@@ -64,7 +91,7 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
         </div>
       </div>
 
-      {/* Progress bar — thin */}
+      {/* Progress bar -- thin */}
       <Progress
         value={pct}
         className={cn(
@@ -78,12 +105,12 @@ export default function BatchCard({ batch, stats, onTap }: BatchCardProps) {
       {/* Stats row */}
       <div className="flex items-center gap-3 text-xs">
         {isComplete ? (
-          <span className="text-indigo-600 font-semibold">Complete ✓</span>
+          <span className="text-indigo-600 font-semibold">Complete</span>
         ) : (
           <>
             {stats.interested > 0 && (
               <span className="text-orange-500 font-medium tabular-nums">
-                {stats.interested} 🔥
+                {stats.interested} hot
               </span>
             )}
             {stats.followUps > 0 && (

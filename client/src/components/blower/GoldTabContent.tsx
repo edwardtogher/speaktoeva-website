@@ -68,6 +68,7 @@ export default function GoldTabContent({
               attempts={attempts[lead.id] || 0}
               texted={texted[lead.id] || false}
               note={notes[lead.id] || undefined}
+              isGold
               onToggle={() => handleToggle(lead.id)}
               onDisposition={(d) => setDisposition(lead.id, d)}
               onSetTexted={() => handleSetTexted(lead.id)}

@@ -4,6 +4,7 @@ export interface BlowerUser {
   displayName: string;
   assignedLeadIds: string[] | "all";
   assignedBatches?: string[];  // if set, user only sees these batches
+  dailyTarget?: number;        // default 20 if not set
 }
 
 export const BLOWER_USERS: BlowerUser[] = [
@@ -12,6 +13,7 @@ export const BLOWER_USERS: BlowerUser[] = [
     password: "edward",
     displayName: "Ed",
     assignedLeadIds: "all",
+    dailyTarget: 20,
   },
   {
     username: "maximilian",
@@ -19,5 +21,6 @@ export const BLOWER_USERS: BlowerUser[] = [
     displayName: "Max",
     assignedLeadIds: "all",  // will be derived from batches
     assignedBatches: [],     // add batch IDs here when importing leads for Max
+    dailyTarget: 1,
   },
 ];

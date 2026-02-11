@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, PhoneMissed, ThumbsUp, X } from "lucide-react";
+import { ArrowLeft, PhoneMissed, ThumbsUp, SkipForward } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
@@ -325,13 +325,13 @@ export default function CallingMode({
             Interested
           </button>
 
-          {/* Not Interested */}
+          {/* Not Interested (reframed as "Next") */}
           <button
             onClick={() => handleDisposition("not_interested")}
-            className="flex-1 flex items-center justify-center gap-2 min-h-[56px] rounded-xl bg-red-500 text-white font-bold text-[15px] transition-all active:scale-[0.97] active:bg-red-600"
+            className="flex-1 flex items-center justify-center gap-2 min-h-[56px] rounded-xl bg-zinc-200 border border-zinc-300 text-zinc-700 font-bold text-[15px] transition-all active:scale-[0.97] active:bg-zinc-300"
           >
-            <X className="w-5 h-5" />
-            Not Int.
+            <SkipForward className="w-5 h-5" />
+            Next
           </button>
         </div>
       </div>
