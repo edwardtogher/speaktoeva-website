@@ -116,18 +116,20 @@ export function ScriptPitch({
 
 export function ScriptDemoClose() {
   return (
-    <>
-      <p className="text-[15px] leading-relaxed text-green-700 font-medium">
-        "I've actually put together a personalised demo specifically for your clinic —
-        could I send that over to you?"
-      </p>
-      <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2 border border-green-200/50">
-        <p className="text-xs text-green-600 font-medium">
-          If yes: "Amazing — are you on WhatsApp on this number? I'll send it straight
-          over."
-        </p>
-      </div>
-    </>
+    <p className="text-[15px] leading-relaxed text-green-700 font-medium">
+      "I've actually put together a personalised demo specifically for your clinic —
+      could I send that over to you?"
+    </p>
+  );
+}
+
+// --- Close (WhatsApp send) ---
+
+export function ScriptClose() {
+  return (
+    <p className="text-[15px] leading-relaxed text-emerald-700 font-medium">
+      "Amazing — are you on WhatsApp on this number? I'll send it straight over."
+    </p>
   );
 }
 

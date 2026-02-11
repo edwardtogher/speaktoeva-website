@@ -4,15 +4,13 @@ import { ChevronDown, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ScriptOpening,
-  ScriptOpeningHint,
   ScriptGatekeeper,
-  ScriptGatekeeperHint,
   ScriptCallbackOpening,
-  ScriptCallbackOpeningHint,
   ScriptCallingBackNowOpening,
   ScriptCallingBackNowPitch,
   ScriptPitch,
   ScriptDemoClose,
+  ScriptClose,
   ScriptObjections,
   ScriptStats,
 } from "@/config/blower-scripts";
@@ -41,87 +39,65 @@ function NewCallFullScript() {
       <div className="rounded-2xl bg-blue-50 border border-blue-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-blue-700 tabular-nums">1</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-700">
-            Opening
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-700">Opening</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptOpening />
-          <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-            <ScriptOpeningHint />
-          </div>
-        </div>
+        <div className="px-4 pb-4"><ScriptOpening /></div>
       </div>
 
       {/* 2. Gatekeeper */}
       <div className="rounded-2xl bg-amber-50 border border-amber-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-amber-700 tabular-nums">2</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-            Gatekeeper
-          </span>
-          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
-            IF NEEDED
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Gatekeeper</span>
+          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">IF NEEDED</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptGatekeeper />
-          <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-            <ScriptGatekeeperHint />
-          </div>
-        </div>
+        <div className="px-4 pb-4"><ScriptGatekeeper /></div>
       </div>
 
       {/* 3. Pitch */}
       <div className="rounded-2xl bg-purple-50 border border-purple-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-purple-700 tabular-nums">3</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-purple-700">
-            Pitch
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-purple-700">Pitch</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptPitch />
-        </div>
+        <div className="px-4 pb-4"><ScriptPitch /></div>
       </div>
 
       {/* 4. Demo Close */}
       <div className="rounded-2xl bg-green-50 border border-green-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-green-700 tabular-nums">4</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-green-700">
-            Demo Close
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-green-700">Demo Close</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptDemoClose />
-        </div>
+        <div className="px-4 pb-4"><ScriptDemoClose /></div>
       </div>
 
-      {/* 5. Objections */}
+      {/* 5. Close */}
+      <div className="rounded-2xl bg-emerald-50 border border-emerald-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+        <div className="px-4 py-3 flex items-center gap-2">
+          <span className="text-[13px] font-bold text-emerald-700 tabular-nums">5</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Close</span>
+          <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded font-medium">IF YES</span>
+        </div>
+        <div className="px-4 pb-4"><ScriptClose /></div>
+      </div>
+
+      {/* 6. Objections */}
       <div className="rounded-2xl bg-white border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-red-600 tabular-nums">5</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-red-600">
-            Objections
-          </span>
+          <span className="text-[13px] font-bold text-red-600 tabular-nums">6</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-red-600">Objections</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptObjections />
-        </div>
+        <div className="px-4 pb-4"><ScriptObjections /></div>
       </div>
 
-      {/* 6. Stats to Drop */}
+      {/* 7. Stats to Drop */}
       <div className="rounded-2xl bg-gray-50 border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">6</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Stats to Drop
-          </span>
+          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">7</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Stats to Drop</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptStats />
-        </div>
+        <div className="px-4 pb-4"><ScriptStats /></div>
       </div>
     </div>
   );
@@ -134,71 +110,56 @@ function GoldCallbackFullScript() {
       <div className="rounded-2xl bg-amber-50 border border-amber-300/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-amber-700 tabular-nums">1</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-            Callback Opening
-          </span>
-          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">
-            THEY RANG BACK
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Callback Opening</span>
+          <span className="text-[10px] text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded font-medium">THEY RANG BACK</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptCallbackOpening />
-          <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-            <ScriptCallbackOpeningHint />
-          </div>
-        </div>
+        <div className="px-4 pb-4"><ScriptCallbackOpening /></div>
       </div>
 
       {/* 2. Pitch */}
       <div className="rounded-2xl bg-purple-50 border border-purple-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-purple-700 tabular-nums">2</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-purple-700">
-            Pitch
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-purple-700">Pitch</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptPitch />
-        </div>
+        <div className="px-4 pb-4"><ScriptPitch /></div>
       </div>
 
       {/* 3. Demo Close */}
       <div className="rounded-2xl bg-green-50 border border-green-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-green-700 tabular-nums">3</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-green-700">
-            Demo Close
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-green-700">Demo Close</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptDemoClose />
-        </div>
+        <div className="px-4 pb-4"><ScriptDemoClose /></div>
       </div>
 
-      {/* 4. Objections */}
+      {/* 4. Close */}
+      <div className="rounded-2xl bg-emerald-50 border border-emerald-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+        <div className="px-4 py-3 flex items-center gap-2">
+          <span className="text-[13px] font-bold text-emerald-700 tabular-nums">4</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Close</span>
+          <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded font-medium">IF YES</span>
+        </div>
+        <div className="px-4 pb-4"><ScriptClose /></div>
+      </div>
+
+      {/* 5. Objections */}
       <div className="rounded-2xl bg-white border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-red-600 tabular-nums">4</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-red-600">
-            Objections
-          </span>
+          <span className="text-[13px] font-bold text-red-600 tabular-nums">5</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-red-600">Objections</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptObjections />
-        </div>
+        <div className="px-4 pb-4"><ScriptObjections /></div>
       </div>
 
-      {/* 5. Stats to Drop */}
+      {/* 6. Stats to Drop */}
       <div className="rounded-2xl bg-gray-50 border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">5</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Stats to Drop
-          </span>
+          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">6</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Stats to Drop</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptStats />
-        </div>
+        <div className="px-4 pb-4"><ScriptStats /></div>
       </div>
     </div>
   );
@@ -211,71 +172,56 @@ function CallingBackNowFullScript() {
       <div className="rounded-2xl bg-teal-50 border border-teal-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-teal-700 tabular-nums">1</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">
-            Opening
-          </span>
-          <span className="text-[10px] text-teal-600 bg-teal-100 px-1.5 py-0.5 rounded font-medium">
-            RINGING NOW
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Opening</span>
+          <span className="text-[10px] text-teal-600 bg-teal-100 px-1.5 py-0.5 rounded font-medium">RINGING NOW</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptCallingBackNowOpening />
-          <div className="mt-2.5 bg-white/60 rounded-lg px-3 py-2">
-            <ScriptCallbackOpeningHint />
-          </div>
-        </div>
+        <div className="px-4 pb-4"><ScriptCallingBackNowOpening /></div>
       </div>
 
       {/* 2. Callback Pitch (unique hook) */}
       <div className="rounded-2xl bg-teal-50 border border-teal-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-teal-700 tabular-nums">2</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">
-            Pitch — Callback Hook
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Pitch — Callback Hook</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptCallingBackNowPitch />
-        </div>
+        <div className="px-4 pb-4"><ScriptCallingBackNowPitch /></div>
       </div>
 
       {/* 3. Demo Close */}
       <div className="rounded-2xl bg-green-50 border border-green-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
           <span className="text-[13px] font-bold text-green-700 tabular-nums">3</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-green-700">
-            Demo Close
-          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-green-700">Demo Close</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptDemoClose />
-        </div>
+        <div className="px-4 pb-4"><ScriptDemoClose /></div>
       </div>
 
-      {/* 4. Objections */}
+      {/* 4. Close */}
+      <div className="rounded-2xl bg-emerald-50 border border-emerald-200/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+        <div className="px-4 py-3 flex items-center gap-2">
+          <span className="text-[13px] font-bold text-emerald-700 tabular-nums">4</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Close</span>
+          <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded font-medium">IF YES</span>
+        </div>
+        <div className="px-4 pb-4"><ScriptClose /></div>
+      </div>
+
+      {/* 5. Objections */}
       <div className="rounded-2xl bg-white border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-red-600 tabular-nums">4</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-red-600">
-            Objections
-          </span>
+          <span className="text-[13px] font-bold text-red-600 tabular-nums">5</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-red-600">Objections</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptObjections />
-        </div>
+        <div className="px-4 pb-4"><ScriptObjections /></div>
       </div>
 
-      {/* 5. Stats to Drop */}
+      {/* 6. Stats to Drop */}
       <div className="rounded-2xl bg-gray-50 border border-gray-100/50 overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">5</span>
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Stats to Drop
-          </span>
+          <span className="text-[13px] font-bold text-zinc-500 tabular-nums">6</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">Stats to Drop</span>
         </div>
-        <div className="px-4 pb-4">
-          <ScriptStats />
-        </div>
+        <div className="px-4 pb-4"><ScriptStats /></div>
       </div>
     </div>
   );
