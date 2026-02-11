@@ -65,8 +65,18 @@ export default function CallsTabContent({
         />
       ))}
 
-      {/* Unstarted batches -- collapsible section */}
-      {unstartedBatches.length > 0 && (
+      {/* Unstarted batches -- show directly if no started batches, collapse otherwise */}
+      {unstartedBatches.length > 0 && startedBatches.length === 0 && (
+        unstartedBatches.map((batch) => (
+          <BatchCard
+            key={batch.id}
+            batch={batch}
+            stats={getBatchStats(batch.id)}
+            onTap={() => onBatchTap(batch.id)}
+          />
+        ))
+      )}
+      {unstartedBatches.length > 0 && startedBatches.length > 0 && (
         <div>
           <button
             onClick={() => setUnstartedExpanded((v) => !v)}
