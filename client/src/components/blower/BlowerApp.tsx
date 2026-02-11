@@ -122,17 +122,6 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     ? LEADS.find((l) => l.id === callingLeadId) ?? null
     : null;
 
-  // --- History View ---
-  if (view === "history") {
-    return (
-      <HistoryView
-        dailyStats={store.dailyStats}
-        dailyStreak={dailyStreak}
-        onBack={() => setView("batches")}
-      />
-    );
-  }
-
   // --- Swipe-back gesture for dialler view ---
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -183,6 +172,17 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
       }
     }
   }, [activeFilter]);
+
+  // --- History View ---
+  if (view === "history") {
+    return (
+      <HistoryView
+        dailyStats={store.dailyStats}
+        dailyStreak={dailyStreak}
+        onBack={() => setView("batches")}
+      />
+    );
+  }
 
   // --- Batch List / Dialler with view transitions ---
   return (
