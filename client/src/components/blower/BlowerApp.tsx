@@ -12,6 +12,7 @@ import MilestoneOverlay from "./MilestoneOverlay";
 import BatchCard from "./BatchCard";
 import HistoryView from "./HistoryView";
 import PipelineView from "./PipelineView";
+import ScriptsSection from "./ScriptsSection";
 
 interface BlowerAppProps {
   username: string;
@@ -311,6 +312,9 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                   onTap={() => handleBatchTap(batch.id)}
                 />
               ))}
+
+              {/* Scripts section — expandable reference cards */}
+              <ScriptsSection />
             </div>
           </motion.div>
         ) : (
