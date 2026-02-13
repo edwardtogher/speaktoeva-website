@@ -41,7 +41,7 @@ const DISPOSITION_DOT: Record<Disposition, string> = {
 };
 
 function getColdSmsTemplate(leadName: string): string {
-  return `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one! I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI. Would you be interested in me sending over a bit of info on what other businesses in your area are doing right now?`;
+  return `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one! I'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI. Would you be interested in me sending over a bit of info on what other businesses in your area are doing right now?`;
 }
 
 function getSmsUrl(phone: string, body: string): string {

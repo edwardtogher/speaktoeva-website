@@ -3,7 +3,7 @@ import { Phone, MessageSquare, SkipForward, X, Check } from "lucide-react";
 import type { Lead } from "@/config/blower-leads";
 
 function getColdSmsUrl(phone: string, leadName: string): string {
-  const body = `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one! I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI. Would you be interested in me sending over a bit of info on what other businesses in your area are doing right now?`;
+  const body = `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one! I'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI. Would you be interested in me sending over a bit of info on what other businesses in your area are doing right now?`;
   const encoded = encodeURIComponent(body);
   const cleanPhone = phone.replace(/\s+/g, "").replace(/^0/, "44");
   return `https://wa.me/${cleanPhone}?text=${encoded}`;
