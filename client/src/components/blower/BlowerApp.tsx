@@ -171,6 +171,27 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     setPreviewLead(null);
   }, []);
 
+  // Handle preview TEXT button -- mark texted, dismiss, advance to next un-texted lead
+  const handlePreviewText = useCallback(() => {
+    if (!previewLead) return;
+    store.setTexted(previewLead.lead.id);
+    setPreviewLead(null);
+
+    // Find next un-texted lead after a short delay (let SMS app open first)
+    setTimeout(() => {
+      // Look for next lead that hasn't been texted
+      for (const batch of effectiveBatches) {
+        const batchLeads = LEADS.filter((l) => l.batch === batch.id);
+        for (const lead of batchLeads) {
+          if (lead.id !== previewLead.lead.id && !store.texted[lead.id] && !store.dispositions[lead.id]) {
+            setPreviewLead({ lead, batchId: batch.id, isGold: false });
+            return;
+          }
+        }
+      }
+    }, 500);
+  }, [previewLead, store, effectiveBatches]);
+
   // Handle selecting a lead from the search overlay
   const handleSearchSelect = useCallback((leadId: string) => {
     const lead = LEADS.find((l) => l.id === leadId);
@@ -503,8 +524,10 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
                   lead={previewLead.lead}
                   isGold={previewLead.isGold}
                   attempts={store.attempts[previewLead.lead.id] || 0}
+                  texted={store.texted[previewLead.lead.id] || false}
                   batchLabel={batches.find((b) => b.id === previewLead.batchId)?.label ?? ""}
                   onCall={handlePreviewCall}
+                  onText={handlePreviewText}
                   onSkip={handlePreviewSkip}
                   onDismiss={handlePreviewDismiss}
                 />

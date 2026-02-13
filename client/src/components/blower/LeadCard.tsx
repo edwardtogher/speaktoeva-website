@@ -40,16 +40,8 @@ const DISPOSITION_DOT: Record<Disposition, string> = {
   not_interested: "bg-red-400",
 };
 
-const SMS_TEMPLATES = [
-  "Hi, tried calling a couple of times \u2014 I help businesses like yours stop missing calls when you're busy. Worth a quick chat? Ed, Speak to Eva",
-  "Hi, it's Ed again. We help busy businesses never miss a call \u2014 even when you're flat out. 5 mins this week? Just text back a time.",
-  "Last message from me \u2014 should I stop reaching out about your phone answering? Totally understand if not a priority right now. Ed",
-];
-
-function getSmsTemplate(attempts: number): string {
-  if (attempts >= 6) return SMS_TEMPLATES[2];
-  if (attempts >= 4) return SMS_TEMPLATES[1];
-  return SMS_TEMPLATES[0];
+function getColdSmsTemplate(leadName: string): string {
+  return `Hey, I was looking at ${leadName} — I've actually built an AI receptionist that catches calls for clinics like yours when you're stuck in sessions. I'm based locally too. Happy to show you what she sounds like if you're interested?`;
 }
 
 function getSmsUrl(phone: string, body: string): string {
@@ -74,7 +66,7 @@ export default function LeadCard({
   const [justCalled, setJustCalled] = useState(false);
   const [callbackOpen, setCallbackOpen] = useState(false);
 
-  const showTextButton = disposition === "no_answer" && attempts >= 2;
+  const showTextButton = true;
   const showTextReminder = attempts >= 3 && !texted && disposition === "no_answer";
 
   const handleCall = () => {
@@ -179,7 +171,7 @@ export default function LeadCard({
                 </a>
                 {showTextButton && (
                   <a
-                    href={getSmsUrl(lead.phone, getSmsTemplate(attempts))}
+                    href={getSmsUrl(lead.phone, getColdSmsTemplate(lead.name))}
                     onClick={() => onSetTexted()}
                     className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-[#F2F2F7] border-none text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
                   >
