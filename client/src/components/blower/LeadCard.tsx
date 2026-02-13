@@ -46,8 +46,8 @@ function getColdSmsTemplate(leadName: string): string {
 
 function getSmsUrl(phone: string, body: string): string {
   const encoded = encodeURIComponent(body);
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  return isIOS ? `sms:${phone}&body=${encoded}` : `sms:${phone}?body=${encoded}`;
+  const cleanPhone = phone.replace(/\s+/g, "").replace(/^0/, "44");
+  return `https://wa.me/${cleanPhone}?text=${encoded}`;
 }
 
 export default function LeadCard({
