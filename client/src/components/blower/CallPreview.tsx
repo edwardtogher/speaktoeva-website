@@ -6,8 +6,8 @@ function getColdSmsUrl(phone: string, leadName: string, leadNotes?: string): str
   let body: string;
   // If lead has a personalised message prefixed with MSG:, use that
   if (leadNotes?.startsWith("MSG:")) {
-    const newlineIdx = leadNotes.indexOf("\n");
-    body = newlineIdx > 0 ? leadNotes.slice(4, newlineIdx) : leadNotes.slice(4);
+    const sep = leadNotes.indexOf("\\n");
+    body = sep > 0 ? leadNotes.slice(4, sep) : leadNotes.slice(4);
   } else {
     body = `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one!\n\nI'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI.\n\nWould you be interested in me sending over a quick demo of how it works?\n\nNo worries if not!`;
   }
