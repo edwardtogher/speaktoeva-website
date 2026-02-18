@@ -6,7 +6,7 @@ const headings = [
   { id: "data-we-collect", label: "What Data We Collect" },
   { id: "how-we-use", label: "How We Use Your Data" },
   { id: "call-recording", label: "Call Recording" },
-  { id: "cookies", label: "Cookies" },
+  { id: "cookies", label: "Cookies and Analytics" },
   { id: "data-sharing", label: "Who We Share Data With" },
   { id: "international-transfers", label: "International Transfers" },
   { id: "data-retention", label: "Data Retention" },
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
             <tr>
               <td>Website visitors</td>
               <td>Pages visited, device info, approximate location</td>
-              <td>Vercel Analytics (cookie-based)</td>
+              <td>Vercel Web Analytics (cookieless)</td>
             </tr>
             <tr>
               <td>Customers</td>
@@ -150,17 +150,18 @@ export default function PrivacyPage() {
         </p>
       </section>
 
-      {/* 5. Cookies */}
+      {/* 5. Cookies and Analytics */}
       <section>
-        <h2 id="cookies">5. Cookies</h2>
+        <h2 id="cookies">5. Cookies and Analytics</h2>
         <p>
-          This website uses Vercel Analytics cookies to understand how visitors use the site.
-          These are first-party analytics cookies.
+          This website uses Vercel Web Analytics to understand how visitors use the site.
+          Vercel Web Analytics is cookieless — it does not store cookies, use local storage,
+          or fingerprint your device. Visitors are identified via a server-side hash derived
+          from the request, which is discarded after 24 hours.
         </p>
-        <p>We do not use advertising or tracking cookies.</p>
         <p>
-          You can manage your cookie preferences using the banner shown when you first visit
-          the site, or by clearing cookies in your browser settings.
+          We do not use advertising, tracking, or third-party cookies. No data is stored on
+          your device for analytics purposes.
         </p>
       </section>
 
@@ -304,7 +305,7 @@ export default function PrivacyPage() {
         </p>
       </section>
 
-      {/* 12. Contact */}
+      {/* 13. Contact */}
       <section>
         <h2 id="contact">13. Contact</h2>
         <p>

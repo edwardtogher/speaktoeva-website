@@ -11,7 +11,6 @@ import PrivacyPage from "@/pages/privacy";
 import DpaPage from "@/pages/dpa";
 import NotFound from "@/pages/not-found";
 import ScrollToTop from "@/components/legal/ScrollToTop";
-import CookieBanner from "@/components/legal/CookieBanner";
 
 function Router() {
   return (
@@ -37,7 +36,6 @@ function App() {
           <div className="min-h-screen bg-background text-foreground">
             <Router />
           </div>
-          <CookieBanner />
           <Toaster />
         </VapiProvider>
       </TooltipProvider>
