@@ -6,15 +6,10 @@ import { BOOKING_LINK } from '@/config/vapi';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Integrations', href: '#integrations' },
+  { label: 'Features', href: '/#features' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'Integrations', href: '/#integrations' },
 ];
-
-function scrollTo(href: string) {
-  const el = document.querySelector(href);
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -33,23 +28,23 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
-        <a href="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <a href="/">
           <img src={evaWordmark} alt="EVA" className="h-14" />
         </a>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-4">
           {navLinks.map((l) => (
-            <button
+            <a
               key={l.href}
-              onClick={() => scrollTo(l.href)}
+              href={l.href}
               className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
             >
               {l.label}
-            </button>
+            </a>
           ))}
-          <Button variant="ghost" size="sm" onClick={() => scrollTo('#hero')}>
-            Try Demo
+          <Button variant="ghost" size="sm" asChild>
+            <a href="/#hero">Try Demo</a>
           </Button>
           <Button size="sm" onClick={() => window.open(BOOKING_LINK, '_blank')}>
             Book a Call
@@ -71,16 +66,17 @@ export default function Navbar() {
             <SheetTitle className="sr-only">Navigation</SheetTitle>
             <nav className="flex flex-col gap-4 mt-8">
               {navLinks.map((l) => (
-                <button
+                <a
                   key={l.href}
-                  onClick={() => { scrollTo(l.href); setOpen(false); }}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
                   className="text-left text-lg font-medium text-foreground"
                 >
                   {l.label}
-                </button>
+                </a>
               ))}
-              <Button variant="ghost" onClick={() => { scrollTo('#hero'); setOpen(false); }}>
-                Try Demo
+              <Button variant="ghost" asChild>
+                <a href="/#hero" onClick={() => setOpen(false)}>Try Demo</a>
               </Button>
               <Button onClick={() => { window.open(BOOKING_LINK, '_blank'); setOpen(false); }}>
                 Book a Call

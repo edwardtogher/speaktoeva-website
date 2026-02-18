@@ -6,15 +6,26 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { VapiProvider } from "@/components/VapiProvider";
 import LandingPage from "@/components/LandingPage";
 import BlowerPage from "@/pages/blower";
+import TermsPage from "@/pages/terms";
+import PrivacyPage from "@/pages/privacy";
+import DpaPage from "@/pages/dpa";
 import NotFound from "@/pages/not-found";
+import ScrollToTop from "@/components/legal/ScrollToTop";
+import CookieBanner from "@/components/legal/CookieBanner";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={LandingPage} />
-      <Route path="/call" component={BlowerPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <ScrollToTop />
+      <Switch>
+        <Route path="/" component={LandingPage} />
+        <Route path="/call" component={BlowerPage} />
+        <Route path="/terms" component={TermsPage} />
+        <Route path="/privacy" component={PrivacyPage} />
+        <Route path="/dpa" component={DpaPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
@@ -26,6 +37,7 @@ function App() {
           <div className="min-h-screen bg-background text-foreground">
             <Router />
           </div>
+          <CookieBanner />
           <Toaster />
         </VapiProvider>
       </TooltipProvider>
