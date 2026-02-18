@@ -2,8 +2,15 @@ import { motion } from "framer-motion";
 import { Phone, MessageSquare, SkipForward, X, Check } from "lucide-react";
 import type { Lead } from "@/config/blower-leads";
 
-function getColdSmsUrl(phone: string, leadName: string): string {
-  const body = `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one!\n\nI'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI.\n\nWould you be interested in me sending over a quick demo of how it works?\n\nNo worries if not!`;
+function getColdSmsUrl(phone: string, leadName: string, leadNotes?: string): string {
+  let body: string;
+  // If lead has a personalised message prefixed with MSG:, use that
+  if (leadNotes?.startsWith("MSG:")) {
+    const newlineIdx = leadNotes.indexOf("\n");
+    body = newlineIdx > 0 ? leadNotes.slice(4, newlineIdx) : leadNotes.slice(4);
+  } else {
+    body = `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one!\n\nI'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI.\n\nWould you be interested in me sending over a quick demo of how it works?\n\nNo worries if not!`;
+  }
   const encoded = encodeURIComponent(body);
   const cleanPhone = phone.replace(/\s+/g, "").replace(/^0/, "44");
   return `https://wa.me/${cleanPhone}?text=${encoded}`;
@@ -94,7 +101,7 @@ export default function CallPreview({
               CALL
             </a>
             <a
-              href={getColdSmsUrl(lead.phone, lead.name)}
+              href={getColdSmsUrl(lead.phone, lead.name, lead.notes)}
               onClick={() => onText()}
               className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 active:scale-[0.98] text-white font-bold text-lg shadow-md transition-all"
             >

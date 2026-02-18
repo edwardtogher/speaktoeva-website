@@ -40,7 +40,12 @@ const DISPOSITION_DOT: Record<Disposition, string> = {
   not_interested: "bg-red-400",
 };
 
-function getColdSmsTemplate(leadName: string): string {
+function getColdSmsTemplate(leadName: string, leadNotes?: string): string {
+  // If lead has a personalised message prefixed with MSG:, use that
+  if (leadNotes?.startsWith("MSG:")) {
+    const newlineIdx = leadNotes.indexOf("\n");
+    return newlineIdx > 0 ? leadNotes.slice(4, newlineIdx) : leadNotes.slice(4);
+  }
   return `Hey, sorry for reaching out out of the blue - I know this is a bit of a random one!\n\nI'm based in Farnham and I actually help businesses like ${leadName} handle their inbound calls and enquiries using AI.\n\nWould you be interested in me sending over a quick demo of how it works?\n\nNo worries if not!`;
 }
 
@@ -171,7 +176,7 @@ export default function LeadCard({
                 </a>
                 {showTextButton && (
                   <a
-                    href={getSmsUrl(lead.phone, getColdSmsTemplate(lead.name))}
+                    href={getSmsUrl(lead.phone, getColdSmsTemplate(lead.name, lead.notes))}
                     onClick={() => onSetTexted()}
                     className="flex items-center justify-center gap-1.5 min-h-[56px] px-5 rounded-xl bg-[#F2F2F7] border-none text-zinc-600 font-medium text-sm transition-colors active:bg-gray-200"
                   >
