@@ -4,12 +4,12 @@ import WhatsAppLeadCard from "./WhatsAppLeadCard";
 
 type TabKey = "new" | "messaged" | "in_convo" | "interested" | "not_interested";
 
-const TAB_CONFIG: { key: TabKey; label: string; shortLabel: string }[] = [
-  { key: "new", label: "New", shortLabel: "New" },
-  { key: "messaged", label: "Messaged", shortLabel: "Messaged" },
-  { key: "in_convo", label: "In Convo", shortLabel: "In Convo" },
-  { key: "interested", label: "Interested", shortLabel: "Interested" },
-  { key: "not_interested", label: "Not Int.", shortLabel: "Not Int." },
+const TAB_CONFIG: { key: TabKey; label: string }[] = [
+  { key: "new", label: "New" },
+  { key: "messaged", label: "Sent" },
+  { key: "in_convo", label: "Replied" },
+  { key: "interested", label: "Interested" },
+  { key: "not_interested", label: "No" },
 ];
 
 // --- StatsBar ---
@@ -37,12 +37,16 @@ function StatsBar({
   negativeRate: number;
 }) {
   return (
-    <div className="bg-white border-b border-zinc-200 px-4 py-3 flex items-center gap-4 overflow-x-auto">
+    <div className="bg-white border-b border-zinc-200 px-2 py-2 flex items-center justify-around">
       <Stat label="Total" value={total} />
+      <div className="w-px h-6 bg-zinc-100" />
       <Stat label="Sent" value={totalSent} />
-      <Stat label="Reply %" value={`${replyRate}%`} />
-      <Stat label="👍 Positive" value={`${positiveRate}%`} color="text-green-600" />
-      <Stat label="👎 Negative" value={`${negativeRate}%`} color="text-red-500" />
+      <div className="w-px h-6 bg-zinc-100" />
+      <Stat label="Reply" value={totalSent > 0 ? `${replyRate}%` : "—"} />
+      <div className="w-px h-6 bg-zinc-100" />
+      <Stat label="Positive" value={totalSent > 0 ? `${positiveRate}%` : "—"} color="text-green-600" />
+      <div className="w-px h-6 bg-zinc-100" />
+      <Stat label="Negative" value={totalSent > 0 ? `${negativeRate}%` : "—"} color="text-red-500" />
     </div>
   );
 }
@@ -59,20 +63,22 @@ function TabBar({
   counts: Record<TabKey, number>;
 }) {
   return (
-    <div className="bg-white border-b border-zinc-200 flex overflow-x-auto">
+    <div className="bg-white border-b border-zinc-200 flex">
       {TAB_CONFIG.map((tab) => {
         const isActive = activeTab === tab.key;
+        const count = counts[tab.key];
         return (
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className={`flex-shrink-0 px-4 py-3 text-[13px] font-medium border-b-2 transition-colors min-h-[44px] whitespace-nowrap ${
+            className={`flex-1 flex flex-col items-center py-2 border-b-2 transition-colors min-h-[44px] ${
               isActive
-                ? "border-indigo-600 text-indigo-600 font-semibold"
+                ? "border-indigo-600 text-indigo-600"
                 : "border-transparent text-zinc-400"
             }`}
           >
-            {tab.label} ({counts[tab.key]})
+            <span className={`text-[12px] font-semibold`}>{tab.label}</span>
+            <span className={`text-[11px] ${isActive ? "text-indigo-400" : "text-zinc-300"}`}>{count}</span>
           </button>
         );
       })}
