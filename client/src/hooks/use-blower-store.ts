@@ -8,7 +8,37 @@ import {
   useSetTagsMutation,
   useSetStageMutation,
   useStartRound2Mutation,
+  useLeads,
+  type ApiLead,
 } from "./use-blower-api";
+
+// --- useAllLeads: fetch leads from API, fall back to static LEADS while loading ---
+export function useAllLeads(): { leads: Lead[]; isLoading: boolean } {
+  const { data: apiLeads, isLoading } = useLeads();
+  const leads = useMemo(() => {
+    if (!apiLeads || apiLeads.length === 0) return LEADS;
+    return apiLeads.map((l: ApiLead): Lead => ({
+      id: l.id,
+      name: l.name,
+      type: (l.type as Lead["type"]) ?? "physio",
+      town: l.town ?? "",
+      phone: l.phone ?? "",
+      phoneLandline: l.phoneLandline ?? undefined,
+      website: l.website ?? undefined,
+      notes: l.notes ?? "",
+      tier: ((l.tier ?? 2) as Lead["tier"]),
+      signal: (l.signal as Lead["signal"]) ?? "local",
+      batch: l.batch ?? "",
+      batchLabel: l.batchLabel ?? "",
+      whatsappSentAt: l.whatsappSentAt,
+      whatsappMessage: l.whatsappMessage,
+      whatsappRepliedAt: l.whatsappRepliedAt,
+      whatsappReply: l.whatsappReply,
+      whatsappDisposition: l.whatsappDisposition,
+    }));
+  }, [apiLeads]);
+  return { leads, isLoading };
+}
 
 // --- Types (unchanged — all components import from here) ---
 

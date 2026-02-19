@@ -168,3 +168,67 @@ export function useLeaderboard() {
     refetchOnWindowFocus: true,
   });
 }
+
+// --- Leads API ---
+
+export interface ApiLead {
+  id: string;
+  name: string;
+  type: string;
+  town: string | null;
+  phone: string | null;
+  phoneLandline: string | null;
+  website: string | null;
+  notes: string | null;
+  tier: number;
+  signal: string | null;
+  batch: string | null;
+  batchLabel: string | null;
+  status: string;
+  attemptCount: number;
+  lastCallAt: string | null;
+  nextCallbackAt: string | null;
+  textedAt: string | null;
+  textMessage: string | null;
+  whatsappSentAt: string | null;
+  whatsappMessage: string | null;
+  whatsappRepliedAt: string | null;
+  whatsappReply: string | null;
+  whatsappDisposition: string | null;
+}
+
+export function useLeads(filters?: { batch?: string; status?: string; limit?: number }) {
+  const params = new URLSearchParams();
+  if (filters?.batch) params.set("batch", filters.batch);
+  if (filters?.status) params.set("status", filters.status);
+  params.set("limit", String(filters?.limit ?? 1000));
+  return useQuery<ApiLead[]>({
+    queryKey: ["blower", "leads", filters],
+    queryFn: () => apiFetch<ApiLead[]>(`/api/leads?${params.toString()}`),
+    staleTime: 60_000,
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useUpdateWhatsapp() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (params: {
+      leadId: string;
+      whatsappSentAt?: Date;
+      whatsappMessage?: string;
+      whatsappRepliedAt?: Date;
+      whatsappReply?: string;
+      whatsappDisposition?: "interested" | "not_interested" | "follow_up" | null;
+    }) => {
+      const { leadId, ...data } = params;
+      return apiFetch(`/api/leads/${leadId}/whatsapp`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["blower", "leads"] });
+    },
+  });
+}

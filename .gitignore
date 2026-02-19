@@ -8,3 +8,6 @@ vite.config.ts.*
 .vercel
 .env
 .env*.local
+
+# Mac metadata files
+._*

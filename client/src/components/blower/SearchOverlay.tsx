@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LEADS, type Lead } from "@/config/blower-leads";
+import { type Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
 
 interface SearchOverlayProps {
@@ -11,6 +11,7 @@ interface SearchOverlayProps {
   dispositions: Record<string, Disposition>;
   attempts: Record<string, number>;
   onSelectLead: (leadId: string) => void;
+  leads: Lead[];
 }
 
 const TYPE_LABEL: Record<Lead["type"], string> = {
@@ -37,6 +38,7 @@ export default function SearchOverlay({
   dispositions,
   attempts,
   onSelectLead,
+  leads,
 }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +52,7 @@ export default function SearchOverlay({
   }, [open]);
 
   const results = query.trim().length >= 2
-    ? LEADS.filter((lead) => {
+    ? leads.filter((lead) => {
         const q = query.trim().toLowerCase();
         const normalizedQuery = normalizePhone(q);
         const normalizedPhone = normalizePhone(lead.phone);

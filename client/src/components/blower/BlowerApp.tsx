@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BLOWER_USERS } from "@/config/blower-users";
-import { getBatches, LEADS, type Lead } from "@/config/blower-leads";
-import { useBlowerStore, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
+import { type Lead } from "@/config/blower-leads";
+import { useBlowerStore, useAllLeads, type FilterKey, type Disposition } from "@/hooks/use-blower-store";
 import ProgressHeader from "./ProgressHeader";
 import LeadList from "./LeadList";
 import CallingMode from "./CallingMode";
@@ -56,7 +56,17 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     user?.assignedLeadIds ?? "all"
   );
 
-  const batches = useMemo(() => getBatches(), []);
+  const { leads: allLeads } = useAllLeads();
+
+  const batches = useMemo(() => {
+    const seen = new Map<string, { id: string; label: string }>();
+    for (const l of allLeads) {
+      if (l.batch && !seen.has(l.batch)) {
+        seen.set(l.batch, { id: l.batch, label: l.batchLabel || l.batch });
+      }
+    }
+    return Array.from(seen.values());
+  }, [allLeads]);
 
   // Filter batches by user's assignedBatches (if set)
   const effectiveBatches = useMemo(() => {
@@ -72,7 +82,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
       return null; // no filtering needed
     }
     const batchSet = new Set(user.assignedBatches);
-    return new Set(LEADS.filter(l => batchSet.has(l.batch)).map(l => l.id));
+    return new Set(allLeads.filter(l => batchSet.has(l.batch)).map(l => l.id));
   }, [user]);
 
   const todayStats = store.getTodayStats();
@@ -116,7 +126,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     }
     // Then batch leads
     for (const batch of effectiveBatches) {
-      const batchLeads = LEADS.filter((l) => l.batch === batch.id);
+      const batchLeads = allLeads.filter((l) => l.batch === batch.id);
       for (const lead of batchLeads) {
         if (!store.dispositions[lead.id]) {
           return { lead, batchId: batch.id, isGold: false };
@@ -181,7 +191,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     setTimeout(() => {
       // Look for next lead that hasn't been texted
       for (const batch of effectiveBatches) {
-        const batchLeads = LEADS.filter((l) => l.batch === batch.id);
+        const batchLeads = allLeads.filter((l) => l.batch === batch.id);
         for (const lead of batchLeads) {
           if (lead.id !== previewLead.lead.id && !store.texted[lead.id] && !store.dispositions[lead.id]) {
             setPreviewLead({ lead, batchId: batch.id, isGold: false });
@@ -194,7 +204,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   // Handle selecting a lead from the search overlay
   const handleSearchSelect = useCallback((leadId: string) => {
-    const lead = LEADS.find((l) => l.id === leadId);
+    const lead = allLeads.find((l) => l.id === leadId);
     if (!lead) return;
 
     // Check if it's a Gold lead
@@ -280,7 +290,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
     (disposition: Disposition, note: string, tags: string[]) => {
       if (!callingLeadId) return;
 
-      const currentLead = LEADS.find((l) => l.id === callingLeadId);
+      const currentLead = allLeads.find((l) => l.id === callingLeadId);
 
       // Save disposition, note, and tags
       store.setDisposition(callingLeadId, disposition);
@@ -341,7 +351,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
 
   // Find the lead for CallingMode
   const callingLead = callingLeadId
-    ? LEADS.find((l) => l.id === callingLeadId) ?? null
+    ? allLeads.find((l) => l.id === callingLeadId) ?? null
     : null;
 
   // --- Swipe-back gesture for dialler view ---
@@ -581,6 +591,7 @@ export default function BlowerApp({ username, onLogout }: BlowerAppProps) {
               dispositions={store.dispositions}
               attempts={store.attempts}
               onSelectLead={handleSearchSelect}
+              leads={allLeads}
             />
           </motion.div>
         ) : (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, MessageSquare, Check, PhoneIncoming, ThumbsUp, X, Clock } from "lucide-react";
+import { Phone, MessageSquare, Check, PhoneIncoming, ThumbsUp, X, Clock, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/config/blower-leads";
 import type { Disposition } from "@/hooks/use-blower-store";
@@ -121,6 +121,17 @@ export default function LeadCard({
               {lead.town}
             </span>
           </div>
+          {lead.whatsappRepliedAt ? (
+            <div className="flex items-center gap-1 mt-0.5">
+              <MessageCircle className="w-3 h-3 flex-shrink-0" style={{ color: "#25D366" }} />
+              <span className="text-[11px] font-medium" style={{ color: "#25D366" }}>WhatsApp replied</span>
+            </div>
+          ) : lead.whatsappSentAt ? (
+            <div className="flex items-center gap-1 mt-0.5">
+              <MessageCircle className="w-3 h-3 text-zinc-400 flex-shrink-0" />
+              <span className="text-[11px] text-zinc-400 font-medium">WhatsApp sent</span>
+            </div>
+          ) : null}
           {!expanded && note && (
             <p className="text-xs text-zinc-400 truncate mt-0.5">
               {note.length > 40 ? note.slice(0, 40) + "..." : note}

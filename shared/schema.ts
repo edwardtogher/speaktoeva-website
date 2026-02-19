@@ -82,6 +82,11 @@ export const leads = blower.table(
     nextCallbackAt: timestamp("next_callback_at"),
     textedAt: timestamp("texted_at"),
     textMessage: text("text_message"),
+    whatsappSentAt: timestamp("whatsapp_sent_at"),
+    whatsappMessage: text("whatsapp_message"),
+    whatsappRepliedAt: timestamp("whatsapp_replied_at"),
+    whatsappReply: text("whatsapp_reply"),
+    whatsappDisposition: text("whatsapp_disposition"),
     assignedUserId: varchar("assigned_user_id").references(() => users.id),
     deletedAt: timestamp("deleted_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -117,12 +122,18 @@ export const insertLeadSchema = z.object({
   nextCallbackAt: z.coerce.date().nullish(),
   textedAt: z.coerce.date().nullish(),
   textMessage: z.string().nullish(),
+  whatsappSentAt: z.coerce.date().nullish(),
+  whatsappMessage: z.string().nullish(),
+  whatsappRepliedAt: z.coerce.date().nullish(),
+  whatsappReply: z.string().nullish(),
+  whatsappDisposition: z.string().nullish(),
   assignedUserId: z.string().nullish(),
   deletedAt: z.coerce.date().nullish(),
 });
 
 export type InsertLead = z.infer<typeof insertLeadSchema>;
 export type Lead = typeof leads.$inferSelect;
+export type WhatsappDisposition = 'interested' | 'not_interested' | 'follow_up' | null;
 
 // ─── Call Logs ───────────────────────────────────────────
 

@@ -96,6 +96,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/leads/:id/whatsapp", async (req: Request, res: Response) => {
+    try {
+      const body = z.object({
+        whatsappSentAt: z.coerce.date().optional(),
+        whatsappMessage: z.string().optional(),
+        whatsappRepliedAt: z.coerce.date().optional(),
+        whatsappReply: z.string().optional(),
+        whatsappDisposition: z.enum(["interested", "not_interested", "follow_up"]).nullable().optional(),
+      }).safeParse(req.body);
+
+      if (!body.success) return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
+
+      const lead = await storage.updateLead(req.params.id, {
+        whatsappSentAt: body.data.whatsappSentAt,
+        whatsappMessage: body.data.whatsappMessage,
+        whatsappRepliedAt: body.data.whatsappRepliedAt,
+        whatsappReply: body.data.whatsappReply,
+        whatsappDisposition: body.data.whatsappDisposition ?? undefined,
+      });
+      res.json(lead);
+    } catch (err) {
+      res.status(500).json({ message: "Failed to update WhatsApp status" });
+    }
+  });
+
   app.post("/api/leads/:id/text", async (req: Request, res: Response) => {
     try {
       const body = z.object({ message: z.string().min(1) }).safeParse(req.body);
