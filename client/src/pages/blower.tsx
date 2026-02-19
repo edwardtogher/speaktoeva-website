@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BlowerLogin from "@/components/blower/BlowerLogin";
-import BlowerApp from "@/components/blower/BlowerApp";
+import WhatsAppApp from "@/components/blower/WhatsAppApp";
 
 interface BlowerSession {
   username: string;
@@ -37,5 +37,5 @@ export default function BlowerPage() {
     return <BlowerLogin onLogin={handleLogin} />;
   }
 
-  return <BlowerApp username={session.username} onLogout={handleLogout} />;
+  return <WhatsAppApp username={session.username} onLogout={handleLogout} />;
 }
