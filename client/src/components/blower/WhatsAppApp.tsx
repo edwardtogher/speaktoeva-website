@@ -101,7 +101,7 @@ export default function WhatsAppApp({
   // Tab filtering
   const newLeads = leads.filter((l) => !l.whatsappSentAt);
   const messagedLeads = leads.filter((l) => l.whatsappSentAt && !l.whatsappRepliedAt);
-  const inConvoLeads = leads.filter((l) => l.whatsappRepliedAt && !l.whatsappDisposition);
+  const inConvoLeads = leads.filter((l) => l.whatsappRepliedAt && (!l.whatsappDisposition || l.whatsappDisposition === "follow_up"));
   const interestedLeads = leads.filter((l) => l.whatsappDisposition === "interested");
   const notInterestedLeads = leads.filter((l) => l.whatsappDisposition === "not_interested");
 
