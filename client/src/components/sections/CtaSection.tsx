@@ -1,9 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { useVapi } from '@/components/VapiProvider';
-import { BOOKING_LINK } from '@/config/vapi';
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll';
 
-export default function CtaSection() {
+interface CtaSectionProps {
+  onContactOpen?: () => void;
+}
+
+export default function CtaSection({ onContactOpen }: CtaSectionProps) {
   const { startCall, endCall, isCallActive, logoState } = useVapi();
 
   const handleTalk = () => {
@@ -27,9 +30,9 @@ export default function CtaSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <Button
               size="lg"
-              onClick={() => window.open(BOOKING_LINK, '_blank')}
+              onClick={() => onContactOpen?.()}
             >
-              Book your walkthrough
+              Get in Touch
             </Button>
             <Button
               size="lg"

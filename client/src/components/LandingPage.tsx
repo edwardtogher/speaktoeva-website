@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Navbar from '@/components/sections/Navbar';
 import HeroSection from '@/components/sections/HeroSection';
 import SocialProof from '@/components/sections/SocialProof';
@@ -7,8 +8,12 @@ import Integrations from '@/components/sections/Integrations';
 import Industries from '@/components/sections/Industries';
 import CtaSection from '@/components/sections/CtaSection';
 import Footer from '@/components/sections/Footer';
+import ContactModal from '@/components/ContactModal';
 
 export default function LandingPage() {
+  const [contactOpen, setContactOpen] = useState(false);
+  const onContactOpen = () => setContactOpen(true);
+
   return (
     <main className="min-h-screen flex flex-col">
       {/* Skip to content link for accessibility */}
@@ -19,15 +24,17 @@ export default function LandingPage() {
         Skip to content
       </a>
 
-      <Navbar />
-      <HeroSection />
+      <Navbar onContactOpen={onContactOpen} />
+      <HeroSection onContactOpen={onContactOpen} />
       <SocialProof />
       <HowItWorks />
       <Features />
       <Integrations />
       <Industries />
-      <CtaSection />
+      <CtaSection onContactOpen={onContactOpen} />
       <Footer />
+
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
     </main>
   );
 }

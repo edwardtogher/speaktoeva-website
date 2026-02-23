@@ -4,9 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import EvaLogo from '@/components/EvaLogo';
 import { useVapi } from '@/components/VapiProvider';
-import { BOOKING_LINK } from '@/config/vapi';
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  onContactOpen?: () => void;
+}
+
+export default function HeroSection({ onContactOpen }: HeroSectionProps) {
   const { logoState, startCall, endCall, isCallActive } = useVapi();
 
   const handleLogoClick = () => {
@@ -75,10 +78,10 @@ export default function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => window.open(BOOKING_LINK, '_blank')}
-              data-testid="button-book-walkthrough"
+              onClick={() => onContactOpen?.()}
+              data-testid="button-get-in-touch"
             >
-              Book a 10-min walkthrough
+              Get in Touch
             </Button>
           </div>
 

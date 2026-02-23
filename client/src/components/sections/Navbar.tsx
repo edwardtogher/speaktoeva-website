@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { BOOKING_LINK } from '@/config/vapi';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 const navLinks = [
@@ -11,7 +10,11 @@ const navLinks = [
   { label: 'Integrations', href: '/#integrations' },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  onContactOpen?: () => void;
+}
+
+export default function Navbar({ onContactOpen }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -46,8 +49,8 @@ export default function Navbar() {
           <Button variant="ghost" size="sm" asChild>
             <a href="/#hero">Try Demo</a>
           </Button>
-          <Button size="sm" onClick={() => window.open(BOOKING_LINK, '_blank')}>
-            Book a Call
+          <Button size="sm" onClick={() => onContactOpen?.()}>
+            Get in Touch
           </Button>
           <Button variant="outline" size="sm" asChild>
             <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
@@ -78,8 +81,8 @@ export default function Navbar() {
               <Button variant="ghost" asChild>
                 <a href="/#hero" onClick={() => setOpen(false)}>Try Demo</a>
               </Button>
-              <Button onClick={() => { window.open(BOOKING_LINK, '_blank'); setOpen(false); }}>
-                Book a Call
+              <Button onClick={() => { setOpen(false); onContactOpen?.(); }}>
+                Get in Touch
               </Button>
               <Button variant="outline" asChild>
                 <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
