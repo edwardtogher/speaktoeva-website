@@ -195,6 +195,7 @@ export interface ApiLead {
   whatsappRepliedAt: string | null;
   whatsappReply: string | null;
   whatsappDisposition: string | null;
+  senderAccount: string | null;
 }
 
 export function useLeads(filters?: { batch?: string; status?: string; limit?: number }) {
@@ -220,6 +221,7 @@ export function useUpdateWhatsapp() {
       whatsappRepliedAt?: Date;
       whatsappReply?: string;
       whatsappDisposition?: "interested" | "not_interested" | "follow_up" | null;
+      senderAccount?: string;
     }) => {
       const { leadId, ...data } = params;
       return apiFetch(`/api/leads/${leadId}/whatsapp`, {

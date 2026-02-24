@@ -17,6 +17,7 @@ export interface Lead {
   whatsappRepliedAt?: string | null;
   whatsappReply?: string | null;
   whatsappDisposition?: string | null;
+  senderAccount?: string | null;
 }
 
 // Lead data — compiled from farnham-physio-leads.md, physio-leads.md, uk-physio-chiro-osteo-ad-leads.md

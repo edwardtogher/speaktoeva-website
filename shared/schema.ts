@@ -51,6 +51,14 @@ export const leadTypeEnum = z.enum([
   "osteo",
   "multi",
   "wellness",
+  "landscaper",
+  "builder",
+  "plumber",
+  "roofer",
+  "electrician",
+  "kitchen_fitter",
+  "bathroom_fitter",
+  "general_trade",
 ]);
 
 export const leadSignalEnum = z.enum([
@@ -58,6 +66,9 @@ export const leadSignalEnum = z.enum([
   "ads",
   "local",
   "compound",
+  "no_website",
+  "website_gaps",
+  "generic",
 ]);
 
 export const leads = blower.table(
@@ -87,6 +98,7 @@ export const leads = blower.table(
     whatsappRepliedAt: timestamp("whatsapp_replied_at"),
     whatsappReply: text("whatsapp_reply"),
     whatsappDisposition: text("whatsapp_disposition"),
+    senderAccount: text("sender_account"),
     assignedUserId: varchar("assigned_user_id").references(() => users.id),
     deletedAt: timestamp("deleted_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -127,6 +139,7 @@ export const insertLeadSchema = z.object({
   whatsappRepliedAt: z.coerce.date().nullish(),
   whatsappReply: z.string().nullish(),
   whatsappDisposition: z.string().nullish(),
+  senderAccount: z.string().nullish(),
   assignedUserId: z.string().nullish(),
   deletedAt: z.coerce.date().nullish(),
 });

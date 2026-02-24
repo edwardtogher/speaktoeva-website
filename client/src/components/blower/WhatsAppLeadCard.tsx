@@ -46,7 +46,7 @@ function StatusPill({ lead }: { lead: Lead }) {
 
 // --- Main card ---
 
-export default function WhatsAppLeadCard({ lead }: { lead: Lead }) {
+export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; senderAccount: string }) {
   const updateWhatsapp = useUpdateWhatsapp();
   const [expanded, setExpanded] = useState(false);
   const [message, setMessage] = useState(() => lead.whatsappMessage || generateMessage(lead));
@@ -58,11 +58,12 @@ export default function WhatsAppLeadCard({ lead }: { lead: Lead }) {
   function handleSendOnWhatsApp() {
     // Open WhatsApp with pre-filled message
     window.open(getWhatsAppUrl(lead.phone, message), "_blank");
-    // Mark as sent in DB
+    // Mark as sent in DB with senderAccount
     updateWhatsapp.mutate({
       leadId: lead.id,
       whatsappSentAt: new Date(),
       whatsappMessage: message,
+      senderAccount,
     });
     setExpanded(false);
   }
@@ -100,7 +101,7 @@ export default function WhatsAppLeadCard({ lead }: { lead: Lead }) {
 
         {/* Tap hint for new leads */}
         {isNew && !expanded && (
-          <p className="mt-2 text-[11px] text-indigo-400 font-medium">Tap to message →</p>
+          <p className="mt-2 text-[11px] text-green-500 font-medium">Tap to message →</p>
         )}
       </div>
 
@@ -117,7 +118,7 @@ export default function WhatsAppLeadCard({ lead }: { lead: Lead }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={5}
-            className="w-full text-[13px] text-zinc-700 bg-zinc-50 rounded-xl p-3 border border-zinc-200 resize-none focus:outline-none focus:border-indigo-400"
+            className="w-full text-[13px] text-zinc-700 bg-zinc-50 rounded-xl p-3 border border-zinc-200 resize-none focus:outline-none focus:border-green-400"
           />
 
           {/* Actions */}

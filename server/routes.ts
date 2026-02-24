@@ -104,6 +104,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         whatsappRepliedAt: z.coerce.date().optional(),
         whatsappReply: z.string().optional(),
         whatsappDisposition: z.enum(["interested", "not_interested", "follow_up"]).nullable().optional(),
+        senderAccount: z.string().optional(),
       }).safeParse(req.body);
 
       if (!body.success) return res.status(400).json({ message: "Invalid data", errors: body.error.flatten() });
@@ -114,6 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         whatsappRepliedAt: body.data.whatsappRepliedAt,
         whatsappReply: body.data.whatsappReply,
         whatsappDisposition: body.data.whatsappDisposition ?? undefined,
+        senderAccount: body.data.senderAccount,
       });
       res.json(lead);
     } catch (err) {

@@ -35,6 +35,7 @@ export function useAllLeads(): { leads: Lead[]; isLoading: boolean } {
       whatsappRepliedAt: l.whatsappRepliedAt,
       whatsappReply: l.whatsappReply,
       whatsappDisposition: l.whatsappDisposition,
+      senderAccount: l.senderAccount,
     }));
   }, [apiLeads]);
   return { leads, isLoading };

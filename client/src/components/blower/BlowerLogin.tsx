@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { BLOWER_USERS } from "@/config/blower-users";
 
 interface BlowerLoginProps {
@@ -35,11 +35,11 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
       >
         <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 space-y-6">
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-100 mb-2">
-              <Phone className="w-7 h-7 text-indigo-600" />
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-100 mb-2">
+              <MessageCircle className="w-7 h-7 text-green-600" />
             </div>
-            <h1 className="text-2xl font-bold text-zinc-900">Blower</h1>
-            <p className="text-zinc-500 text-sm">Cold calling CRM</p>
+            <h1 className="text-2xl font-bold text-zinc-900">WhatsApp CRM</h1>
+            <p className="text-zinc-500 text-sm">Eva Outreach</p>
           </div>
 
           <div className="space-y-3">
@@ -63,9 +63,9 @@ export default function BlowerLogin({ onLogin }: BlowerLoginProps) {
 
           <button
             type="submit"
-            className="w-full h-14 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold text-[16px] shadow-md transition-colors"
+            className="w-full h-14 rounded-xl bg-green-600 hover:bg-green-500 active:bg-green-700 text-white font-semibold text-[16px] shadow-md transition-colors"
           >
-            Start Calling
+            Log In
           </button>
         </div>
       </motion.form>
