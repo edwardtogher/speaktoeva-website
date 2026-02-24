@@ -71,22 +71,34 @@ function StatusPill({ lead }: { lead: Lead }) {
 export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; senderAccount: string }) {
   const updateWhatsapp = useUpdateWhatsapp();
   const [expanded, setExpanded] = useState(false);
+  const [pendingConfirm, setPendingConfirm] = useState(false);
   const [message, setMessage] = useState(() => lead.whatsappMessage || generateMessage(lead));
 
   const isNew = !lead.whatsappSentAt;
   const hasReplied = !!lead.whatsappRepliedAt;
   const needsDisposition = hasReplied && !lead.whatsappDisposition;
 
-  function handleSendOnWhatsApp() {
-    // Open WhatsApp with pre-filled message
-    window.open(getWhatsAppUrl(lead.phone, message), "_blank");
-    // Mark as sent in DB with senderAccount
+  function handleOpenWhatsApp() {
+    // Navigate directly to wa.me — opens WhatsApp natively on iOS
+    window.location.href = getWhatsAppUrl(lead.phone, message);
+    // Show confirm/reject buttons when they come back
+    setPendingConfirm(true);
+  }
+
+  function handleConfirmSent() {
     updateWhatsapp.mutate({
       leadId: lead.id,
       whatsappSentAt: new Date(),
       whatsappMessage: message,
       senderAccount,
     });
+    setPendingConfirm(false);
+    setExpanded(false);
+  }
+
+  function handleBadNumber() {
+    updateWhatsapp.mutate({ leadId: lead.id, whatsappDisposition: "bad_number" });
+    setPendingConfirm(false);
     setExpanded(false);
   }
 
@@ -94,8 +106,8 @@ export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; 
     <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden">
       {/* Card header — always visible, tap to expand new leads */}
       <div
-        className={`p-4 ${isNew ? "cursor-pointer active:bg-zinc-50" : ""}`}
-        onClick={() => isNew && setExpanded((e) => !e)}
+        className={`p-4 ${isNew && !pendingConfirm ? "cursor-pointer active:bg-zinc-50" : ""}`}
+        onClick={() => isNew && !pendingConfirm && setExpanded((e) => !e)}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
@@ -106,7 +118,7 @@ export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; 
         </div>
 
         {/* Message sent preview */}
-        {lead.whatsappMessage && !expanded && (
+        {lead.whatsappMessage && !expanded && !pendingConfirm && (
           <p className="mt-2 text-[12px] text-zinc-400 line-clamp-1">
             {lead.whatsappMessage}
           </p>
@@ -122,13 +134,41 @@ export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; 
         )}
 
         {/* Tap hint for new leads */}
-        {isNew && !expanded && (
+        {isNew && !expanded && !pendingConfirm && (
           <p className="mt-2 text-[11px] text-green-500 font-medium">Tap to message →</p>
         )}
       </div>
 
-      {/* Expanded: message editor + send button (new leads only) */}
-      {isNew && expanded && (
+      {/* Pending confirm — shown after returning from WhatsApp */}
+      {pendingConfirm && (
+        <div className="px-4 pb-4 border-t border-zinc-100 pt-3">
+          <p className="text-[13px] text-zinc-600 mb-3">Did you send it?</p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleConfirmSent}
+              className="flex-1 py-3 rounded-xl font-semibold text-[14px] text-white min-h-[48px] active:opacity-80"
+              style={{ backgroundColor: "#25D366" }}
+            >
+              Sent
+            </button>
+            <button
+              onClick={handleBadNumber}
+              className="py-3 px-4 rounded-xl bg-red-50 text-red-500 font-semibold text-[14px] min-h-[48px] active:bg-red-100"
+            >
+              Bad #
+            </button>
+            <button
+              onClick={() => { setPendingConfirm(false); setExpanded(false); }}
+              className="py-3 px-4 rounded-xl bg-zinc-100 text-zinc-500 font-semibold text-[14px] min-h-[48px] active:bg-zinc-200"
+            >
+              Skip
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Expanded: message editor + open button (new leads only) */}
+      {isNew && expanded && !pendingConfirm && (
         <div className="px-4 pb-4 border-t border-zinc-100 pt-3">
           {/* Notes context */}
           {lead.notes && (
@@ -146,20 +186,11 @@ export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; 
           {/* Actions */}
           <div className="flex gap-2 mt-3">
             <button
-              onClick={handleSendOnWhatsApp}
+              onClick={handleOpenWhatsApp}
               className="flex-1 py-3 rounded-xl font-semibold text-[14px] text-white min-h-[48px] flex items-center justify-center gap-2 active:opacity-80"
               style={{ backgroundColor: "#25D366" }}
             >
               Open in WhatsApp
-            </button>
-            <button
-              onClick={() => {
-                updateWhatsapp.mutate({ leadId: lead.id, whatsappDisposition: "bad_number" });
-                setExpanded(false);
-              }}
-              className="py-3 px-4 rounded-xl bg-red-50 text-red-500 font-semibold text-[14px] min-h-[48px] active:bg-red-100"
-            >
-              Bad #
             </button>
             <button
               onClick={() => setExpanded(false)}

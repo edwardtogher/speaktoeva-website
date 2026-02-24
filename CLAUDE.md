@@ -62,7 +62,23 @@ gh repo view                                        # GitHub info
 - **Login button** -> dash.speaktoeva.com
 - **Talk to EVA button** -> VAPI voice demo
 - **Book a Call** -> Cal.com link
-- **Footer** -> Copyright + LinkedIn link
+- **Footer** -> Quick links + Legal links (Terms, Privacy, DPA) + Copyright + LinkedIn
+
+### Legal Pages
+
+| Route | File | Content |
+|-------|------|---------|
+| `/terms` | `client/src/pages/terms.tsx` | Terms of Service (17 sections) |
+| `/privacy` | `client/src/pages/privacy.tsx` | Privacy Policy (13 sections) |
+| `/dpa` | `client/src/pages/dpa.tsx` | Data Processing Addendum (13 sections) |
+
+**Constants:** `client/src/lib/constants.ts` — `COMPANY_NAME`, `CONTACT_EMAIL`, `SITE_URL`, `JURISDICTION`, `LAST_UPDATED`. When the Ltd is registered, change `COMPANY_NAME` here and push — all three pages update automatically.
+
+**Layout:** `client/src/components/legal/` — LegalLayout (shared wrapper with Navbar + Footer), TableOfContents (sticky sidebar desktop, collapsible mobile), ScrollToTop, BackToTop.
+
+**Analytics:** Vercel Web Analytics is cookieless — no cookie banner needed. No cookies, localStorage, or fingerprinting. PECR does not apply.
+
+**Navbar/Footer:** Nav links use `<a href="/#section">` format so they work from legal pages (not just scroll-to buttons).
 
 ---
 
