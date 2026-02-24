@@ -206,7 +206,7 @@ export default function WhatsAppApp({
   return (
     <div className="min-h-screen bg-[#F2F2F7] flex flex-col">
       {/* Header */}
-      <div className="bg-white px-4 pt-safe pb-3 border-b border-zinc-200 flex items-center justify-between min-h-[52px]">
+      <div className="bg-white px-4 pb-3 border-b border-zinc-200 flex items-center justify-between min-h-[52px]" style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 12px)' }}>
         <span className="font-semibold text-[17px]">WhatsApp CRM</span>
         <button
           onClick={onLogout}
