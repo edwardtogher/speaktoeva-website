@@ -13,17 +13,29 @@ function formatPhoneForWhatsApp(phone: string): string {
 
 function generateMessage(lead: Lead): string {
   const notes = (lead.notes || "").trim();
+  const isTrade = lead.type === "trade";
+  const isHiring = notes.toLowerCase().includes("hiring");
 
-  // Build a personalised opener from the notes if possible
+  // Pick the right business word
+  const bizWord = isTrade ? "business" : "clinic";
+
+  // Opener — personalised if we have usable notes
   let opener = "";
-  if (notes.length > 15) {
-    // Notes are written in third person — convert to second person context
+  if (isHiring) {
+    // Hiring signal — don't repeat the job listing, reference it naturally
+    opener = `Hey! I noticed ${lead.name} is hiring at the moment — must be busy!`;
+  } else if (notes.length > 15) {
     opener = `Hey! I came across ${lead.name} in ${lead.town} — ${notes.split(".")[0].toLowerCase()}.`;
   } else {
-    opener = `Hey! I came across your clinic in the ${lead.town} area —`;
+    opener = `Hey! I came across ${lead.name} in the ${lead.town} area.`;
   }
 
-  return `${opener} I'm based over in Farnham and I've been helping clinics like yours handle their inbound calls using AI, so when you're in sessions all day every call still gets answered and patients get booked in. Would you be up for a quick demo? No worries if not!`;
+  // Body — different for trades vs clinics
+  if (isTrade) {
+    return `${opener} I'm based in Farnham and I've been helping local businesses like yours make sure every call gets answered — even when you're out on a job. Built an AI receptionist that picks up, takes details and books things in. Would you be up for a quick chat about it? No worries if not!`;
+  }
+
+  return `${opener} I'm based in Farnham and I've been helping clinics like yours handle inbound calls using AI, so when you're in sessions all day every call still gets answered and patients get booked in. Would you be up for a quick demo? No worries if not!`;
 }
 
 function getWhatsAppUrl(phone: string, message: string): string {
