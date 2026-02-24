@@ -13,19 +13,29 @@ function formatPhoneForWhatsApp(phone: string): string {
 
 function generateMessage(lead: Lead): string {
   const notes = (lead.notes || "").trim();
+
+  // If notes contain a pre-written message (MSG: prefix from Scout), use it directly
+  if (notes.startsWith("MSG:")) {
+    // Extract just the message, strip the "From Google Maps scrape" metadata
+    const msg = notes.slice(4).split("\nFrom Google Maps")[0].trim();
+    if (msg.length > 20) return msg;
+  }
+
   const isTrade = lead.type === "trade";
   const isHiring = notes.toLowerCase().includes("hiring");
 
-  // Pick the right business word
-  const bizWord = isTrade ? "business" : "clinic";
-
-  // Opener — personalised if we have usable notes
+  // Opener
   let opener = "";
   if (isHiring) {
-    // Hiring signal — don't repeat the job listing, reference it naturally
     opener = `Hey! I noticed ${lead.name} is hiring at the moment — must be busy!`;
-  } else if (notes.length > 15) {
-    opener = `Hey! I came across ${lead.name} in ${lead.town} — ${notes.split(".")[0].toLowerCase()}.`;
+  } else if (notes.length > 15 && !notes.startsWith("MSG:")) {
+    // Only use notes as opener if they're genuine observations, not metadata
+    const firstSentence = notes.split(".")[0].trim();
+    if (firstSentence.length > 10 && firstSentence.length < 100) {
+      opener = `Hey! I came across ${lead.name} in ${lead.town} — ${firstSentence.toLowerCase()}.`;
+    } else {
+      opener = `Hey! I came across ${lead.name} in the ${lead.town} area.`;
+    }
   } else {
     opener = `Hey! I came across ${lead.name} in the ${lead.town} area.`;
   }
