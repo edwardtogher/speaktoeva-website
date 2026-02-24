@@ -131,6 +131,15 @@ export default function WhatsAppLeadCard({ lead, senderAccount }: { lead: Lead; 
               Open in WhatsApp
             </button>
             <button
+              onClick={() => {
+                updateWhatsapp.mutate({ leadId: lead.id, whatsappDisposition: "bad_number" });
+                setExpanded(false);
+              }}
+              className="py-3 px-4 rounded-xl bg-red-50 text-red-500 font-semibold text-[14px] min-h-[48px] active:bg-red-100"
+            >
+              Bad #
+            </button>
+            <button
               onClick={() => setExpanded(false)}
               className="py-3 px-4 rounded-xl bg-zinc-100 text-zinc-500 font-semibold text-[14px] min-h-[48px] active:bg-zinc-200"
             >

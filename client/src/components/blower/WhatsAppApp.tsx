@@ -155,6 +155,8 @@ export default function WhatsAppApp({
   // - Other tabs: leads assigned to the selected account
   const accountLeads = useMemo(() => {
     return allLeads.filter((l) => {
+      // Hide bad numbers everywhere
+      if (l.whatsappDisposition === "bad_number") return false;
       // Leads that haven't been sent yet (no senderAccount) show in all accounts' "New" tab
       if (!l.senderAccount && !l.whatsappSentAt) return true;
       // Sent leads: only show in the account they were sent from
@@ -163,7 +165,7 @@ export default function WhatsAppApp({
   }, [allLeads, activeAccount]);
 
   // Tab filtering (within the account-filtered leads)
-  const newLeads = accountLeads.filter((l) => !l.whatsappSentAt);
+  const newLeads = accountLeads.filter((l) => !l.whatsappSentAt && l.whatsappDisposition !== "bad_number");
   const messagedLeads = accountLeads.filter((l) => l.whatsappSentAt && !l.whatsappRepliedAt);
   const inConvoLeads = accountLeads.filter((l) => l.whatsappRepliedAt && !l.whatsappDisposition);
   const interestedLeads = accountLeads.filter((l) => l.whatsappDisposition === "interested");
