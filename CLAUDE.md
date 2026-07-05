@@ -53,14 +53,14 @@ gh repo view                                        # GitHub info
 |------|------------------|
 | `client/src/components/Hero.tsx` | Main landing page content |
 | `client/src/components/EvaLogo.tsx` | Animated logo component |
-| `client/src/components/VapiProvider.tsx` | Voice call integration |
-| `client/src/config/vapi.ts` | VAPI keys and booking link |
+| `client/src/components/EvaVoiceProvider.tsx` | Voice call integration (ElevenLabs) |
+| `client/src/config/eva.ts` | ElevenLabs agent ID and booking link |
 | `.env.local` | Environment variables (VAPI keys) |
 
 ### Features
 
 - **Login button** -> dash.speaktoeva.com
-- **Talk to EVA button** -> VAPI voice demo
+- **Talk to EVA button** -> ElevenLabs voice demo
 - **Book a Call** -> Cal.com link
 - **Footer** -> Quick links + Legal links (Terms, Privacy, DPA) + Copyright + LinkedIn
 
