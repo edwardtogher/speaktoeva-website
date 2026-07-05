@@ -152,9 +152,15 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '', ge
           const energy = energyRef.current;
           for (let n = 0; n < 10; n++) {
             const d = Math.abs(n - C);
-            const raw = (levels.bands[Math.round(3 + d * 5)] ?? 0) / 255;
-            energy[n] = Math.max(raw, energy[n] - 0.05);
-            const f = -0.48 * (1 - Math.min(1, energy[n] * 1.35));
+            const bin = Math.round(3 + d * 5);
+            // Average a couple of neighbouring bins to calm spectral flicker
+            const raw =
+              ((levels.bands[bin] ?? 0) + (levels.bands[bin + 1] ?? 0) + (levels.bands[bin + 2] ?? 0)) /
+              (3 * 255);
+            const e = energy[n];
+            // Eased attack, slow release — dances without twitching
+            energy[n] = raw > e ? e + (raw - e) * 0.22 : Math.max(raw, e - 0.025);
+            const f = -0.48 * (1 - Math.min(1, energy[n] * 1.45));
             o.dy[n] = (NODEY[n] - MID) * f;
           }
           return o;
