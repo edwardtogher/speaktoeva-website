@@ -347,9 +347,9 @@
   }
 
   .eva-dormant {
-    --base: 1;
-    --amp: 0;
-    --dur: 1400ms;
+    --base: 0.99;
+    --amp: 0.02;
+    --dur: 3400ms;
     animation: eva-ripple var(--dur) ease-in-out infinite;
   }
 
@@ -383,4 +383,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+/* EVA logo hover — outside @layer so Tailwind never purges it.
+   When idle, hovering makes the bars ripple outward from the centre
+   (each slice keeps its own animation-delay), like Eva noticing you. */
+@keyframes eva-wave {
+  0%   { transform: scaleY(1); }
+  35%  { transform: scaleY(0.78); }
+  70%  { transform: scaleY(1.07); }
+  100% { transform: scaleY(1); }
+}
+
+.group:hover .eva-dormant {
+  animation: eva-wave 1200ms ease-in-out infinite;
 }
