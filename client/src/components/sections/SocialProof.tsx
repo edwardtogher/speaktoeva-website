@@ -1,5 +1,3 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll';
 
 const metrics = [
@@ -9,39 +7,25 @@ const metrics = [
   { value: '99.9%', label: 'Uptime guarantee' },
 ];
 
-function Metric({ value, label, delay }: { value: string; label: string; delay: number }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 16 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay }}
-      className="text-center"
-    >
-      <div className="text-4xl sm:text-5xl font-bold text-primary">{value}</div>
-      <p className="mt-2 text-sm text-muted-foreground">{label}</p>
-    </motion.div>
-  );
-}
-
+// Telemetry band: one hairline-ruled row of instrument readings
 export default function SocialProof() {
   return (
-    <section className="py-20 px-4 bg-muted/30">
-      <div className="max-w-5xl mx-auto space-y-12">
-        <AnimateOnScroll>
-          <h2 className="text-3xl sm:text-4xl font-bold text-center">
-            Built on infrastructure that handles millions.
-          </h2>
-        </AnimateOnScroll>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {metrics.map((m, i) => (
-            <Metric key={m.label} value={m.value} label={m.label} delay={i * 0.1} />
-          ))}
-        </div>
+    <section className="border-y border-foreground/10">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4">
+        {metrics.map((m, i) => (
+          <AnimateOnScroll key={m.label}>
+            <div
+              className={`px-4 lg:px-8 py-8 lg:py-10 border-foreground/10 ${
+                i > 0 ? 'lg:border-l' : ''
+              } ${i % 2 === 1 ? 'border-l lg:border-l' : ''} ${i > 1 ? 'border-t lg:border-t-0' : ''}`}
+            >
+              <div className="font-display font-extrabold text-4xl lg:text-5xl text-primary">
+                {m.value}
+              </div>
+              <p className="microlabel text-foreground/50 mt-3">{m.label}</p>
+            </div>
+          </AnimateOnScroll>
+        ))}
       </div>
     </section>
   );

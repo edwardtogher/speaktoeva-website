@@ -1,60 +1,51 @@
-import { Phone, MessageSquare, BellRing } from 'lucide-react';
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll';
 
 const steps = [
   {
-    num: 1,
-    icon: Phone,
+    num: '01',
     title: 'A customer calls',
-    description: 'EVA picks up instantly — no hold music, no voicemail, no missed opportunity.',
+    description: 'Eva picks up instantly — no hold music, no voicemail, no missed opportunity.',
   },
   {
-    num: 2,
-    icon: MessageSquare,
-    title: 'EVA handles the conversation',
+    num: '02',
+    title: 'Eva handles the conversation',
     description: 'She greets them naturally, answers questions, and books appointments on the spot.',
   },
   {
-    num: 3,
-    icon: BellRing,
+    num: '03',
     title: 'You get notified',
-    description: 'You receive a call summary, any booked appointments, and follow-up actions — instantly.',
+    description: 'A call summary, any booked appointments, and follow-up actions — instantly.',
   },
 ];
 
+// Procedure ledger: numbered hairline rows, no icons, no cards
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 px-4">
-      <div className="max-w-5xl mx-auto space-y-12">
+    <section id="how-it-works" className="px-4 lg:px-8 py-24">
+      <div className="max-w-6xl mx-auto">
         <AnimateOnScroll>
-          <div className="text-center space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-bold">How EVA works</h2>
-            <p className="text-lg text-muted-foreground">Three steps. Zero missed calls.</p>
+          <div className="flex items-baseline justify-between mb-10">
+            <h2 className="font-display font-extrabold uppercase text-3xl sm:text-4xl lg:text-5xl tracking-tight">
+              How Eva works
+            </h2>
+            <span className="microlabel text-foreground/40 hidden sm:inline">Procedure — 3 steps</span>
           </div>
         </AnimateOnScroll>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-          {/* Dashed connecting line (desktop only) */}
-          <div className="hidden md:block absolute top-12 left-[20%] right-[20%] border-t-2 border-dashed border-border" />
-
-          {steps.map((step) => {
-            const Icon = step.icon;
-            return (
-              <AnimateOnScroll key={step.num}>
-                <div className="relative flex flex-col items-center text-center space-y-4">
-                  {/* Numbered circle */}
-                  <div className="relative z-10 w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Icon className="w-10 h-10 text-primary" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 md:static md:mt-0 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
-                    {step.num}
-                  </span>
-                  <h3 className="text-xl font-semibold">{step.title}</h3>
-                  <p className="text-muted-foreground max-w-xs">{step.description}</p>
-                </div>
-              </AnimateOnScroll>
-            );
-          })}
+        <div className="border-t border-foreground/10">
+          {steps.map((step) => (
+            <AnimateOnScroll key={step.num}>
+              <div className="grid grid-cols-[3rem_1fr] sm:grid-cols-[6rem_1fr_1fr] gap-4 sm:gap-8 items-baseline border-b border-foreground/10 py-8 group">
+                <span className="font-mono text-sm text-primary font-bold">{step.num}</span>
+                <h3 className="font-display font-bold text-xl sm:text-2xl group-hover:text-primary transition-colors">
+                  {step.title}
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base col-start-2 sm:col-start-3">
+                  {step.description}
+                </p>
+              </div>
+            </AnimateOnScroll>
+          ))}
         </div>
       </div>
     </section>

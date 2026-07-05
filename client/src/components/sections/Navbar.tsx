@@ -23,8 +23,8 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-background/95 backdrop-blur-sm transition-shadow ${
-        scrolled ? 'border-b shadow-sm' : ''
+      className={`sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b transition-colors ${
+        scrolled ? 'border-foreground/15' : 'border-transparent'
       }`}
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
@@ -38,18 +38,18 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+              className="microlabel text-foreground/60 hover:text-primary transition-colors"
             >
               {l.label}
             </a>
           ))}
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="ghost" size="sm" className="btn-sharp" asChild>
             <a href="/#hero">Try Demo</a>
           </Button>
-          <Button size="sm" onClick={() => window.open(BOOKING_LINK, '_blank')}>
+          <Button size="sm" className="btn-sharp" onClick={() => window.open(BOOKING_LINK, '_blank')}>
             Book a Call
           </Button>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm" className="btn-sharp border-foreground/20" asChild>
             <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
               Login
             </a>
