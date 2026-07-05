@@ -14,8 +14,16 @@ const MARK_PATH =
 
 const SLICE_BOUNDS = [92, 202, 262, 384, 575, 735, 799, 909];
 
+// Literal class names so Tailwind's content scan keeps them in the build
+const STATE_CLASSES: Record<LogoState, string> = {
+  dormant: 'eva-dormant',
+  connecting: 'eva-connecting',
+  speaking: 'eva-speaking',
+  listening: 'eva-listening',
+};
+
 export default function EvaLogo({ state = 'dormant', onClick, className = '' }: EvaLogoProps) {
-  const stateClass = `eva-${state}`;
+  const stateClass = STATE_CLASSES[state] ?? STATE_CLASSES.dormant;
   const center = (SLICE_BOUNDS.length - 2) / 2;
 
   return (
@@ -35,7 +43,7 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
           <defs>
             {SLICE_BOUNDS.slice(0, -1).map((x0, i) => (
               <clipPath key={i} id={`eva-slice-${i}`}>
-                <rect x={x0} y={0} width={SLICE_BOUNDS[i + 1] - x0} height={1080} />
+                <rect x={x0} y={0} width={SLICE_BOUNDS[i + 1] - x0 + 3} height={1080} />
               </clipPath>
             ))}
           </defs>
