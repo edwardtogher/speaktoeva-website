@@ -18,7 +18,7 @@ import symbolLogo from '@assets/linked in post Artboard 5_1758296315847.png';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 export default function Hero() {
-  const { logoState, startCall, endCall, isCallActive } = useEvaVoice();
+  const { logoState, startCall, endCall, isCallActive, getAudioLevels } = useEvaVoice();
 
   const handleLogoClick = () => {
     if (logoState === 'connecting' || isCallActive) {
@@ -140,6 +140,7 @@ export default function Hero() {
               state={logoState} 
               onClick={handleLogoClick}
               className="mx-auto"
+              getLevels={getAudioLevels}
             />
             
             {/* Talk to EVA Button */}

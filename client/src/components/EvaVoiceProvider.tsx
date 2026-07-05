@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
+import { createContext, useContext, useCallback, useEffect, useRef, useState, ReactNode } from 'react';
 import { Conversation } from '@elevenlabs/client';
 import { EVA_CONFIG } from '@/config/eva';
 import { LogoState } from './EvaLogo';
@@ -6,11 +6,18 @@ import { useToast } from '@/hooks/use-toast';
 
 type EvaConversation = Awaited<ReturnType<typeof Conversation.startSession>>;
 
+export interface AudioLevels {
+  out: number;
+  in: number;
+  bands: Uint8Array | null;
+}
+
 interface EvaVoiceContextType {
   isCallActive: boolean;
   logoState: LogoState;
   startCall: () => Promise<void>;
   endCall: () => void;
+  getAudioLevels: () => AudioLevels | null;
 }
 
 const EvaVoiceContext = createContext<EvaVoiceContextType | undefined>(undefined);
@@ -114,11 +121,28 @@ export function EvaVoiceProvider({ children }: EvaVoiceProviderProps) {
     }
   };
 
+  // Live audio levels from the active conversation, read by the logo's
+  // animation loop every frame — so Eva's mark moves to her actual voice.
+  const getAudioLevels = useCallback((): AudioLevels | null => {
+    const c = conversationRef.current as any;
+    if (!c?.getOutputVolume) return null;
+    try {
+      return {
+        out: c.getOutputVolume(),
+        in: c.getInputVolume(),
+        bands: c.getOutputByteFrequencyData(),
+      };
+    } catch {
+      return null;
+    }
+  }, []);
+
   const value = {
     isCallActive,
     logoState,
     startCall,
     endCall,
+    getAudioLevels,
   };
 
   return (

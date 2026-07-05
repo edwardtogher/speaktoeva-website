@@ -7,7 +7,7 @@ import { useEvaVoice } from '@/components/EvaVoiceProvider';
 import { BOOKING_LINK } from '@/config/eva';
 
 export default function HeroSection() {
-  const { logoState, startCall, endCall, isCallActive } = useEvaVoice();
+  const { logoState, startCall, endCall, isCallActive, getAudioLevels } = useEvaVoice();
 
   const handleLogoClick = () => {
     if (logoState === 'connecting' || isCallActive) {
@@ -57,7 +57,7 @@ export default function HeroSection() {
 
         {/* EVA Logo */}
         <div className="py-8 space-y-6">
-          <EvaLogo state={logoState} onClick={handleLogoClick} className="mx-auto" />
+          <EvaLogo state={logoState} onClick={handleLogoClick} className="mx-auto" getLevels={getAudioLevels} />
           <div className="flex justify-center">
             <Button size="lg" onClick={handleLogoClick} data-testid="button-talk-to-eva">
               {logoState === 'connecting' ? 'Connecting...' : isCallActive ? 'End Call' : 'Talk to EVA'}

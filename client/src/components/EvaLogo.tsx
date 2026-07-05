@@ -2,10 +2,19 @@ import { useEffect, useRef } from 'react';
 
 export type LogoState = 'dormant' | 'connecting' | 'speaking' | 'listening';
 
+export interface AudioLevels {
+  out: number;
+  in: number;
+  bands: Uint8Array | null;
+}
+
 interface EvaLogoProps {
   state?: LogoState;
   onClick?: () => void;
   className?: string;
+  /** Live audio levels from the call — when provided, speaking and
+   *  listening animate to the real voice instead of a synthetic cadence. */
+  getLevels?: () => AudioLevels | null;
 }
 
 // The Eva waveform mark (media/eva-mark.svg) decomposed into its 9 zigzag
@@ -95,7 +104,7 @@ const MODES: Record<Mode, (t: number) => Pose> = {
   },
 };
 
-export default function EvaLogo({ state = 'dormant', onClick, className = '' }: EvaLogoProps) {
+export default function EvaLogo({ state = 'dormant', onClick, className = '', getLevels }: EvaLogoProps) {
   const gRef = useRef<SVGGElement>(null);
   const polyRefs = useRef<(SVGPolygonElement | null)[]>([]);
   const hoveredRef = useRef(false);
@@ -103,8 +112,12 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
   const modeRef = useRef<Mode>('idle');
   const prevModeRef = useRef<Mode>('idle');
   const blendRef = useRef(1);
+  const getLevelsRef = useRef<EvaLogoProps['getLevels']>(getLevels);
+  // Per-node smoothed voice energy: instant attack, gradual release
+  const energyRef = useRef<number[]>(new Array(10).fill(0));
 
   stateRef.current = state;
+  getLevelsRef.current = getLevels;
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -128,8 +141,36 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
       if (blendRef.current < 1) blendRef.current = Math.min(1, blendRef.current + 0.04);
       const m = blendRef.current;
 
-      const a = MODES[prevModeRef.current](t);
-      const b = MODES[modeRef.current](t);
+      const levels = getLevelsRef.current?.() ?? null;
+
+      // Voice-driven poses: each stroke follows a frequency band of Eva's
+      // real speech (centre = low frequencies, edges = high), with instant
+      // attack and gradual release so it dances rather than flickers.
+      const poseFor = (mode: Mode): Pose => {
+        if (mode === 'speaking' && levels?.bands && levels.bands.length > 30) {
+          const o = zero();
+          const energy = energyRef.current;
+          for (let n = 0; n < 10; n++) {
+            const d = Math.abs(n - C);
+            const raw = (levels.bands[Math.round(3 + d * 5)] ?? 0) / 255;
+            energy[n] = Math.max(raw, energy[n] - 0.05);
+            const f = -0.48 * (1 - Math.min(1, energy[n] * 1.35));
+            o.dy[n] = (NODEY[n] - MID) * f;
+          }
+          return o;
+        }
+        if (mode === 'listening' && levels) {
+          // The whisper ripple sways with the caller's own voice level
+          const o = MODES.listening(t);
+          const react = 0.35 + 0.65 * Math.min(1, levels.in * 2.5);
+          for (let n = 0; n < 10; n++) o.dy[n] *= react;
+          return o;
+        }
+        return MODES[mode](t);
+      };
+
+      const a = poseFor(prevModeRef.current);
+      const b = poseFor(modeRef.current);
       const dy: number[] = [];
       for (let n = 0; n < 10; n++) dy[n] = a.dy[n] * (1 - m) + b.dy[n] * m;
       const sx = a.sx * (1 - m) + b.sx * m;
