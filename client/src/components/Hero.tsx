@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import EvaLogo from './EvaLogo';
-import { useVapi } from './VapiProvider';
-import { BOOKING_LINK } from '@/config/vapi';
+import { useEvaVoice } from './EvaVoiceProvider';
+import { BOOKING_LINK } from '@/config/eva';
 import { 
   SiGooglecalendar, 
   SiSlack, 
@@ -18,7 +18,7 @@ import symbolLogo from '@assets/linked in post Artboard 5_1758296315847.png';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 export default function Hero() {
-  const { logoState, startCall, endCall, isCallActive } = useVapi();
+  const { logoState, startCall, endCall, isCallActive } = useEvaVoice();
 
   const handleLogoClick = () => {
     if (logoState === 'connecting' || isCallActive) {

@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { useVapi } from '@/components/VapiProvider';
-import { BOOKING_LINK } from '@/config/vapi';
+import { useEvaVoice } from '@/components/EvaVoiceProvider';
+import { BOOKING_LINK } from '@/config/eva';
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll';
 
 export default function CtaSection() {
-  const { startCall, endCall, isCallActive, logoState } = useVapi();
+  const { startCall, endCall, isCallActive, logoState } = useEvaVoice();
 
   const handleTalk = () => {
     if (logoState === 'connecting' || isCallActive) {

@@ -3,7 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { VapiProvider } from "@/components/VapiProvider";
+import { EvaVoiceProvider } from "@/components/EvaVoiceProvider";
 import LandingPage from "@/components/LandingPage";
 import BlowerPage from "@/pages/blower";
 import TermsPage from "@/pages/terms";
@@ -32,12 +32,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <VapiProvider>
+        <EvaVoiceProvider>
           <div className="min-h-screen bg-background text-foreground">
             <Router />
           </div>
           <Toaster />
-        </VapiProvider>
+        </EvaVoiceProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

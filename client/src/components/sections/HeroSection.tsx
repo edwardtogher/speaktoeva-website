@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import EvaLogo from '@/components/EvaLogo';
-import { useVapi } from '@/components/VapiProvider';
-import { BOOKING_LINK } from '@/config/vapi';
+import { useEvaVoice } from '@/components/EvaVoiceProvider';
+import { BOOKING_LINK } from '@/config/eva';
 
 export default function HeroSection() {
-  const { logoState, startCall, endCall, isCallActive } = useVapi();
+  const { logoState, startCall, endCall, isCallActive } = useEvaVoice();
 
   const handleLogoClick = () => {
     if (logoState === 'connecting' || isCallActive) {

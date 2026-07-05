@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { BOOKING_LINK } from '@/config/vapi';
+import { BOOKING_LINK } from '@/config/eva';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 const navLinks = [
