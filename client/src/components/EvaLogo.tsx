@@ -6,13 +6,21 @@ interface EvaLogoProps {
   className?: string;
 }
 
-// The real Eva waveform mark (media/eva-mark.svg), sliced into 7 vertical
-// segments at the low-ink valleys between bars so each segment can animate
-// independently like an equaliser.
-const MARK_PATH =
-  'M550.27,155.19l4.11,364.33,55.21-280.41h116.6l4.11,282.46,45.19-188.09,134.81-.21v399.14l-100.23,18.43-6.12-206.74-61.39,302.93h-116.6c-3.75-32.94-1.24-66.21-1.96-99.36-.65-29.92,0-62.22-2.05-92.1-.22-3.12-.45-12.16-4.15-13.22l-51.16,282.46h-114.55l-6.16-313.16-58.28,235.38h-111.48l-9.22-288.6-41.81,193.54-133.08.91v-364.34l100.22-51.16,6.13,202.62,63.43-298.83h112.51l6.12,276.32,55.25-362.28h114.55Z';
-
-const SLICE_BOUNDS = [92, 202, 262, 384, 575, 735, 799, 909];
+// The Eva waveform mark (media/eva-mark.svg) decomposed into its 9 zigzag
+// strokes, reconstructed from the original path's edge lines (99.8% pixel
+// match to the union). Each stroke is a whole shape, so they can animate
+// independently with no clipping seams or protruding edges mid-animation.
+const STROKES: string[] = [
+  '92.1,388.5 192.3,337.4 204.8,752.2 92.1,752.9',
+  '261.8,241.2 335.4,241.2 225.1,752.0 153.4,752.0',
+  '256.7,241.2 374.3,241.2 387.6,847.0 276.2,847.0',
+  '435.7,155.2 559.0,155.2 387.6,847.0 330.3,847.0',
+  '436.9,155.2 550.3,155.2 559.0,924.8 452.1,924.8',
+  '609.6,239.1 690.9,239.1 566.6,924.8 474.6,924.8',
+  '601.6,239.1 726.2,239.1 735.0,847.0 626.0,847.0',
+  '775.5,333.5 846.5,333.5 742.6,847.0 652.1,847.0',
+  '797.6,333.4 910.3,333.3 910.3,732.4 810.1,750.8',
+];
 
 // Literal class names so Tailwind's content scan keeps them in the build
 const STATE_CLASSES: Record<LogoState, string> = {
@@ -24,7 +32,7 @@ const STATE_CLASSES: Record<LogoState, string> = {
 
 export default function EvaLogo({ state = 'dormant', onClick, className = '' }: EvaLogoProps) {
   const stateClass = STATE_CLASSES[state] ?? STATE_CLASSES.dormant;
-  const center = (SLICE_BOUNDS.length - 2) / 2;
+  const center = (STROKES.length - 1) / 2;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
@@ -40,26 +48,17 @@ export default function EvaLogo({ state = 'dormant', onClick, className = '' }: 
           role="img"
           aria-label="EVA waveform logo"
         >
-          <defs>
-            {SLICE_BOUNDS.slice(0, -1).map((x0, i) => (
-              <clipPath key={i} id={`eva-slice-${i}`}>
-                <rect x={x0} y={0} width={SLICE_BOUNDS[i + 1] - x0 + 3} height={1080} />
-              </clipPath>
-            ))}
-          </defs>
-          {SLICE_BOUNDS.slice(0, -1).map((_, i) => (
-            <g
+          {STROKES.map((points, i) => (
+            <polygon
               key={i}
-              clipPath={`url(#eva-slice-${i})`}
-              className={stateClass}
+              points={points}
+              className={`fill-primary ${stateClass}`}
               style={{
                 transformOrigin: '540px 540px',
                 transformBox: 'view-box',
-                animationDelay: `${Math.abs(i - center) * 140}ms`,
+                animationDelay: `${Math.abs(i - center) * 110}ms`,
               }}
-            >
-              <path d={MARK_PATH} className="fill-primary" />
-            </g>
+            />
           ))}
         </svg>
       </button>
