@@ -6,6 +6,7 @@ import Features from '@/components/sections/Features';
 import Integrations from '@/components/sections/Integrations';
 import Industries from '@/components/sections/Industries';
 import CtaSection from '@/components/sections/CtaSection';
+import DemoStrip from '@/components/sections/DemoStrip';
 import Footer from '@/components/sections/Footer';
 
 export default function LandingPage() {
@@ -23,8 +24,10 @@ export default function LandingPage() {
       <HeroSection />
       <SocialProof />
       <HowItWorks />
+      <DemoStrip label="Want this answering your phones?" />
       <Features />
       <Integrations />
+      <DemoStrip label="Hear Eva trained on your business." />
       <Industries />
       <CtaSection />
       <Footer />

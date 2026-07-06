@@ -43,7 +43,10 @@ export default function Navbar() {
             </a>
           ))}
           <Button variant="ghost" size="sm" className="btn-sharp" asChild>
-            <a href="/#hero">Try Demo</a>
+            <a href="/#hero">Talk to Eva</a>
+          </Button>
+          <Button size="sm" className="btn-sharp" asChild>
+            <a href="/#demo">Free Demo</a>
           </Button>
           <Button variant="outline" size="sm" className="btn-sharp border-foreground/20" asChild>
             <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
@@ -72,7 +75,10 @@ export default function Navbar() {
                 </a>
               ))}
               <Button variant="ghost" asChild>
-                <a href="/#hero" onClick={() => setOpen(false)}>Try Demo</a>
+                <a href="/#hero" onClick={() => setOpen(false)}>Talk to Eva</a>
+              </Button>
+              <Button asChild>
+                <a href="/#demo" onClick={() => setOpen(false)}>Free Demo</a>
               </Button>
               <Button variant="outline" asChild>
                 <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">

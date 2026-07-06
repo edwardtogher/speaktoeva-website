@@ -29,7 +29,7 @@ export default function CtaSection() {
   };
 
   return (
-    <section className="bg-primary text-primary-foreground">
+    <section id="demo" className="bg-primary text-primary-foreground scroll-mt-16">
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-24 lg:py-32">
         <AnimateOnScroll>
           <span className="microlabel text-primary-foreground/60">Free demo — no call required</span>

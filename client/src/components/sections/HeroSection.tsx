@@ -166,6 +166,9 @@ export default function HeroSection() {
           <Button size="lg" className="btn-sharp h-12 px-8" onClick={handleLogoClick} data-testid="button-talk-to-eva">
             {logoState === 'connecting' ? 'Connecting…' : isCallActive ? 'End call' : 'Talk to Eva'}
           </Button>
+          <Button size="lg" variant="outline" className="btn-sharp h-12 px-8 border-foreground/20" asChild>
+            <a href="/#demo">Get your free demo</a>
+          </Button>
           <p className="microlabel text-foreground/40 sm:ml-auto self-center">
             She greets, books, and follows up — while you work.
           </p>

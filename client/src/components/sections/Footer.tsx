@@ -1,4 +1,5 @@
 const quickLinks = [
+  { label: 'Free Demo', href: '/#demo' },
   { label: 'Features', href: '/#features' },
   { label: 'How It Works', href: '/#how-it-works' },
   { label: 'Integrations', href: '/#integrations' },
