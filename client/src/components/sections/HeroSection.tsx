@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import EvaLogo from '@/components/EvaLogo';
 import { useEvaVoice } from '@/components/EvaVoiceProvider';
-import { BOOKING_LINK } from '@/config/eva';
 
 const SPEC = [
   ['Unit', 'EVA-001'],
@@ -166,15 +165,6 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-3 mt-8">
           <Button size="lg" className="btn-sharp h-12 px-8" onClick={handleLogoClick} data-testid="button-talk-to-eva">
             {logoState === 'connecting' ? 'Connecting…' : isCallActive ? 'End call' : 'Talk to Eva'}
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="btn-sharp h-12 px-8 border-foreground/20"
-            onClick={() => window.open(BOOKING_LINK, '_blank')}
-            data-testid="button-book-walkthrough"
-          >
-            Book a 10-min walkthrough
           </Button>
           <p className="microlabel text-foreground/40 sm:ml-auto self-center">
             She greets, books, and follows up — while you work.

@@ -1,5 +1,3 @@
-import { Linkedin } from 'lucide-react';
-
 const quickLinks = [
   { label: 'Features', href: '/#features' },
   { label: 'How It Works', href: '/#how-it-works' },
@@ -47,15 +45,6 @@ export default function Footer() {
           <p className="microlabel text-foreground/40">
             &copy; {new Date().getFullYear()} SpeakToEva — All rights reserved
           </p>
-          <a
-            href="https://www.linkedin.com/in/edward-togher"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 microlabel text-foreground/40 hover:text-primary transition-colors"
-          >
-            <Linkedin className="w-3.5 h-3.5" />
-            Edward Togher
-          </a>
         </div>
       </div>
     </footer>

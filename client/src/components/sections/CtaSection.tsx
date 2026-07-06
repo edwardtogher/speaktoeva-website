@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BOOKING_LINK } from '@/config/eva';
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll';
 
 const DEMO_ENDPOINT = 'https://intelligent-enthusiasm-production-6235.up.railway.app/leads/demo-request';
@@ -99,12 +98,6 @@ export default function CtaSection() {
                   That didn't send — check the details and try again, or email hello@speaktoeva.com.
                 </p>
               )}
-              <p className="microlabel text-primary-foreground/50 mt-4">
-                Prefer to talk it through?{' '}
-                <a href={BOOKING_LINK} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary-foreground">
-                  Book a 10-min call
-                </a>
-              </p>
             </form>
           )}
         </AnimateOnScroll>

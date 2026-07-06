@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { BOOKING_LINK } from '@/config/eva';
 import evaWordmark from '@assets/linked in post Artboard 3_1758296319703.png';
 
 const navLinks = [
@@ -46,9 +45,6 @@ export default function Navbar() {
           <Button variant="ghost" size="sm" className="btn-sharp" asChild>
             <a href="/#hero">Try Demo</a>
           </Button>
-          <Button size="sm" className="btn-sharp" onClick={() => window.open(BOOKING_LINK, '_blank')}>
-            Book a Call
-          </Button>
           <Button variant="outline" size="sm" className="btn-sharp border-foreground/20" asChild>
             <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">
               Login
@@ -77,9 +73,6 @@ export default function Navbar() {
               ))}
               <Button variant="ghost" asChild>
                 <a href="/#hero" onClick={() => setOpen(false)}>Try Demo</a>
-              </Button>
-              <Button onClick={() => { window.open(BOOKING_LINK, '_blank'); setOpen(false); }}>
-                Book a Call
               </Button>
               <Button variant="outline" asChild>
                 <a href="https://dash.speaktoeva.com" target="_blank" rel="noopener noreferrer">

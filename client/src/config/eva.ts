@@ -4,6 +4,3 @@
 export const EVA_CONFIG = {
   agentId: "agent_1301k54rg56re6pvnm5can7r296h",
 } as const;
-
-// Cal.com booking link
-export const BOOKING_LINK = "https://cal.com/edward-togher-5q9jk9/connect-session";
